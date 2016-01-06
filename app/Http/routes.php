@@ -10,7 +10,19 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('/', 'WelcomeController@index');
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
+{
+	Route::get('/', 'HomeController@index');
 });
+
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
+{
+	Route::get('/', 'AdminController@index');
+});
+
+Route::controllers([
+		'auth' => 'Auth\AuthController',
+		'password' => 'Auth\PasswordController',
+]);

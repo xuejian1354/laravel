@@ -1,45 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Laravel</title>
+@extends('app')
 
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+@section('content')
+<div class="container">
+  <h1>Welcome to SmartLab !</h1>
+  <h4><p>This is longyuan smart labrotary or classroom main console. We will provide more useful and interesting service. Let's looking forward to it !</p>
 
-        <style>
-            html, body {
-                height: 100%;
-            }
+  <p>For more details please refer to
+  <a href="http://www.lysoc.cn">lysoc.cn</a>.<br/>
+  OpenSource is support at
+  <a href="https://github.com/xuejian1354?tab=repositories">github.com/xuejian1354</a>.</p>
 
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                display: table;
-                font-weight: 100;
-                font-family: 'Lato';
-            }
-
-            .container {
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-            }
-
-            .content {
-                text-align: center;
-                display: inline-block;
-            }
-
-            .title {
-                font-size: 96px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="content">
-                <div class="title">Laravel 5</div>
-            </div>
-        </div>
-    </body>
-</html>
+  <p><em>Thank you for using loongsmart.</em></p></h4>
+</div>
+@endsection
