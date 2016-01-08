@@ -4,39 +4,64 @@
   <meta charset="UTF-8">
   <title>smartlab | console</title>
   
-  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+  <link href="{{ asset('/img/favicon.png') }}" rel="icon">
+  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/css/smartlab.css') }}" rel="stylesheet">
 </head>
 <body>
-  <div class="panel-header">
-    <nav class="navbar navbar-inverse">
-      <div class="navbar-header">
-        @if (Auth::guest())
-          <a class="navbar-brand" href="{{ url('/') }}">smartlab</a>
-	    @else
-          <a class="navbar-brand" href="#">smartlab</a>
-        @endif
+  <nav class="smartlab-nav navbar navbar-fixed-top">
+    <div class="container-fluid">
+	  <div class="navbar-header">
+        <a class="navbar-brand smartlab-brand" href="#">SmartLab</a>
       </div>
-      <div class="collapse navbar-collapse navbar-collapse-example">
-        <ul id="nav_bar" class="nav navbar-nav">
-          <li><a href="{{ url('#') }}">User</a></li>
-          <li><a href="{{ url('#') }}">Device</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="{{ url('/home') }}">Front</a></li>
-	      <li class="dropdown">
-		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->name }} <span class="caret"></span></a>
-		    <ul class="dropdown-menu" role="menu">
-		      <li><a href="{{ url('#') }}">Setting</a></li>
-		      <li class="divider"></li>
-			  <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
-		    </ul>
-	      </li>
+      <div class="nav navbar-nav dropdown">
+        <a class="menu active">状态</a>
+        <ul class="dropdown-menu dropdown-auto">
+	      <li><a href="#">总览</a></li>
+	      <li><a href="#">统计</a></li>
 	    </ul>
       </div>
-    </nav>
-  </div>
-  
-  @yield('content')
+      <div class="nav navbar-nav dropdown">
+        <a class="menu">课程</a>
+	    <ul class="dropdown-menu dropdown-auto">
+	      <li><a href="#">查看</a></li>
+	      <li><a href="#">录入</a></li>
+        </ul>
+      </div>
+      <div class="nav navbar-nav dropdown">
+        <a class="menu">教室</a>
+        <ul class="dropdown-menu dropdown-auto">
+          <li><a href="#">使用情况</a></li>
+          <li><a href="#">教室控制</a></li>
+        </ul>
+      </div>
+	  <div class="nav navbar-nav dropdown">
+        <a class="menu">设备</a>
+        <ul class="dropdown-menu dropdown-auto">
+          <li><a href="#">状态</a></li>
+          <li><a href="#">操作</a></li>
+        </ul>
+      </div>
+	  <div class="nav navbar-nav dropdown">
+        <a class="menu">用户</a>
+        <ul class="dropdown-menu dropdown-auto">
+          <li><a href="#">教师</a></li>
+          <li><a href="#">学生</a></li>
+        </ul>
+      </div>
+	  
+	  <div class="nav navbar-nav navbar-right dropdown">
+        <a id="user-info" class="homemenu dropdown-toggle" data-toggle="dropdown" href="">{{ Auth::user()->name }}</a>
+        <ul id="user-list" class="dropdown-menu">
+          <li><a href="#">设置</a></li>
+          <li><a href="{{ url('/auth/logout') }}">退出</a></li>
+        </ul>
+      </div>
+      <a class="nav navbar-nav navbar-right smartlab-nav-item" href="{{ url('/home') }}">前台</a>
+    </div>
+  </nav>
+
+  @yield('menuboard')
   
   <!-- Scripts -->
   <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>

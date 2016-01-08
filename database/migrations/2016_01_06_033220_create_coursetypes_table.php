@@ -14,7 +14,7 @@ class CreateCourseTypesTable extends Migration {
 	{
 		Schema::create('coursetypes', function(Blueprint $table)
 		{
-			$table->integer('id');
+			$table->integer('coursetype');
 			$table->string('val');
             $table->timestamps();
 		});

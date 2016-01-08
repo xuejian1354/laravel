@@ -15,7 +15,7 @@ class CoursetypeTableSeeder extends Seeder
     public function run()
     {
         DB::table('coursetypes')->delete();
-        Coursetype::create(['id' => '1', 'val' => '静态课程']);
-        Coursetype::create(['id' => '2', 'val' => '动态课程']);
+        Coursetype::create(['coursetype' => '1', 'val' => '静态课程']);
+        Coursetype::create(['coursetype' => '2', 'val' => '动态课程']);
     }
 }

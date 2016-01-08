@@ -13,7 +13,7 @@ class CreateGradesTable extends Migration
     public function up()
     {
         Schema::create('grades', function (Blueprint $table) {
-            $table->integer('id');
+            $table->integer('grade');
             $table->string('val');
             $table->timestamps();
         });

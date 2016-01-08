@@ -6,6 +6,7 @@
   
   <title>smartlab</title>
   
+  <link href="{{ asset('/img/favicon.png') }}" rel="icon">
   <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
 </head>
 <body>

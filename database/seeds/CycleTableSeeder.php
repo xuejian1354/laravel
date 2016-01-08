@@ -15,9 +15,9 @@ class CycleTableSeeder extends Seeder
     public function run()
     {
         DB::table('cycles')->delete();
-        Cycle::create(['id' => '1', 'val' => '仅一次']);
-        Cycle::create(['id' => '2', 'val' => '每月']);
-        Cycle::create(['id' => '3', 'val' => '每周']);
-        Cycle::create(['id' => '4', 'val' => '每天']);
+        Cycle::create(['cycle' => '1', 'val' => '一次']);
+        Cycle::create(['cycle' => '2', 'val' => '每月']);
+        Cycle::create(['cycle' => '3', 'val' => '每周']);
+        Cycle::create(['cycle' => '4', 'val' => '每天']);
     }
 }

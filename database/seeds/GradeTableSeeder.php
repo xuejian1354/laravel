@@ -15,9 +15,9 @@ class GradeTableSeeder extends Seeder
     public function run()
     {
         DB::table('grades')->delete();
-        Grade::create(['id' => '1', 'val' => '管理员']);
-        Grade::create(['id' => '2', 'val' => '教师']);
-        Grade::create(['id' => '3', 'val' => '学生']);
-        Grade::create(['id' => '4', 'val' => '访客']);
+        Grade::create(['grade' => '1', 'val' => '管理员']);
+        Grade::create(['grade' => '2', 'val' => '教师']);
+        Grade::create(['grade' => '3', 'val' => '学生']);
+        Grade::create(['grade' => '4', 'val' => '访客']);
     }
 }

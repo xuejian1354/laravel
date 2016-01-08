@@ -13,7 +13,7 @@ class CreatePrivilegesTable extends Migration
     public function up()
     {
         Schema::create('privileges', function (Blueprint $table) {
-            $table->integer('id');
+            $table->integer('privilege');
             $table->string('val');
             $table->timestamps();
         });
