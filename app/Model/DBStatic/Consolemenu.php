@@ -4,7 +4,7 @@ namespace App\Model\DBStatic;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Coursetype extends Model
+class Consolemenu extends Model
 {
     //
 }

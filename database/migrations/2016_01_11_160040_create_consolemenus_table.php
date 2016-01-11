@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePrivilegesTable extends Migration
+class CreateConsoleMenusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,10 @@ class CreatePrivilegesTable extends Migration
      */
     public function up()
     {
-        Schema::create('privileges', function (Blueprint $table) {
-            $table->integer('privilege');
-            $table->string('val');
+        Schema::create('consolemenus', function (Blueprint $table) {
+            $table->string('mmenu');
+            $table->string('cmenu');
+            $table->string('action');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ class CreatePrivilegesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('privileges');
+        Schema::drop('consolemenus');
     }
 }

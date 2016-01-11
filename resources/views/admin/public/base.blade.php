@@ -14,46 +14,26 @@
 	  <div class="navbar-header">
         <a class="navbar-brand smartlab-brand" href="#">SmartLab</a>
       </div>
-      <div class="nav navbar-nav dropdown">
-        <a class="menu active">状态</a>
-        <ul class="dropdown-menu dropdown-auto">
-	      <li><a href="#">总览</a></li>
-	      <li><a href="#">统计</a></li>
-	    </ul>
+      @foreach ($nmenus as $nmenu)
+        <div class="nav navbar-nav dropdown">
+          <a class="menu
+            @if($nmenu->mmenu == $amenu->mmenu)
+              active
+            @endif
+          " href="{{ url('/admin?action='.$nmenu->action) }}">{{ $nmenu->mmenu }}</a>
+          <!-- ul class="dropdown-menu dropdown-auto">
+            @foreach ($menus as $tmenu)
+              @if($nmenu->mmenu == $tmenu->mmenu)
+	            <li><a href="{{ url('/admin?action='.$tmenu->action) }}">{{ $tmenu->cmenu }}</a></li>
+	          @endif
+	        @endforeach
+	      </ul-->
       </div>
-      <div class="nav navbar-nav dropdown">
-        <a class="menu">课程</a>
-	    <ul class="dropdown-menu dropdown-auto">
-	      <li><a href="#">查看</a></li>
-	      <li><a href="#">录入</a></li>
-        </ul>
-      </div>
-      <div class="nav navbar-nav dropdown">
-        <a class="menu">教室</a>
-        <ul class="dropdown-menu dropdown-auto">
-          <li><a href="#">使用情况</a></li>
-          <li><a href="#">教室控制</a></li>
-        </ul>
-      </div>
-	  <div class="nav navbar-nav dropdown">
-        <a class="menu">设备</a>
-        <ul class="dropdown-menu dropdown-auto">
-          <li><a href="#">状态</a></li>
-          <li><a href="#">操作</a></li>
-        </ul>
-      </div>
-	  <div class="nav navbar-nav dropdown">
-        <a class="menu">用户</a>
-        <ul class="dropdown-menu dropdown-auto">
-          <li><a href="#">教师</a></li>
-          <li><a href="#">学生</a></li>
-        </ul>
-      </div>
-	  
+      @endforeach
 	  <div class="nav navbar-nav navbar-right dropdown">
         <a id="user-info" class="homemenu dropdown-toggle" data-toggle="dropdown" href="">{{ Auth::user()->name }}</a>
         <ul id="user-list" class="dropdown-menu">
-          <li><a href="#">设置</a></li>
+          <li><a href="/admin?action=setting">设置</a></li>
           <li><a href="{{ url('/auth/logout') }}">退出</a></li>
         </ul>
       </div>

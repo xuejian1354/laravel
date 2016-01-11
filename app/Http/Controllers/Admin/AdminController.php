@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Model\Device\Device;
+use App\Model\DBStatic\Consolemenu;
 
 class AdminController extends Controller {
 
@@ -33,7 +33,43 @@ class AdminController extends Controller {
 	 */
 	public function index()
 	{
-		return view('admin.admin');
+		$action = isset($_GET['action'])?$_GET['action']:"#";
+		$amenu = "#";
+		
+		$menus = Consolemenu::all();
+		$mmenus = array();
+		foreach ($menus as $menu)
+		{
+			if($action == $menu->action)
+			{
+				$amenu = $menu;
+			}
+			array_push($mmenus, $menu->mmenu);
+		}
+		
+		if($amenu == "#")
+		{
+			$amenu = $menus[0];
+		}
+		
+		$umenus = array_unique($mmenus);
+		$nmenus = array();
+		foreach($umenus as $umenu)
+		{
+			foreach ($menus as $menu)
+			{
+				if ($umenu == $menu->mmenu)
+				{
+					array_push($nmenus, $menu);
+					break;
+				}
+			}
+		}
+
+		return view('admin.admin')
+					->withMenus($menus)
+					->withNmenus($nmenus)
+					->withAmenu($amenu);
 	}
 
 }

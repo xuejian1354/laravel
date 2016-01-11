@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PrivilegeTableSeeder::class);
         $this->call(CycleTableSeeder::class);
         $this->call(CoursetypeTableSeeder::class);
+        $this->call(ConsolemenuTableSeeder::class);
 
         Model::reguard();
     }

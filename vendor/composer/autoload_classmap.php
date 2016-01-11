@@ -6,13 +6,17 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ConsolemenuTableSeeder' => $baseDir . '/database/seeds/ConsolemenuTableSeeder.php',
     'CoursetypeTableSeeder' => $baseDir . '/database/seeds/CoursetypeTableSeeder.php',
+    'CreateConsoleMenusTable' => $baseDir . '/database/migrations/2016_01_11_160040_create_consolemenus_table.php',
+    'CreateContentreportsTable' => $baseDir . '/database/migrations/2016_01_06_155430_create_contentreports_table.php',
     'CreateCourseTypesTable' => $baseDir . '/database/migrations/2016_01_06_033220_create_coursetypes_table.php',
     'CreateCoursesTable' => $baseDir . '/database/migrations/2016_01_06_033220_create_courses_table.php',
     'CreateCyclesTable' => $baseDir . '/database/migrations/2016_01_06_033220_create_cycles_table.php',
     'CreateDevicesTable' => $baseDir . '/database/migrations/2015_10_23_055510_create_devices_table.php',
     'CreateGatewaysTable' => $baseDir . '/database/migrations/2015_10_27_003648_create_gateways_table.php',
     'CreateGradesTable' => $baseDir . '/database/migrations/2016_01_06_000000_create_grades_table.php',
+    'CreateMainreportsTable' => $baseDir . '/database/migrations/2016_01_06_155430_create_mainreports_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePrivilegesTable' => $baseDir . '/database/migrations/2016_01_06_000000_create_privileges_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
