@@ -12,7 +12,9 @@ class CreateConsoleMenusTable extends Migration
      */
     public function up()
     {
-        Schema::create('consolemenus', function (Blueprint $table) {
+        Schema::create('consolemenus', function (Blueprint $table)
+        {
+        	$table->increments('id');
             $table->string('mmenu');
             $table->string('cmenu');
             $table->string('action');

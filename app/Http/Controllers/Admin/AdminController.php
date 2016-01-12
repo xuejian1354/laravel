@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Model\DBStatic\Consolemenu;
+use App\Model\DBStatic\Globalval;
 
 class AdminController extends Controller {
 
@@ -67,6 +68,7 @@ class AdminController extends Controller {
 		}
 
 		return view('admin.admin')
+					->withGlobalvals(Controller::getGlobalvals())
 					->withMenus($menus)
 					->withNmenus($nmenus)
 					->withAmenu($amenu);

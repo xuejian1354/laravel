@@ -212,3 +212,5 @@ h6, .h6 {
   margin-top: 0;
 }
 
+.homenav {min-height: 40px;}
+.homenav-bar>a, .homenav-bar>li>a {height: 40px; padding: 10px 15px;}

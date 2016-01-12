@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CycleTableSeeder::class);
         $this->call(CoursetypeTableSeeder::class);
         $this->call(ConsolemenuTableSeeder::class);
+        $this->call(GlobalvalTableSeeder::class);
 
         Model::reguard();
     }

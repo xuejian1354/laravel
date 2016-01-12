@@ -2,17 +2,20 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>smartlab | console</title>
+  <title>{{ $globalvals['title'] }} | 控制台 | {{ $amenu->cmenu }}</title>
   
-  <link href="{{ asset('/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('/css/smartlab.css') }}" rel="stylesheet">
+  <link rel="shortcut icon" href="{{ asset('/img/favicon.icon') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('/css/smartlab.css') }}">
+  <!-- Scripts -->
+  <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
 </head>
 <body>
   <nav class="smartlab-nav navbar navbar-fixed-top">
     <div class="container-fluid">
 	  <div class="navbar-header">
-        <a class="navbar-brand smartlab-brand" href="#">SmartLab</a>
+        <a class="navbar-brand smartlab-brand" href="#">{{ $globalvals['title'] }}</a>
       </div>
       @foreach ($nmenus as $nmenu)
         <div class="nav navbar-nav dropdown">
@@ -42,9 +45,5 @@
   </nav>
 
   @yield('menuboard')
-  
-  <!-- Scripts -->
-  <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
