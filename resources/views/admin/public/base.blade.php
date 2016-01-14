@@ -10,6 +10,7 @@
   <!-- Scripts -->
   <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('/js/smartlab.js') }}"></script>
 </head>
 <body>
   <nav class="smartlab-nav navbar navbar-fixed-top">
@@ -21,9 +22,10 @@
         <div class="nav navbar-nav dropdown">
           <a class="menu
             @if($nmenu->mmenu == $amenu->mmenu)
-              active
-            @endif
-          " href="{{ url('/admin?action='.$nmenu->action) }}">{{ $nmenu->mmenu }}</a>
+              active" href="javascript:void(0);"
+            @else
+            " href="{{ url('/admin?action='.$nmenu->action) }}"
+            @endif>{{ $nmenu->mmenu }}</a>
           <!-- ul class="dropdown-menu dropdown-auto">
             @foreach ($menus as $tmenu)
               @if($nmenu->mmenu == $tmenu->mmenu)
@@ -44,6 +46,6 @@
     </div>
   </nav>
 
-  @yield('menuboard')
+  @yield('board')
 </body>
 </html>

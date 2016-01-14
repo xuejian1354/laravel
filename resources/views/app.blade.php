@@ -45,7 +45,9 @@
 	      <li class="dropdown" style="margin-right: -15px;">
 		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->name }} <span class="caret"></span></a>
 		    <ul class="dropdown-menu" role="menu">
-		      <li><a href="{{ url('/admin') }}">Console</a></li>
+		      @if(Auth::user()->grade == 1)
+		        <li><a href="{{ url('/admin') }}">Console</a></li>
+		      @endif
 		      <li><a href="{{ url('#') }}">Setting</a></li>
 		      <li class="divider"></li>
 			  <li><a href="{{ url('/auth/logout') }}">Logout</a></li>

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Model\DBStatic\Consolemenu;
 use App\Model\DBStatic\Globalval;
@@ -36,7 +37,7 @@ class AdminController extends Controller {
 	{
 		$action = isset($_GET['action'])?$_GET['action']:"#";
 		$amenu = "#";
-		
+
 		$menus = Consolemenu::all();
 		$mmenus = array();
 		foreach ($menus as $menu)
@@ -47,12 +48,12 @@ class AdminController extends Controller {
 			}
 			array_push($mmenus, $menu->mmenu);
 		}
-		
+
 		if($amenu == "#")
 		{
 			$amenu = $menus[0];
 		}
-		
+
 		$umenus = array_unique($mmenus);
 		$nmenus = array();
 		foreach($umenus as $umenu)
@@ -67,11 +68,18 @@ class AdminController extends Controller {
 			}
 		}
 
-		return view('admin.admin')
-					->withGlobalvals(Controller::getGlobalvals())
-					->withMenus($menus)
-					->withNmenus($nmenus)
-					->withAmenu($amenu);
+		if(Auth::user()->grade == 1)
+		{
+			return view('admin.admin')
+						->withGlobalvals(Controller::getGlobalvals())
+						->withMenus($menus)
+						->withNmenus($nmenus)
+						->withAmenu($amenu);
+		}
+		else
+		{
+			return view("errors.permitts");
+		}
 	}
 
 }

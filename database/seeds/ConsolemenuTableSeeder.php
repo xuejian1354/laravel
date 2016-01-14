@@ -23,7 +23,6 @@ class ConsolemenuTableSeeder extends Seeder
         Consolemenu::create(['mmenu' => '教室', 'cmenu' => '教室控制', 'action' => 'roomctrl']);
         Consolemenu::create(['mmenu' => '设备', 'cmenu' => '状态', 'action' => 'devstats']);
         Consolemenu::create(['mmenu' => '设备', 'cmenu' => '操作', 'action' => 'devctrl']);
-        Consolemenu::create(['mmenu' => '用户', 'cmenu' => '老师', 'action' => 'teacher']);
-        Consolemenu::create(['mmenu' => '用户', 'cmenu' => '学生', 'action' => 'student']);
+        Consolemenu::create(['mmenu' => '用户', 'cmenu' => '信息', 'action' => 'userinfo']);
     }
 }
