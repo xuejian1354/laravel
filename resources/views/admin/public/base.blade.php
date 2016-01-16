@@ -2,9 +2,11 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>{{ $globalvals['title'] }} | 控制台 | {{ $amenu->cmenu }}</title>
   
-  <link rel="shortcut icon" href="{{ asset('/img/favicon.icon') }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('/img/favicon.icon') }}">
+  <link rel="icon" type="image/x-icon" href="{{ asset('/img/favicon.icon') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/smartlab.css') }}">
   <!-- Scripts -->
@@ -33,7 +35,7 @@
 	          @endif
 	        @endforeach
 	      </ul-->
-      </div>
+        </div>
       @endforeach
 	  <div class="nav navbar-nav navbar-right dropdown">
         <a id="user-info" class="homemenu dropdown-toggle" data-toggle="dropdown" href="">{{ Auth::user()->name }}</a>

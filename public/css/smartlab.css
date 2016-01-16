@@ -214,3 +214,6 @@ h6, .h6 {
 
 .homenav {min-height: 40px;}
 .homenav-bar>a, .homenav-bar>li>a {height: 40px; padding: 10px 15px;}
+
+.table>tbody>tr>td .btn {padding: 4px 8px; margin: -4px 0;}
+

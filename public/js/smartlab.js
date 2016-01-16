@@ -4,3 +4,9 @@ $(document).ready(function() {
     $(this).addClass("active");
   });
 })
+
+function loadUserInfo(id) {
+  $(".nav-li"+id).addClass("active");
+  $(".targ").addClass("hidden");
+  $(".targlist"+id).removeClass("hidden");
+}

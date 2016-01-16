@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use Auth;
+use App\User;
+use App\Model\DBStatic\Grade;
 use App\Http\Controllers\Controller;
 use App\Model\DBStatic\Consolemenu;
 use App\Model\DBStatic\Globalval;
@@ -37,6 +39,8 @@ class AdminController extends Controller {
 	{
 		$action = isset($_GET['action'])?$_GET['action']:"#";
 		$amenu = "#";
+		$grades = array();
+		$args = array();
 
 		$menus = Consolemenu::all();
 		$mmenus = array();
@@ -52,6 +56,30 @@ class AdminController extends Controller {
 		if($amenu == "#")
 		{
 			$amenu = $menus[0];
+		}
+
+		if($amenu->action == "userinfo")
+		{
+			$users = User::all();
+			$grades = Grade::all();
+			foreach($grades as $grade)
+			{
+				$grade["count"] = 0;
+			}
+
+			foreach ($users as $user)
+			{
+				foreach($grades as $grade)
+				{
+					if($user->grade == $grade->grade)
+					{
+						$grade["count"] += 1;
+						$user["gradename"] = $grade->val;
+						$user["index"] = $grade["count"];
+					}
+				}
+			}
+			$args = $users;
 		}
 
 		$umenus = array_unique($mmenus);
@@ -74,12 +102,13 @@ class AdminController extends Controller {
 						->withGlobalvals(Controller::getGlobalvals())
 						->withMenus($menus)
 						->withNmenus($nmenus)
-						->withAmenu($amenu);
+						->withAmenu($amenu)
+						->withGrades($grades)
+						->withArgs($args);
 		}
 		else
 		{
 			return view("errors.permitts");
 		}
 	}
-
 }
