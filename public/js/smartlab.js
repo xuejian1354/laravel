@@ -43,3 +43,38 @@ function userDelAlert(id, userid, tabpos, token) {
   }
 }
 
+function userEditAlert(id, token) {
+	var postForm = document.createElement("form");
+	postForm.method="post";
+	postForm.action = "admin/useredit";
+
+	var tokenInput = document.createElement("input");
+	tokenInput.setAttribute("name", "_token");
+	tokenInput.setAttribute("value", token);
+	postForm.appendChild(tokenInput);
+
+	var idInput = document.createElement("input");
+	idInput.setAttribute("name", "id");
+	idInput.setAttribute("value", id);
+	postForm.appendChild(idInput);
+
+	var nameInput = document.createElement("input");
+	nameInput.setAttribute("name", "name");
+	nameInput.setAttribute("value", $("#username"+id).val());
+	postForm.appendChild(nameInput);
+
+	var gradeInput = document.createElement("input");
+	gradeInput.setAttribute("name", "grade");
+	gradeInput.setAttribute("value", $("#usergrade"+id).find("option:selected").text());
+	postForm.appendChild(gradeInput);
+
+	var privilegeInput = document.createElement("input");
+	privilegeInput.setAttribute("name", "privilege");
+	privilegeInput.setAttribute("value", $("#userprivilege"+id).find("option:selected").text());
+	postForm.appendChild(privilegeInput);
+
+	document.body.appendChild(postForm);
+	postForm.submit();
+	document.body.removeChild(postForm);
+}
+

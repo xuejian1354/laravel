@@ -15,7 +15,7 @@
           <th>邮箱</th>
           <th>身份</th>
           <th>权限</th>
-          <th>创建时间</th>
+          <th>修改时间</th>
           <th></th>
         </tr>
       </thead>
@@ -33,11 +33,17 @@
             <td>{{ $arg->email }}</td>
             <td>{{ $arg->gradename }}</td>
             <td>{{ $arg->privilege }}</td>
-            <td>{{ $arg->created_at }}</td>
+            <td>{{ $arg->updated_at }}</td>
             <td>
-              <a href="javascript:void(0);" class="btn btn-primary" role="button">修改</a>
+              <a href="{{ url('/admin?action=userinfo/edit&id='.$arg->id) }}"
+                @if(Auth::user()->privilege < 5)
+                  class="btn btn-primary disabled"
+                @else
+                  class="btn btn-primary"
+                @endif
+                  role="button">修改</a>
               <a href="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
-                @if(Auth::user()->name == $arg->name)
+                @if(Auth::user()->name == $arg->name || Auth::user()->privilege < 5)
                   class="btn btn-danger disabled"
                 @else
                   class="btn btn-danger"

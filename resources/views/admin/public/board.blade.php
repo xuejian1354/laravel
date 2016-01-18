@@ -7,7 +7,12 @@
           @if($menu->mmenu == $amenu->mmenu)
             <li
               @if($menu->cmenu == $amenu->cmenu)
-                class="active"><a href="javascript:void(0);">
+                class="active">
+                @if($amenu->action == $amenu->caction)
+                <a href="javascript:void(0);">
+                @else
+                  <a href="{{ url('/admin?action='.$menu->action) }}">
+                @endif
               @else
                 ><a href="{{ url('/admin?action='.$menu->action) }}">
               @endif{{ $menu->cmenu }}</a></li>
@@ -15,7 +20,7 @@
         @endforeach
       </ul>
     </div>
-    @yield($amenu->action)
+    @yield($amenu->caction)
   </div>
 </div>
 @endsection

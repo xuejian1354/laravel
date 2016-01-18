@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Model\DBStatic\Consolemenu;
 use App\Model\DBStatic\Globalval;
 use Illuminate\Support\Facades\Redirect;
+use App\Model\DBStatic\Privilege;
 
 class AdminController extends Controller {
 
@@ -31,6 +32,20 @@ class AdminController extends Controller {
 		$this->middleware('auth');
 	}
 
+	public function getGradeFromVal($val)
+	{
+		$grades = Grade::all();
+		foreach($grades as $grade)
+		{
+			if ($grade->val == $val)
+			{
+				return $grade->grade;
+			}
+		}
+
+		return 4;
+	}
+
 	/**
 	 * Show the application dashboard to the user.
 	 *
@@ -39,18 +54,21 @@ class AdminController extends Controller {
 	public function index()
 	{
 		//$action = isset($_GET['action'])?$_GET['action']:"#";
-		$action = Input::get('action');
+		$actions = explode('/', Input::get('action'));
+
 		$amenu = "#";
 		$grades = array();
+		$privileges = array();
 		$args = array();
 
 		$menus = Consolemenu::all();
 		$mmenus = array();
 		foreach ($menus as $menu)
 		{
-			if($action == $menu->action)
+			if($actions[0] == $menu->action)
 			{
 				$amenu = $menu;
+				$amenu['caction'] = $menu->action;
 			}
 			array_push($mmenus, $menu->mmenu);
 		}
@@ -58,12 +76,19 @@ class AdminController extends Controller {
 		if($amenu == "#")
 		{
 			$amenu = $menus[0];
+			$amenu['caction'] = $menus[0]->action;
 		}
 
 		if($amenu->action == "userinfo")
 		{
+			if(isset($actions[1]))
+			{
+				$amenu['caction'] = $actions[1];
+			}
+
 			$users = User::all();
 			$grades = Grade::all();
+			$privileges = Privilege::all();
 			foreach($grades as $grade)
 			{
 				$grade['count'] = 0;
@@ -80,8 +105,19 @@ class AdminController extends Controller {
 						$user['index'] = $grade['count'];
 					}
 				}
+
+				if($amenu['caction'] == 'edit' && isset($_GET['id']) && $user->id != Input::get('id'))
+				{}
+				else
+				{
+					array_push($args, $user);
+				}
 			}
-			$args = $users;
+
+			if($amenu['caction'] == 'edit' && Auth::user()->privilege < 5)
+			{
+				return view('errors.permitts');
+			}
 		}
 
 		$umenus = array_unique($mmenus);
@@ -98,7 +134,7 @@ class AdminController extends Controller {
 			}
 		}
 
-		if(Auth::user()->grade == 1)
+		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 		{
 			return view('admin.admin')
 						->withGlobalvals(Controller::getGlobalvals())
@@ -106,6 +142,7 @@ class AdminController extends Controller {
 						->withNmenus($nmenus)
 						->withAmenu($amenu)
 						->withGrades($grades)
+						->withPrivileges($privileges)
 						->withArgs($args);
 		}
 		else
@@ -118,5 +155,16 @@ class AdminController extends Controller {
 	{
 		User::find(Input::get('id'))->delete();
 		return redirect("admin?action=userinfo&tabpos=".Input::get('tabpos'));
+	}
+
+	public function useredit()
+	{
+		$user = User::find(Input::get('id'));
+		$user->name = Input::get('name');
+		$user->grade = $this->getGradeFromVal(Input::get('grade'));
+		$user->privilege = intval(substr(Input::get('privilege'), 0, 1), 10);
+		$user->save();
+
+		return redirect("admin?action=userinfo&tabpos=".($user->grade-1));
 	}
 }
