@@ -1,11 +1,12 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Auth;
+use Input, Auth;
 use App\User;
 use App\Model\DBStatic\Grade;
 use App\Http\Controllers\Controller;
 use App\Model\DBStatic\Consolemenu;
 use App\Model\DBStatic\Globalval;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller {
 
@@ -37,7 +38,8 @@ class AdminController extends Controller {
 	 */
 	public function index()
 	{
-		$action = isset($_GET['action'])?$_GET['action']:"#";
+		//$action = isset($_GET['action'])?$_GET['action']:"#";
+		$action = Input::get('action');
 		$amenu = "#";
 		$grades = array();
 		$args = array();
@@ -64,7 +66,7 @@ class AdminController extends Controller {
 			$grades = Grade::all();
 			foreach($grades as $grade)
 			{
-				$grade["count"] = 0;
+				$grade['count'] = 0;
 			}
 
 			foreach ($users as $user)
@@ -73,9 +75,9 @@ class AdminController extends Controller {
 				{
 					if($user->grade == $grade->grade)
 					{
-						$grade["count"] += 1;
-						$user["gradename"] = $grade->val;
-						$user["index"] = $grade["count"];
+						$grade['count'] += 1;
+						$user['gradename'] = $grade->val;
+						$user['index'] = $grade['count'];
 					}
 				}
 			}
@@ -108,7 +110,13 @@ class AdminController extends Controller {
 		}
 		else
 		{
-			return view("errors.permitts");
+			return view('errors.permitts');
 		}
+	}
+
+	public function userdel()
+	{
+		User::find(Input::get('id'))->delete();
+		return redirect("admin?action=userinfo&tabpos=".Input::get('tabpos'));
 	}
 }

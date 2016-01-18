@@ -34,8 +34,16 @@
             <td>{{ $arg->gradename }}</td>
             <td>{{ $arg->privilege }}</td>
             <td>{{ $arg->created_at }}</td>
-            <td><a href="javascript:void(0);" class="btn btn-primary" role="button">修改</a>
-            <a href="javascript:void(0);" class="btn btn-danger" role="button">删除</a></td>
+            <td>
+              <a href="javascript:void(0);" class="btn btn-primary" role="button">修改</a>
+              <a href="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
+                @if(Auth::user()->name == $arg->name)
+                  class="btn btn-danger disabled"
+                @else
+                  class="btn btn-danger"
+                @endif
+                role="button">删除</a>
+            </td>
           </tr>
         @endforeach
       </tbody>
@@ -43,6 +51,6 @@
   </div>
 </div>
 <script type="text/javascript">
-  loadUserInfo({{ $grades[0]->grade }});
+  loadUserInfo({{ $grades[isset($_GET['tabpos'])&&$_GET['tabpos']<4?$_GET['tabpos']:'0']->grade }});
 </script>
 @endsection

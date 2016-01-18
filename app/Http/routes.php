@@ -20,6 +20,7 @@ Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
 	Route::get('/', 'AdminController@index');
+	Route::post('/userdel', 'AdminController@userdel');
 });
 
 Route::controllers([
