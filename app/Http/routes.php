@@ -24,6 +24,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/useredit', 'AdminController@useredit');
 });
 
+Route::post('/devicedata', 'DeviceController@datapush');
+
 Route::controllers([
 		'auth' => 'Auth\AuthController',
 		'password' => 'Auth\PasswordController',

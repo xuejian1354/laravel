@@ -101,12 +101,27 @@ h6, .h6 {
 	background-color: #eeeeee;
 }
 
-.smartlab-nav  .dropdown:hover .dropdown-auto {
-	display: block;
+@media (max-width: 768px) {
+	.smartlab-nav  .dropdown:hover .dropdown-auto {
+		display: block;
+	}
+
+	.smartlab-nav  a.smartlab-nav-item {
+		display: none;
+	}
+
+	#user-list>li>a.smartlab-nav-item {
+		display: block;
+	}
 }
 
-.smartlab-nav  .dropdown  a.menu ,
-.smartlab-nav  a.smartlab-nav-item {
+@media (min-width: 768px) {
+	#user-list>li>a.smartlab-nav-item {
+		display: none;
+	}
+}
+
+.smartlab-nav  .dropdown  a.menu {
 	width: 49px;
 }
 

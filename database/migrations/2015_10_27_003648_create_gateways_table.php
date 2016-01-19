@@ -18,12 +18,14 @@ class CreateGatewaysTable extends Migration {
 			$table->string('name')->nullable();
 			$table->string('gw_sn');
 			$table->string('transtocol');
-			$table->string('ip');
-			$table->string('udp_port');
-			$table->string('tcp_port');
-			$table->string('http_url');
+			$table->string('ip')->nullable();
+			$table->string('udp_port')->nullable();
+			$table->string('tcp_port')->nullable();
+			$table->string('http_url')->nullable();
 			$table->string('area')->nullable();
-			$table->string('updatetime')->nullable();
+			$table->boolean('ispublic')->nullable();
+			$table->string('owner')->nullable();
+			$table->timestamps();
 		});
 	}
 

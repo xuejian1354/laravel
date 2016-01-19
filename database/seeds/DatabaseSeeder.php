@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Model\DBStatic\CourseType;
+use App\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,15 @@ class DatabaseSeeder extends Seeder
         $this->call(CoursetypeTableSeeder::class);
         $this->call(ConsolemenuTableSeeder::class);
         $this->call(GlobalvalTableSeeder::class);
+
+        DB::table('users')->delete();
+        User::create([
+                'name' => 'root',
+                'email' => 'root@loongsmart.com',
+                'password' => bcrypt('root'),
+                'grade' => 1,
+                'privilege' => 5,
+        ]);
 
         Model::reguard();
     }

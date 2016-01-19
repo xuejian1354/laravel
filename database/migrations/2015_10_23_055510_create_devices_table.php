@@ -23,7 +23,8 @@ class CreateDevicesTable extends Migration {
 			$table->string('gw_sn');
 			$table->string('area')->nullable();
 			$table->boolean('ispublic')->nullable();
-			$table->timestamp('updatetime')->nullable();
+			$table->string('owner')->nullable();
+			$table->timestamps();
 		});
 	}
 

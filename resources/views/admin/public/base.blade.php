@@ -22,24 +22,24 @@
       </div>
       @foreach ($nmenus as $nmenu)
         <div class="nav navbar-nav dropdown">
-          <a class="menu
-            @if($nmenu->mmenu == $amenu->mmenu)
-              active" href="javascript:void(0);"
-            @else
-            " href="{{ url('/admin?action='.$nmenu->action) }}"
-            @endif>{{ $nmenu->mmenu }}</a>
-          <!-- ul class="dropdown-menu dropdown-auto">
+          @if($nmenu->mmenu == $amenu->mmenu)
+            <a class="menu disabled active" href="javascript:void(0);">{{ $nmenu->mmenu }}</a>
+          @else
+            <a class="menu disabled " href="{{ url('/admin?action='.$nmenu->action) }}">{{ $nmenu->mmenu }}</a>
+          @endif
+          <ul class="dropdown-menu dropdown-auto">
             @foreach ($menus as $tmenu)
               @if($nmenu->mmenu == $tmenu->mmenu)
 	            <li><a href="{{ url('/admin?action='.$tmenu->action) }}">{{ $tmenu->cmenu }}</a></li>
 	          @endif
 	        @endforeach
-	      </ul-->
+	      </ul>
         </div>
       @endforeach
 	  <div class="nav navbar-nav navbar-right dropdown">
         <a id="user-info" class="homemenu dropdown-toggle" data-toggle="dropdown" href="">{{ Auth::user()->name }}</a>
         <ul id="user-list" class="dropdown-menu">
+          <li><a class="smartlab-nav-item" href="{{ url('/home') }}">前台</a></li>
           <li><a href="/admin?action=setting">设置</a></li>
           <li><a href="{{ url('/auth/logout') }}">退出</a></li>
         </ul>

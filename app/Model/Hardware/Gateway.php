@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gateway extends Model
 {
-    //
+    protected $table = 'gateways';
+
+    protected $fillable = ['name', 'gw_sn', 'transtocol', 'ip', 'udp_port', 'tcp_port', 'http_url', 'area', 'ispublic', 'owner'];
 }
