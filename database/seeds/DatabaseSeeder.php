@@ -22,16 +22,19 @@ class DatabaseSeeder extends Seeder
         $this->call(CycleTableSeeder::class);
         $this->call(CoursetypeTableSeeder::class);
         $this->call(ConsolemenuTableSeeder::class);
+        $this->call(DevtypeTableSeeder::class);
         $this->call(GlobalvalTableSeeder::class);
 
-        DB::table('users')->delete();
-        User::create([
-                'name' => 'root',
-                'email' => 'root@loongsmart.com',
-                'password' => bcrypt('root'),
-                'grade' => 1,
-                'privilege' => 5,
-        ]);
+        if(count(DB::table('users')->where('email', 'root@loongsmart.com')->get()) == 0)
+        {
+	        User::create([
+	                'name' => 'root',
+	                'email' => 'root@loongsmart.com',
+	                'password' => bcrypt('root'),
+	                'grade' => 1,
+	                'privilege' => 5,
+	        ]);
+        }
 
         Model::reguard();
     }

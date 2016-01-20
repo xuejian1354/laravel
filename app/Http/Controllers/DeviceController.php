@@ -20,14 +20,6 @@ class DeviceController extends Controller {
 			'tocolres' => '7'
 	];
 
-	public $devtype = [
-			'lampswitch' => '31',
-			'projector' => '32',
-			'airconditioner' => '33',
-			'curtain' => '34',
-			'doorlock' => '35'
-	];
-
 	public function __construct()
 	{
 		//$this->middleware('auth');

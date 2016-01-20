@@ -232,3 +232,12 @@ h6, .h6 {
 
 .table>tbody>tr>td .btn {padding: 4px 8px; margin: -4px 0;}
 
+.td_col_1 {width: 30px;}
+.td_col_2 {width: 60px;}
+.td_col_3 {width: 90px;}
+.td_col_4 {width: 120px;}
+.td_col_5 {width: 150px;}
+.td_col_6 {width: 180px;}
+.td_col_7 {width: 210px;}
+.td_col_8 {width: 240px;}
+

@@ -22,6 +22,10 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::get('/', 'AdminController@index');
 	Route::post('/userdel', 'AdminController@userdel');
 	Route::post('/useredit', 'AdminController@useredit');
+	Route::post('/gwdel', 'AdminController@gwdel');
+	Route::post('/gwedit', 'AdminController@gwedit');
+	Route::post('/devdel', 'AdminController@devdel');
+	Route::post('/devedit', 'AdminController@devedit');
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');
