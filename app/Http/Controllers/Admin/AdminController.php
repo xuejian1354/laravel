@@ -137,14 +137,34 @@ class AdminController extends Controller {
 
 			if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 			{
-				return view('admin.admin')
-					->withGlobalvals(Controller::getGlobalvals())
-					->withMenus($menus)
-					->withNmenus($nmenus)
-					->withAmenu($amenu)
-					->withUsers(User::all())
-					->withGateways($gwargs)
-					->withDevices($devargs);
+				if($amenu['caction'] == 'async')
+				{
+					$async = 'admin.devstats.gwasync';
+					if(Input::get('tabpos') == 1)
+					{
+						$async = 'admin.devstats.devasync';
+					}
+
+					return view($async)
+								->withGlobalvals(Controller::getGlobalvals())
+								->withMenus($menus)
+								->withNmenus($nmenus)
+								->withAmenu($amenu)
+								->withUsers(User::all())
+								->withGateways($gwargs)
+								->withDevices($devargs);
+				}
+				else
+				{
+					return view('admin.admin')
+								->withGlobalvals(Controller::getGlobalvals())
+								->withMenus($menus)
+								->withNmenus($nmenus)
+								->withAmenu($amenu)
+								->withUsers(User::all())
+								->withGateways($gwargs)
+								->withDevices($devargs);
+				}
 			}
 			else
 			{

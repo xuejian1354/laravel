@@ -22,18 +22,50 @@ function loadUserGrade(id) {
 }
 
 function loadDeviceTab(pos) {
-  if(pos == 1) {
+  if(pos == 1) {	//device
     $(".nav-li-gw").removeClass("active");
     $(".table-gw").addClass("hidden");
     $(".nav-li-dev").addClass("active");
     $(".table-dev").removeClass("hidden");
   }
-  else {
+  else {	//gateway
     $(".nav-li-dev").removeClass("active");
     $(".table-dev").addClass("hidden");
     $(".nav-li-gw").addClass("active");
     $(".table-gw").removeClass("hidden");
   }
+}
+
+function loadDeviceContent(pos) {
+  var xmlhttp;
+  var bodyid;
+
+  if(pos == 1) {
+    bodyid = "devtbody";
+  }
+  else {
+    bodyid = "gwtbody";
+  }
+
+  if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+  }
+  else
+  {// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      document.getElementById(bodyid).innerHTML=xmlhttp.responseText;
+    }
+  }
+
+  xmlhttp.open("GET", "/admin?action=devstats/async&tabpos="+pos, true);
+  xmlhttp.send();
 }
 
 function userDelAlert(id, userid, tabpos, token) {

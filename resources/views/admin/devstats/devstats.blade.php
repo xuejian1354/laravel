@@ -2,8 +2,8 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   <h1 class="page-header">{{ $amenu->cmenu }}</h1>
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="nav-li nav-li-gw active"><a href="javascript:loadDeviceTab(0);">网关</a></li>
-    <li role="presentation" class="nav-li nav-li-dev"><a href="javascript:loadDeviceTab(1);">设备</a></li>
+    <li role="presentation" class="nav-li nav-li-gw active"><a href="javascript:loadDeviceContent(0);">网关</a></li>
+    <li role="presentation" class="nav-li nav-li-dev"><a href="javascript:loadDeviceContent(1);">设备</a></li>
   </ul>
   <div class="table-responsive">
    <table class="table table-striped table-gw" style="min-width: 728px;">
@@ -20,7 +20,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="gwtbody">
         @for($index=0; $index < count($gateways); $index++)
           <tr>
             <td>{{ $index+1 }}</td>
@@ -56,7 +56,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="devtbody">
         @for($index=0; $index < count($devices); $index++)
           <tr>
             <td>{{ $index+1 }}</td>
@@ -83,5 +83,18 @@
 </div>
 <script type="text/javascript">
   loadDeviceTab({{ isset($_GET['tabpos'])&&$_GET['tabpos']<2?$_GET['tabpos']:'0' }});
+
+  self.setInterval("refreshDevTab()",5137)
+  self.setInterval("refreshGWTab()",10371)
+
+  function refreshDevTab()
+  {
+	  loadDeviceContent(1);
+  }
+
+  function refreshGWTab()
+  {
+	  loadDeviceContent(0);
+  }
 </script>
 @endsection
