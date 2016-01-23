@@ -80,10 +80,43 @@ class DeviceController extends Controller {
 
 		case $this->action['check']:
 			$content = json_decode(Input::get('key'))[0];
+
+			$dbData = DB::select('SELECT dev_data,znet_status FROM devices WHERE gw_sn=\''.$content->gw_sn.'\' ORDER BY dev_sn ASC');
+			$datas = '';
+
+			foreach ($dbData as $d)
+			{
+				$datas = $datas.$d->dev_data;
+				$datas = $datas.$d->znet_status;
+			}
+
+			if($content->code->code_check == 'md5')
+			{
+				if(strcasecmp($content->code->code_data, md5($datas)) != 0)
+				{
+					return $this->refreshToFrame($content->gw_sn, $content->random);
+				}
+			}
+
 			return $this->tocolresToFrame($content->action, $content->random);
 		}
 
 		return "Unrecognize frame, cannot parse for it";
+	}
+
+	public function refreshToFrame($gw_sn, $random)
+	{
+		$ret = [[
+				'action' => $this->action['refresh'],
+				'obj' => [
+						'owner' => 'server',
+						'custom' => 'gateway',
+				],
+				'gw_sn' => $gw_sn,
+				'random' => $random,
+		]];
+
+		return json_encode($ret);
 	}
 
 	public function tocolresToFrame($action, $random)
