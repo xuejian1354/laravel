@@ -15,8 +15,8 @@ class CreateGlobalvalsTable extends Migration
         Schema::create('globalvals', function (Blueprint $table)
         {
             $table->increments('id');
-            $table->string('key');
-            $table->string('val');
+            $table->string('name')->unique();
+            $table->string('fieldval')->nullable();
             $table->timestamps();
         });
     }

@@ -30,6 +30,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 
 Route::post('/devicedata', 'DeviceController@datapush');
 
+Route::post('/admin/devoptdel', 'DeviceController@devoptdel');
+Route::post('/admin/devoptadd', 'DeviceController@devoptadd');
+
 Route::controllers([
 		'auth' => 'Auth\AuthController',
 		'password' => 'Auth\PasswordController',

@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Model\Hardware\Device;
 use App\Model\Hardware\Gateway;
 use Symfony\Component\Console\Helper\Table;
+use App\Model\DBStatic\Globalval;
+use App\Model\DBStatic\Devcmd;
 
 class DeviceController extends Controller {
 
@@ -80,6 +82,21 @@ class DeviceController extends Controller {
 
 		case $this->action['check']:
 			$content = json_decode(Input::get('key'))[0];
+			$myData = DB::select('SELECT * FROM globalvals WHERE name=\'ctrlFrame\'');
+			$myArray = json_decode($myData[0]->fieldval);
+
+			if($myArray != null
+				&& $myArray[0]->action == $this->action['control']
+				&& $myArray[0]->gw_sn == $content->gw_sn)
+			{
+				DB::table('globalvals')
+					->where('name', 'ctrlFrame')
+					->update([
+							'fieldval' => null,
+							'updated_at' => new Carbon
+					]);
+				return json_encode($myArray);
+			}
 
 			$dbData = DB::select('SELECT dev_data,znet_status FROM devices WHERE gw_sn=\''.$content->gw_sn.'\' ORDER BY dev_sn ASC');
 			$datas = '';
@@ -99,6 +116,19 @@ class DeviceController extends Controller {
 			}
 
 			return $this->tocolresToFrame($content->action, $content->random);
+
+		case $this->action['respond']:
+			$content = json_decode(Input::get('key'))[0];
+			return $this->tocolresToFrame($content->action, $content->random);
+
+		case $this->action['control']:
+			DB::table('globalvals')
+				->where('name', 'ctrlFrame')
+				->update([
+						'fieldval' => Input::get('key'),
+						'updated_at' => new Carbon
+				]);
+			return "发送控制命令到服务器成功\n";
 		}
 
 		return "Unrecognize frame, cannot parse for it";
@@ -164,6 +194,18 @@ class DeviceController extends Controller {
 					'owner' => 'root',
 			]);
 		}
+	}
+
+	public function devoptdel() {
+		Devcmd::find(Input::get('id'))->delete();
+		return view('admin.devstats.devopt')->withDevcmds(Controller::getDevCmds());
+	}
+
+	public function devoptadd() {
+		DB::insert('insert into devcmds (action, dev_type, data, created_at, updated_at) values (?, ?, ?, ?, ?)',
+			[Input::get('action'), Input::get('devtype'), Input::get('data'),new Carbon, new Carbon]);
+
+		return view('admin.devstats.devopt')->withDevcmds(Controller::getDevCmds());
 	}
 }
 

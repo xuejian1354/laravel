@@ -8,6 +8,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use App\Model\DBStatic\Globalval;
+use App\Model\DBStatic\Devtype;
+use App\Model\DBStatic\Devcmd;
 
 abstract class Controller extends BaseController
 {
@@ -19,9 +21,33 @@ abstract class Controller extends BaseController
     	$globalvals = array();
     	foreach ($dbvals as $dbval)
     	{
-    		$globalvals[$dbval->key] = $dbval->val;
+    		$globalvals[$dbval->name] = $dbval->fieldval;
     	}
     	
     	return $globalvals;
+    }
+
+    public function getDevCmds()
+    {
+    	$devcmds = Devcmd::all();
+    	$devtypes = Devtype::all();
+    	foreach ($devtypes as $devtype)
+    	{
+    		$devtype['count'] = 0;
+    	}
+
+    	foreach ($devcmds as $devcmd)
+    	{
+    		foreach ($devtypes as $devtype)
+    		{
+    			if($devtype->devtype == $devcmd->dev_type)
+    			{
+    				$devtype['count'] += 1;
+    				$devcmd['index'] = $devtype['count'];
+    			}
+    		}
+    	}
+
+    	return $devcmds;
     }
 }

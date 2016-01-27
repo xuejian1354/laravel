@@ -203,6 +203,25 @@ function gatewayEditAlert(id, token) {
 	document.body.removeChild(postForm);
 }
 
+function deviceOptDialog(title, gwsn, devsn, devtype)
+{
+	document.getElementById("devOptHeader").innerHTML = "<h3>操作:" + title + "</h3>";
+	document.getElementById("devOptHeader").setAttribute("gwsn", gwsn);
+	document.getElementById("devOptHeader").setAttribute("devsn", devsn);
+	document.getElementById("optAddDev").setAttribute("devtype", devtype);
+
+    $(".devOptArgs").addClass("hidden");
+    $(".devOptArg"+devtype).removeClass("hidden");
+}
+
+function deviceOptAddDialog()
+{
+	document.getElementById("devOptAddHeader").innerHTML = "<h3>添加操作</h3>";
+	var devtype = document.getElementById("optAddDev").getAttribute("devtype");
+	document.getElementById("devAddAction").setAttribute("value", $("#actionDefault" + devtype).val());
+	document.getElementById("devAddData").setAttribute("value", $("#dataDefault" + devtype).val());
+}
+
 function deviceDelAlert(id, devsn, tabpos, token)
 {
   if(confirm("确定要删除设备?\n\n序列号="+devsn)) {
@@ -269,4 +288,92 @@ function deviceEditAlert(id, token) {
 	document.body.appendChild(postForm);
 	postForm.submit();
 	document.body.removeChild(postForm);
+}
+
+function deviceOptSend(typeindex, index, devtype, token) {
+	var gwsn = document.getElementById("devOptHeader").getAttribute("gwsn");
+	var devsn = document.getElementById("devOptHeader").getAttribute("devsn");
+	//var action;
+	var data;
+
+	if(typeindex == 1) {
+		//action = $("#actionDefault"+devtype).val();
+		data = $("#dataDefault"+devtype).val();
+	}
+	else {
+		//action = $("#devOptAction"+index).val();
+		data = $("#devOptData"+index).text();
+	}
+
+	var key = '[{"action":"6", "gw_sn":"'
+		+ gwsn + '", "ctrls":[{"dev_sn":"'
+		+ devsn + '", "cmd":"'
+		+ data + '"}], "random":"'
+		+ String(Math.random()).substring(4, 8) + '"}]';
+
+
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		xmlhttp=new XMLHttpRequest();
+	}
+	else {
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	      alert(xmlhttp.responseText);
+	    }
+	}
+
+	xmlhttp.open("POST", "/devicedata?_token="+token+"&key="+key+"&datatype=6", true);
+	xmlhttp.send(null);
+}
+
+function deviceOptDel(id, token) {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		xmlhttp=new XMLHttpRequest();
+	}
+	else {
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	document.getElementById("devopt").innerHTML=xmlhttp.responseText;
+	    }
+	}
+
+	xmlhttp.open("POST", "/admin/devoptdel?_token="+token+"&id="+id, true);
+	xmlhttp.send(null);
+}
+
+function deviceOptAdd(token) {
+	var devtype = document.getElementById("optAddDev").getAttribute("devtype");
+	var action = $("#devAddAction").val();
+	var data = $("#devAddData").val();
+
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		xmlhttp=new XMLHttpRequest();
+	}
+	else {
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	xmlhttp.onreadystatechange=function()
+	{
+	    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+	    	document.getElementById("devopt").innerHTML=xmlhttp.responseText;
+	    }
+	}
+
+	xmlhttp.open("POST", "/admin/devoptadd?_token="+token+"&devtype="+devtype+"&action="+action+"&data="+data, true);
+	xmlhttp.send(null);
 }

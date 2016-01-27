@@ -20,24 +20,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="gwtbody">
-        @for($index=0; $index < count($gateways); $index++)
-          <tr>
-            <td>{{ $index+1 }}</td>
-            <td>{{ $gateways[$index]->name }}</td>
-            <td>{{ $gateways[$index]->gw_sn }}</td>
-            <td>{{ $gateways[$index]->transtocol }}</td>
-            <td>{{ $gateways[$index]->area }}</td>
-            <td>{{ $gateways[$index]->ispublic }}</td>
-            <td>{{ $gateways[$index]->owner }}</td>
-            <td>{{ $gateways[$index]->updated_at }}</td>
-            <td>
-              <a href="{{ url('/admin?action=devstats/gwedit&id='.$gateways[$index]->id) }}" class="btn btn-primary" role="button">修改</a>
-              <a href="javascript:gatewayDelAlert('{{ $gateways[$index]->id }}', '{{ $gateways[$index]->gw_sn }}', '0', '{{ csrf_token() }}');" class="btn btn-danger" role="button">删除</a>
-            </td>
-          </tr>
-        @endfor
-      </tbody>
+      @include('admin.devstats.gwasync')
     </table>
     <table class="table table-striped table-dev hidden" style="min-width: 1050px;">
       <thead>
@@ -56,29 +39,14 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="devtbody">
-        @for($index=0; $index < count($devices); $index++)
-          <tr>
-            <td>{{ $index+1 }}</td>
-            <td>{{ $devices[$index]->name }}</td>
-            <td>{{ $devices[$index]->dev_sn }}</td>
-            <td>{{ $devices[$index]->dev_type }}</td>
-            <td>{{ $devices[$index]->znet_status }}</td>
-            <td>{{ $devices[$index]->dev_data }}</td>
-            <td>{{ $devices[$index]->gw_sn }}</td>
-            <td>{{ $devices[$index]->area }}</td>
-            <td>{{ $devices[$index]->ispublic }}</td>
-            <td>{{ $devices[$index]->owner }}</td>
-            <td>{{ $devices[$index]->updated_at }}</td>
-            <td>
-              <a href="javascript:void(0);" class="btn btn-info" role="button">操作</a>
-              <a href="{{ url('/admin?action=devstats/devedit&id='.$devices[$index]->id) }}" class="btn btn-primary" role="button">修改</a>
-              <a href="javascript:deviceDelAlert('{{ $devices[$index]->id }}', '{{ $devices[$index]->dev_sn }}', '1', '{{ csrf_token() }}');" class="btn btn-danger" role="button">删除</a>
-            </td>
-          </tr>
-        @endfor
-      </tbody>
+      @include('admin.devstats.devasync')
     </table>
+  </div>
+  <div id="devopt">
+    @include('admin.devstats.devopt')
+  </div>
+  <div id="devoptadd">
+    @include('admin.devstats.devoptadd')
   </div>
 </div>
 <script type="text/javascript">

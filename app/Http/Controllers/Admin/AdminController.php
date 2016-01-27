@@ -10,6 +10,7 @@ use App\Model\DBStatic\Consolemenu;
 use App\Model\DBStatic\Globalval;
 use App\Model\DBStatic\Privilege;
 use App\Model\DBStatic\Devtype;
+use App\Model\DBStatic\Devcmd;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 
@@ -103,6 +104,7 @@ class AdminController extends Controller {
 		{
 			$gateways = Gateway::all();
 			$devices = Device::all();
+			$devtypes = Devtype::all();
 			$gwargs = array();
 			$devargs = array();
 
@@ -118,7 +120,6 @@ class AdminController extends Controller {
 
 			foreach ($devices as $device)
 			{
-				$devtypes = Devtype::all();
 				foreach($devtypes as $devtype)
 				{
 					if ($device->dev_type == $devtype->devtype)
@@ -147,6 +148,7 @@ class AdminController extends Controller {
 
 					return view($async)
 								->withGlobalvals(Controller::getGlobalvals())
+								->withDevcmds(Controller::getDevCmds())
 								->withMenus($menus)
 								->withNmenus($nmenus)
 								->withAmenu($amenu)
@@ -158,6 +160,7 @@ class AdminController extends Controller {
 				{
 					return view('admin.admin')
 								->withGlobalvals(Controller::getGlobalvals())
+								->withDevcmds(Controller::getDevCmds())
 								->withMenus($menus)
 								->withNmenus($nmenus)
 								->withAmenu($amenu)

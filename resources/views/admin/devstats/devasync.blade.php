@@ -13,9 +13,9 @@
       <td>{{ $devices[$index]->owner }}</td>
       <td>{{ $devices[$index]->updated_at }}</td>
       <td>
-        <a href="javascript:void(0);" class="btn btn-info" role="button">操作</a>
-        <a href="{{ url('/admin?action=devstats/devedit&id='.$devices[$index]->id) }}" class="btn btn-primary" role="button">修改</a>
-        <a href="javascript:deviceDelAlert('{{ $devices[$index]->id }}', '{{ $devices[$index]->dev_sn }}', '1', '{{ csrf_token() }}');" class="btn btn-danger" role="button">删除</a>
+        <button onclick="javascript:deviceOptDialog('{{ $devices[$index]->name }}', '{{ $devices[$index]->gw_sn }}', '{{ $devices[$index]->dev_sn }}', '{{ $devices[$index]->dev_type }}');" type="button" class="btn btn-info" role="button" data-target="#devOptModal" data-toggle="modal">操作</button>
+        <button onclick="location='{{ url('/admin?action=devstats/devedit&id='.$devices[$index]->id) }}'" type="button" class="btn btn-primary" role="button">修改</button>
+        <button onclick="javascript:deviceDelAlert('{{ $devices[$index]->id }}', '{{ $devices[$index]->dev_sn }}', '1', '{{ csrf_token() }}');" type="button" class="btn btn-danger" role="button">删除</button>
       </td>
     </tr>
   @endfor

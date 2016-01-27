@@ -35,20 +35,20 @@
             <td>{{ $arg->privilege }}</td>
             <td>{{ $arg->updated_at }}</td>
             <td>
-              <a href="{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}"
+              <button onclick="location='{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}'"
                 @if(Auth::user()->privilege < 5)
                   class="btn btn-primary disabled"
                 @else
                   class="btn btn-primary"
                 @endif
-                  role="button">修改</a>
-              <a href="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
+                  type="button" role="button">修改</button>
+              <button onclick="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
                 @if(Auth::user()->name == $arg->name || Auth::user()->privilege < 5)
                   class="btn btn-danger disabled"
                 @else
                   class="btn btn-danger"
                 @endif
-                role="button">删除</a>
+                type="button" role="button">删除</button>
             </td>
           </tr>
         @endforeach
