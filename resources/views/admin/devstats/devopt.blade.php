@@ -4,8 +4,8 @@
       <div class="modal-header"><a class="close" data-dismiss="modal">×</a>
         <h3 id="devOptHeader"></h3>
       </div>
-      <div id="devOptBody" class="modal-body">
-        <table class="table table-striped">
+      <div id="devOptBody" class="modal-body table-responsive">
+        <table class="table table-striped" style="min-width: 320px;">
           <thead>
             <tr>
               <th>#</th>
@@ -25,14 +25,14 @@
               >
                 @if($devcmds[$index]->index == 1)
                   <td>{{ $devcmds[$index]->index }}</td>
-                  <td><input id="{{ 'actionDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->action }}"></td>
-                  <td><input id="{{ 'dataDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->data }}"></td>
+                  <td><input id="{{ 'actionDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->action }}" style="width: 60px;"></td>
+                  <td><input id="{{ 'dataDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->data }}" style="width: 60px;"></td>
                 @else
                   <td>{{ $devcmds[$index]->index }}</td>
                   <td id="{{ 'devOptAction'.$index }}">{{ $devcmds[$index]->action }}</td>
                   <td id="{{ 'devOptData'.$index }}">{{ $devcmds[$index]->data }}</td>
                 @endif
-                <td>
+                <td style="min-width: 111px;">
                   <button onclick="javascript:deviceOptDel('{{ $devcmds[$index]->id }}', '{{ csrf_token() }}');" type="button" class="btn btn-danger" role="button" data-dismiss="modal" style="float: right;">删除</button>
                   <button onclick="javascript:deviceOptSend('{{ $devcmds[$index]->index }}', '{{ $index }}', '{{ $devcmds[$index]->dev_type }}', '{{ csrf_token() }}');" type="button" class="btn btn-primary" role="button" data-dismiss="modal" style="float: right; margin-right: 5px;">发送</button>
                 </td>

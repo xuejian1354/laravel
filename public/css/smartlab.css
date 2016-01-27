@@ -212,13 +212,19 @@ h6, .h6 {
 /*
  * Main content
  */
-
 .main {
-  margin-top: 41px;
-  padding: 20px;
+	margin-top: 121px;
+	padding: 20px;
+}
+@media (min-width: 372px) {
+	.main {
+	  margin-top: 81px;
+	  padding: 20px;
+	}
 }
 @media (min-width: 768px) {
   .main {
+    margin-top: 41px;
     padding-right: 40px;
     padding-left: 40px;
   }
