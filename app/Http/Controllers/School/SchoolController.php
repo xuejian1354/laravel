@@ -1,10 +1,10 @@
-<?php namespace App\Http\Controllers\Home;
+<?php namespace App\Http\Controllers\School;
 
 use DB;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 
-class HomeController extends Controller {
+class SchoolController extends Controller {
 
 	/*
 	|--------------------------------------------------------------------------
@@ -37,10 +37,10 @@ class HomeController extends Controller {
 		DB::table('globalvals')
 			->where('name', 'title')
 			->update([
-					'fieldval' => 'SmartHome',
+					'fieldval' => 'SmartLab',
 					'updated_at' => new Carbon
 			]);
-		return view('home.home')->withGlobalvals(Controller::getGlobalvals());
+		return view('school.school')->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

@@ -10,11 +10,26 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::group(['domain' => 'home.loongsmart.com'], function()
+{
+        Route::get('/', 'WelcomeController@home');
+});
+
+Route::group(['domain' => 'school.loongsmart.com'], function()
+{
+        Route::get('/', 'WelcomeController@school');
+});
+
 Route::get('/', 'WelcomeController@index');
 
 Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
 {
 	Route::get('/', 'HomeController@index');
+});
+
+Route::group(['prefix' => 'school', 'namespace' => 'School'], function()
+{
+	Route::get('/', 'SchoolController@index');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
@@ -29,7 +44,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');
-
 Route::post('/admin/devoptdel', 'DeviceController@devoptdel');
 Route::post('/admin/devoptadd', 'DeviceController@devoptadd');
 
