@@ -107,9 +107,9 @@ class DeviceController extends Controller {
 				$datas = $datas.$d->znet_status;
 			}
 
-			if($content->code->code_check == 'md5')
+			if($content->code[0]->code_check == 'md5')
 			{
-				if(strcasecmp($content->code->code_data, md5($datas)) != 0)
+				if(strcasecmp($content->code[0]->code_data, md5($datas)) != 0)
 				{
 					return $this->refreshToFrame($content->gw_sn, $content->random);
 				}
