@@ -203,15 +203,23 @@ function gatewayEditAlert(id, token) {
 	document.body.removeChild(postForm);
 }
 
-function deviceOptDialog(title, gwsn, devsn, devtype)
+function deviceOptDialog(title, gwsn, devsn, devtype, iscmdfound)
 {
 	document.getElementById("devOptHeader").innerHTML = "<h3>操作:" + title + "</h3>";
 	document.getElementById("devOptHeader").setAttribute("gwsn", gwsn);
 	document.getElementById("devOptHeader").setAttribute("devsn", devsn);
 	document.getElementById("optAddDev").setAttribute("devtype", devtype);
 
-    $(".devOptArgs").addClass("hidden");
-    $(".devOptArg"+devtype).removeClass("hidden");
+	$(".devOptArgs").addClass("hidden");
+
+	if(iscmdfound == 0)
+	{
+		$(".devOptArgFF").removeClass("hidden");
+	}
+	else
+	{
+        $(".devOptArg"+devtype).removeClass("hidden");
+	}
 }
 
 function deviceOptAddDialog()
@@ -296,7 +304,7 @@ function deviceOptSend(typeindex, index, devtype, token) {
 	//var action;
 	var data;
 
-	if(typeindex == 1) {
+	if(typeindex <= 1) {
 		//action = $("#actionDefault"+devtype).val();
 		data = $("#dataDefault"+devtype).val();
 	}

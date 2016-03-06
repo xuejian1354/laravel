@@ -25,5 +25,6 @@ class DevcmdTableSeeder extends Seeder
         Devcmd::create(['action' => '停', 'dev_type' => '34', 'data' => '00']);
         Devcmd::create(['action' => '反转', 'dev_type' => '34', 'data' => '01']);
         Devcmd::create(['action' => '开', 'dev_type' => '35', 'data' => '01']);
+        Devcmd::create(['action' => '通用', 'dev_type' => 'FF', 'data' => '01']);
     }
 }

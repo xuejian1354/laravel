@@ -105,6 +105,7 @@ class AdminController extends Controller {
 			$gateways = Gateway::all();
 			$devices = Device::all();
 			$devtypes = Devtype::all();
+			$devcmds = Controller::getDevCmds();
 			$gwargs = array();
 			$devargs = array();
 
@@ -120,6 +121,17 @@ class AdminController extends Controller {
 
 			foreach ($devices as $device)
 			{
+				foreach ($devcmds as $devcmd)
+				{
+					if($device->dev_type == $devcmd->dev_type)
+					{
+						$device['iscmdfound'] = 1;
+						goto cmdfoundend;
+					}
+				}
+				$device['iscmdfound'] = 0;
+				cmdfoundend:;
+
 				foreach($devtypes as $devtype)
 				{
 					if ($device->dev_type == $devtype->devtype)
@@ -148,7 +160,7 @@ class AdminController extends Controller {
 
 					return view($async)
 								->withGlobalvals(Controller::getGlobalvals())
-								->withDevcmds(Controller::getDevCmds())
+								->withDevcmds($devcmds)
 								->withMenus($menus)
 								->withNmenus($nmenus)
 								->withAmenu($amenu)

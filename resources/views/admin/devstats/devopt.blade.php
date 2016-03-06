@@ -23,7 +23,7 @@
                   style="background-color: #f9f9f9;"
                 @endif
               >
-                @if($devcmds[$index]->index == 1)
+                @if($devcmds[$index]->index <= 1)
                   <td>{{ $devcmds[$index]->index }}</td>
                   <td><input id="{{ 'actionDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->action }}" style="width: 60px;"></td>
                   <td><input id="{{ 'dataDefault'.$devcmds[$index]->dev_type }}" type="text" value="{{ $devcmds[$index]->data }}" style="width: 60px;"></td>

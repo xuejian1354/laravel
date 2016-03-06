@@ -44,8 +44,11 @@ abstract class Controller extends BaseController
     			{
     				$devtype['count'] += 1;
     				$devcmd['index'] = $devtype['count'];
+    				goto next;
     			}
     		}
+    		$devcmd['index'] = 0;
+    		next: ;
     	}
 
     	return $devcmds;
