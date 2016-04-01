@@ -5,8 +5,6 @@ namespace Illuminate\Foundation\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\Controller;
-
 trait RegistersUsers
 {
     use RedirectsUsers;
@@ -18,7 +16,7 @@ trait RegistersUsers
      */
     public function getRegister()
     {
-        return view('auth.register')->withGlobalvals(Controller::getGlobalvals());
+        return view('auth.register');
     }
 
     /**
