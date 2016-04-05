@@ -45,7 +45,8 @@ class DeviceController extends Controller {
 					'ip' => null,
 					'udp_port' => null,
 					'tcp_port' => null,
-					'http_url' => null
+					'http_url' => null,
+					'ws_url' => null
 			]);
 
 			foreach ($devices as $device)
@@ -176,6 +177,7 @@ class DeviceController extends Controller {
 						'udp_port' => $gw['udp_port'],
 						'tcp_port' => $gw['tcp_port'],
 						'http_url' => $gw['http_url'],
+						'ws_url' => $gw['ws_url'],
 						'updated_at' => new Carbon
 				]);
 		}
@@ -189,6 +191,7 @@ class DeviceController extends Controller {
 					'udp_port' => $gw['udp_port'],
 					'tcp_port' => $gw['tcp_port'],
 					'http_url' => $gw['http_url'],
+					'ws_url' => $gw['ws_url'],
 					'area' => '未设置',
 					'ispublic' => '0',
 					'owner' => 'root',

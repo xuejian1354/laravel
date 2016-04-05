@@ -34,12 +34,6 @@ class HomeController extends Controller {
 	 */
 	public function index()
 	{
-		DB::table('globalvals')
-			->where('name', 'title')
-			->update([
-					'fieldval' => 'SmartHome',
-					'updated_at' => new Carbon
-			]);
 		return view('home.home')->withGlobalvals(Controller::getGlobalvals());
 	}
 

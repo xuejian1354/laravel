@@ -15,7 +15,7 @@ class CreateDevicesTable extends Migration {
 		Schema::create('devices', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('dev_sn');
+			$table->string('dev_sn')->unique();
 			$table->string('name')->nullable();
 			$table->string('dev_type');
 			$table->string('znet_status');

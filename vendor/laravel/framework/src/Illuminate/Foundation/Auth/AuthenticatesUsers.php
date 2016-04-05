@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 
+use App\Http\Controllers\Controller;
+
 trait AuthenticatesUsers
 {
     use RedirectsUsers;
@@ -21,7 +23,7 @@ trait AuthenticatesUsers
             return view('auth.authenticate');
         }
 
-        return view('auth.login');
+        return view('auth.login')->withGlobalvals(Controller::getGlobalvals());
     }
 
     /**

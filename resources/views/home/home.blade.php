@@ -1,1 +1,1 @@
-@extends('welcome.home')
+@extends('welcome.school')

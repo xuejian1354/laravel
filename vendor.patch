@@ -1,0 +1,44 @@
+diff --git a/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php b/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php
+index 2d1bc8c..99ee3e4 100644
+--- a/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php
++++ b/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php
+@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
+ use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Facades\Lang;
+ 
++use App\Http\Controllers\Controller;
++
+ trait AuthenticatesUsers
+ {
+     use RedirectsUsers;
+@@ -21,7 +23,7 @@ trait AuthenticatesUsers
+             return view('auth.authenticate');
+         }
+ 
+-        return view('auth.login');
++        return view('auth.login')->withGlobalvals(Controller::getGlobalvals());
+     }
+ 
+     /**
+diff --git a/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php b/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php
+index 496abd6..6cefe77 100644
+--- a/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php
++++ b/vendor/laravel/framework/src/Illuminate/Foundation/Auth/RegistersUsers.php
+@@ -5,6 +5,8 @@ namespace Illuminate\Foundation\Auth;
+ use Illuminate\Http\Request;
+ use Illuminate\Support\Facades\Auth;
+ 
++use App\Http\Controllers\Controller;
++
+ trait RegistersUsers
+ {
+     use RedirectsUsers;
+@@ -16,7 +18,7 @@ trait RegistersUsers
+      */
+     public function getRegister()
+     {
+-        return view('auth.register');
++        return view('auth.register')->withGlobalvals(Controller::getGlobalvals());
+     }
+ 
+     /**
