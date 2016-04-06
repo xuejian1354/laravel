@@ -11,6 +11,7 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/smartlab.css') }}">
   <!-- Scripts -->
   <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('/js/socket.io.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/smartlab.js') }}"></script>
 </head>

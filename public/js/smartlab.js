@@ -319,8 +319,10 @@ function deviceOptSend(typeindex, index, devtype, token) {
 		+ data + '"}], "random":"'
 		+ String(Math.random()).substring(4, 8) + '"}]';
 
+	var url = 'http://' + window.location.host + ':8033';
+	io.connect(url).emit('DevOpt', key);
 
-	var xmlhttp;
+	/*var xmlhttp;
 	if (window.XMLHttpRequest) {
 		xmlhttp=new XMLHttpRequest();
 	}
@@ -337,7 +339,7 @@ function deviceOptSend(typeindex, index, devtype, token) {
 	}
 
 	xmlhttp.open("POST", "/devicedata?_token="+token+"&key="+key+"&datatype=6", true);
-	xmlhttp.send(null);
+	xmlhttp.send(null);*/
 }
 
 function deviceOptDel(id, token) {
