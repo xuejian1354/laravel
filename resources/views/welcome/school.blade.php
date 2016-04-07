@@ -10,6 +10,6 @@
   OpenSource is support at
   <a href="https://github.com/xuejian1354?tab=repositories">github.com/xuejian1354</a>.</p>
 
-  <p><em>Thank you for using loongsmart.</em></p></h4>
+  <p><em>Thank you for using smartlab.</em></p></h4>
 </div>
 @endsection
