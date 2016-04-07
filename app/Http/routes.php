@@ -10,6 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+
+Route::get('excel/export','ExcelController@export');
+Route::get('excel/import','ExcelController@import');
+
+
 Route::group(['domain' => 'home.loongsmart.com'], function()
 {
         Route::get('/', 'WelcomeController@home');

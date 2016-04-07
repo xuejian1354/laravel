@@ -19,6 +19,7 @@ class CreateCoursesTable extends Migration {
 			$table->integer('coursetype');
 			$table->integer('cycle');
 			$table->string('time');
+			$table->string('room');
 			$table->string('owner');
 			$table->string('remarks');
 		});
