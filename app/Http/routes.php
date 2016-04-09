@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('excel/export','ExcelController@export');
-Route::get('excel/import','ExcelController@import');
-
-
 Route::group(['domain' => 'home.loongsmart.com'], function()
 {
         Route::get('/', 'WelcomeController@home');
@@ -32,11 +28,6 @@ Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
 	Route::get('/', 'HomeController@index');
 });
 
-Route::group(['prefix' => 'school', 'namespace' => 'School'], function()
-{
-	Route::get('/', 'SchoolController@index');
-});
-
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
 	Route::get('/', 'AdminController@index');
@@ -51,6 +42,11 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 Route::post('/devicedata', 'DeviceController@datapush');
 Route::post('/admin/devoptdel', 'DeviceController@devoptdel');
 Route::post('/admin/devoptadd', 'DeviceController@devoptadd');
+
+Route::get('/xls', 'ExcelController@xlsupload');
+Route::post('/xls/obj', 'ExcelController@import');
+Route::post('/xls/courselist', 'ExcelController@courselist');
+Route::post('/xls/roomlist', 'ExcelController@roomlist');
 
 Route::controllers([
 		'auth' => 'Auth\AuthController',

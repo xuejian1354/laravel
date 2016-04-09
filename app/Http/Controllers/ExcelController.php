@@ -2,27 +2,156 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
+use Input, Excel;
 use App\Http\Controllers\Controller;
+use App\Model\Course\Course;
+use App\Model\Room\Room;
+use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Database\QueryException;
 
 class ExcelController extends Controller
 {
-	//Excel文件导出功能 By Laravel学院
-	public function export(){
-		$cellData = [
-				['学号','姓名','成绩'],
-				['10001','AAAAA','99'],
-				['10002','BBBBB','92'],
-				['10003','CCCCC','95'],
-				['10004','DDDDD','89'],
-				['10005','EEEEE','96'],
-		];
-		Excel::create('学生成绩',function($excel) use ($cellData){
-			$excel->sheet('score', function($sheet) use ($cellData){
-				$sheet->rows($cellData);
+	public $xlsTypes = [
+			'text/plain',
+			'application/vnd.ms-excel',
+			'application/vnd.ms-office',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	];
+
+	public function xlsupload()
+	{
+		return view('xls.upload');
+	}
+
+	public function import(){
+		$file = Input::file('xlsfile');
+		if($file == null)
+		{
+			return '<script type="text/javascript">(function(){alert("未选择任何文件");history.back(-1);})();</script>';
+		}
+
+		if ($this->xlsFileMatch($file))
+		{
+			$fileName = $file->getRealPath();
+
+			Excel::load($fileName, function($reader) {
+				$results = $reader->all();
+				dd($results);
 			});
-		})->export('xls');
+		}
+		else
+		{
+			return '<p>Can\'t match type for excel</p><p>File Type: "'.$file->getMimeType().'"</p>';
+		}
+	}
+
+	public function courselist(){
+		$file = Input::file('xlsfile');
+		if($file == null)
+		{
+			return '<script type="text/javascript">(function(){alert("未选择任何文件");history.back(-1);})();</script>';
+		}
+	
+		if ($this->xlsFileMatch($file))
+		{
+			$fileName = $file->getRealPath();
+	
+			Excel::load($fileName, function($reader) {
+				$results = $reader->all();
+				foreach ($results as $sheet)
+				{
+					if(strstr($sheet->getTitle(), '课程')
+							|| stristr($sheet->getTitle(), 'COURSE'))
+					{
+						foreach ($sheet as $course)
+						{
+							try {
+								Course::create([
+										'sn' => $course->sn,
+										'course' => $course->course,
+										'room' => $course->room,
+										'time' => $course->time,
+										'cycle' => $course->cycle,
+										'term' => $course->term,
+										'teacher' => $course->teacher,
+										'remarks' => $course->remarks,
+								]);
+							} catch (QueryException $e) {
+							}
+						}
+						break;
+					}
+				}
+			});
+	
+				return '<script type="text/javascript">(function(){alert("OK");history.back(-1);})();</script>';
+		}
+		else
+		{
+			return '<p>Can\'t match type for excel</p><p>File Type: "'.$file->getMimeType().'"</p>';
+		}
+	}
+
+	public function roomlist(){
+		$file = Input::file('xlsfile');
+		if($file == null)
+		{
+			return '<script type="text/javascript">(function(){alert("未选择任何文件");history.back(-1);})();</script>';
+		}
+
+		if ($this->xlsFileMatch($file))
+		{
+			$fileName = $file->getRealPath();
+
+			Excel::load($fileName, function($reader) {
+				$results = $reader->all();
+				foreach ($results as $sheet)
+				{
+					if(strstr($sheet->getTitle(), '教室')
+						|| stristr($sheet->getTitle(), 'ROOM'))
+					{
+						foreach ($sheet as $room)
+						{
+							try {
+								Room::create([
+										'sn' => $room->sn,
+										'name' => $room->name,
+										'roomtype' => $room->type,
+										'addr' => $room->addr,
+										'status' => $room->status,
+										'user' => $room->user,
+										'owner' => $room->owner,
+										'remarks' => $room->remarks,
+								]);
+							} catch (QueryException $e) {
+							}
+						}
+						break;
+					}
+				}
+			});
+
+			return '<script type="text/javascript">(function(){alert("OK");history.back(-1);})();</script>';
+		}
+		else
+		{
+			return '<p>Can\'t match type for excel</p><p>File Type: "'.$file->getMimeType().'"</p>';
+		}
+	}
+	
+	private function xlsFileMatch($file)
+	{
+		if($file != null && $file->isValid()) {
+			$fileType = $file->getMimeType();
+			foreach ($this->xlsTypes as $xlsType)
+			{
+				if ($xlsType == $fileType)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }
