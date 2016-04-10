@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Input, Excel;
+use Input, Excel, DB;
 use App\Http\Controllers\Controller;
 use App\Model\Course\Course;
 use App\Model\Room\Room;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Database\QueryException;
+use App\Model\DBStatic\Roomtype;
+use App\Model\DBStatic\Roomaddr;
 
 class ExcelController extends Controller
 {
@@ -113,12 +115,16 @@ class ExcelController extends Controller
 						foreach ($sheet as $room)
 						{
 							try {
+								$name = $room->name;
+								$roomtype = $this->getRoomType($room->type);
+								$addr = $this->syncRoomAddr($room->addr);
+
 								Room::create([
-										'sn' => $room->sn,
-										'name' => $room->name,
-										'roomtype' => $room->type,
-										'addr' => $room->addr,
-										'status' => $room->status,
+										'sn' => $this->genSN($name, $roomtype, $addr),
+										'name' => $name,
+										'roomtype' => $roomtype,
+										'addr' => $addr,
+										'status' => $this->getRoomStatus($room->status),
 										'user' => $room->user,
 										'owner' => $room->owner,
 										'remarks' => $room->remarks,
@@ -139,6 +145,96 @@ class ExcelController extends Controller
 		}
 	}
 	
+	private function genSN($name, $roomtype, $addr)
+	{
+		$ran = substr(hexdec(md5($name)), 2, 4);
+
+		if($addr < 10)
+		{
+			$addr = '0'.$addr;
+		}
+
+		if($roomtype < 10)
+		{
+			$roomtype = '0'.$roomtype;
+		}
+
+		return $addr.$roomtype.$ran;
+	}
+
+	private function getRoomType($s)
+	{
+		if($s == null)
+		{
+			return 0;
+		}
+
+		$roomTypes = Roomtype::all();
+		$typeId = 0;
+
+		foreach ($roomTypes as $type)
+		{
+			$typeId = max([$type->roomtype, $typeId]);
+
+			if(stristr($type->roomtype, $s)
+				|| stristr($type->val, $s))
+			{
+				return $type->roomtype;
+			}
+		}
+
+		$typeId++;
+
+		Roomtype::create([
+				'roomtype' => $typeId,
+				'val' => $s,
+		]);
+
+		return $typeId;
+	}
+
+	private function getRoomStatus($s)
+	{
+		if(stristr('正使用', $s)
+				|| stristr('1', $s))
+		{
+			return '1';
+		}
+
+		return '0';
+	}
+
+	private function syncRoomAddr($s)
+	{
+		if ($s == null)
+		{
+			return 0;
+		}
+
+		$roomaddr = DB::table('roomaddrs')->where('val', $s)->get();
+		if(count($roomaddr) > 0)
+		{
+			return $roomaddr[0]->roomaddr;
+		}
+		else
+		{
+			$roomaddrs = Roomaddr::all();
+			$addrId = 0;
+			foreach ($roomaddrs as $addr)
+			{
+				$addrId = max([$addr->roomaddr, $addrId]);
+			}
+			$addrId++;
+
+			Roomaddr::create([
+				'roomaddr' => $addrId,
+				'val' => $s,
+				]);
+
+			return $addrId;
+		}
+	}
+
 	private function xlsFileMatch($file)
 	{
 		if($file != null && $file->isValid()) {

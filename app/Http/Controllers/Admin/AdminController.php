@@ -13,6 +13,10 @@ use App\Model\DBStatic\Devtype;
 use App\Model\DBStatic\Devcmd;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
+use App\Model\Room\Room;
+use App\Model\Course\Course;
+use App\Model\DBStatic\Roomtype;
+use App\Model\DBStatic\Roomaddr;
 
 class AdminController extends Controller {
 
@@ -79,7 +83,56 @@ class AdminController extends Controller {
 			}
 		}
 
-		if($amenu->action == "devstats" || $amenu->action == "devctrl")
+		if($amenu->action == "courselist")
+		{
+			return view('admin.admin')
+			->withCourses(Course::all())
+			->withGlobalvals(Controller::getGlobalvals())
+			->withMenus($menus)
+			->withNmenus($nmenus)
+			->withAmenu($amenu);
+		}
+		else if($amenu->action == "roomstats")
+		{
+			$rooms = Room::all();
+			foreach ($rooms as $room)
+			{
+				foreach (Roomtype::all() as $roomtype)
+				{
+					if ($roomtype->roomtype == $room->roomtype)
+					{
+						$room->roomtypestr = $roomtype->val.'('.$roomtype->roomtype.')';
+						break;
+					}
+				}
+
+				foreach (Roomaddr::all() as $roomaddr)
+				{
+					if ($roomaddr->roomaddr == $room->addr)
+					{
+						$room->addrstr = $roomaddr->val.'('.$roomaddr->roomaddr.')';
+						break;
+					}
+				}
+
+				if($room->status == '1')
+				{
+					$room->statusstr = '正使用(1)';
+				}
+				else
+				{
+					$room->statusstr = '未使用(0)';
+				}
+			}
+
+			return view('admin.admin')
+				->withRooms($rooms)
+				->withGlobalvals(Controller::getGlobalvals())
+				->withMenus($menus)
+				->withNmenus($nmenus)
+				->withAmenu($amenu);
+		}
+		else if($amenu->action == "devstats" || $amenu->action == "devctrl")
 		{
 			$gateways = Gateway::all();
 			$devices = Device::all();
