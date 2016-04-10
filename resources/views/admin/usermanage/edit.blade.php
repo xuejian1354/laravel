@@ -54,6 +54,21 @@
         </tr>
         <tr>
           <td>5</td>
+          <td>位置</td>
+          <td>
+            <select id="{{ 'userarea'.$arg->id }}">
+              @foreach($areas as $area)
+                <option
+                  @if($arg->area == $area->name)
+                    selected = "selected"
+                  @endif
+                >{{ $area->name }}</option>
+              @endforeach
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>6</td>
           <td>修改时间</td>
           <td>{{ $arg->updated_at }}</td>
         </tr>

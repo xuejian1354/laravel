@@ -62,6 +62,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'grade' => 4,
             'privilege' => 1,
+            'area' => '未设置',
         ]);
     }
 }

@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
 	                'password' => bcrypt('root'),
 	                'grade' => 1,
 	                'privilege' => 5,
+	                'area' => '未设置',
 	        ]);
         }
 

@@ -130,6 +130,11 @@ function userEditAlert(id, token) {
 	privilegeInput.setAttribute("value", $("#userprivilege"+id).find("option:selected").text());
 	postForm.appendChild(privilegeInput);
 
+	var areaInput = document.createElement("input");
+	areaInput.setAttribute("name", "area");
+	areaInput.setAttribute("value", $("#userarea"+id).find("option:selected").text());
+	postForm.appendChild(areaInput);
+
 	document.body.appendChild(postForm);
 	postForm.submit();
 	document.body.removeChild(postForm);

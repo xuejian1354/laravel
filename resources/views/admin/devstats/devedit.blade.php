@@ -45,7 +45,18 @@
         <tr>
           <td>4</td>
           <td>区域位置</td>
-          <td><input id="{{ 'devarea'.$devices[$index]->id }}" type="text" value="{{ $devices[$index]->area }}"></td>
+          <td>
+            <!--input id="{{ 'devarea'.$devices[$index]->id }}" type="text" value="{{ $devices[$index]->area }}"-->
+            <select id="{{ 'devarea'.$devices[$index]->id }}">
+              @foreach($areas as $area)
+                <option
+                  @if($devices[$index]->area == $area->name)
+                    selected = "selected"
+                  @endif
+                >{{ $area->name }}</option>
+              @endforeach
+            </select>
+          </td>
         </tr>
         <tr>
           <td>5</td>

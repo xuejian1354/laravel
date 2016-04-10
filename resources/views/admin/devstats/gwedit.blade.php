@@ -30,7 +30,18 @@
         <tr>
           <td>4</td>
           <td>区域位置</td>
-          <td><input id="{{ 'gwarea'.$gateways[$index]->id }}" type="text" value="{{ $gateways[$index]->area }}"></td>
+          <td>
+            <!--input id="{{ 'gwarea'.$gateways[$index]->id }}" type="text" value="{{ $gateways[$index]->area }}"-->
+            <select id="{{ 'gwarea'.$gateways[$index]->id }}">
+              @foreach($areas as $area)
+                <option
+                  @if($gateways[$index]->area == $area->name)
+                    selected = "selected"
+                  @endif
+                >{{ $area->name }}</option>
+              @endforeach
+            </select>
+          </td>
         </tr>
         <tr>
           <td>5</td>

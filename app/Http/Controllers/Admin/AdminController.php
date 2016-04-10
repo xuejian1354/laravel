@@ -208,6 +208,7 @@ class AdminController extends Controller {
 								->withMenus($menus)
 								->withNmenus($nmenus)
 								->withAmenu($amenu)
+								->withAreas(Room::all())
 								->withUsers(User::all())
 								->withGateways($gwargs)
 								->withDevices($devargs);
@@ -263,6 +264,7 @@ class AdminController extends Controller {
 					->withAmenu($amenu)
 					->withGrades($grades)
 					->withPrivileges($privileges)
+					->withAreas(Room::all())
 					->withArgs($args);
 			}
 			else
@@ -312,6 +314,12 @@ class AdminController extends Controller {
 		$user->name = Input::get('name');
 		$user->grade = $this->getGradeFromVal(Input::get('grade'));
 		$user->privilege = intval(substr(Input::get('privilege'), 0, 1), 10);
+
+		$area = Input::get('area');
+		if ($area != null && $area != 'null')
+		{
+			$user->area = $area;
+		}
 		$user->save();
 
 		return redirect("admin?action=usermanage&tabpos=".($user->grade-1));
@@ -327,7 +335,11 @@ class AdminController extends Controller {
 	{
 		$gateway = Gateway::find(Input::get('id'));
 		$gateway->name = Input::get('name');
-		$gateway->area = Input::get('area');
+		$area = Input::get('area');
+		if ($area != null && $area != 'null')
+		{
+			$gateway->area = $area;
+		}
 		$gateway->ispublic = Input::get('ispublic');
 		$gateway->owner = Input::get('owner');
 		$gateway->save();
@@ -345,7 +357,11 @@ class AdminController extends Controller {
 	{
 		$device = Device::find(Input::get('id'));
 		$device->name = Input::get('name');
-		$device->area = Input::get('area');
+		$area = Input::get('area');
+		if ($area != null && $area != 'null')
+		{
+			$device->area = $area;
+		}
 		$device->ispublic = Input::get('ispublic');
 		$device->owner = Input::get('owner');
 		$device->save();

@@ -15,6 +15,7 @@
           <th>邮箱</th>
           <th>身份</th>
           <th>权限</th>
+          <th>位置</th>
           <th>修改时间</th>
           <th></th>
         </tr>
@@ -33,6 +34,7 @@
             <td>{{ $arg->email }}</td>
             <td>{{ $arg->gradename }}</td>
             <td>{{ $arg->privilege }}</td>
+            <td>{{ $arg->area }}</td>
             <td>{{ $arg->updated_at }}</td>
             <td>
               <button onclick="location='{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}'"
