@@ -8,5 +8,5 @@ class Course extends Model
 {
     protected $table = 'courses';
 
-    protected $fillable = ['sn', 'course', 'room', 'time', 'cycle', 'term', 'teacher', 'remarks'];
+    protected $fillable = ['sn', 'course', 'coursetype', 'room', 'time', 'cycle', 'term', 'teacher', 'remarks'];
 }

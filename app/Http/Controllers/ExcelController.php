@@ -69,8 +69,14 @@ class ExcelController extends Controller
 						{
 							try {
 								Course::create([
-										'sn' => $course->sn,
+										'sn' => $this->genCourseSN($course->course,
+																		1,
+																		$course->room,
+																		$course->time,
+																		$course->cycle,
+																		$course->term),
 										'course' => $course->course,
+										'coursetype' => 1,
 										'room' => $course->room,
 										'time' => $course->time,
 										'cycle' => $course->cycle,
@@ -120,7 +126,7 @@ class ExcelController extends Controller
 								$addr = $this->syncRoomAddr($room->addr);
 
 								Room::create([
-										'sn' => $this->genSN($name, $roomtype, $addr),
+										'sn' => $this->genRoomSN($name, $roomtype, $addr),
 										'name' => $name,
 										'roomtype' => $roomtype,
 										'addr' => $addr,
@@ -144,8 +150,27 @@ class ExcelController extends Controller
 			return '<p>Can\'t match type for excel</p><p>File Type: "'.$file->getMimeType().'"</p>';
 		}
 	}
-	
-	private function genSN($name, $roomtype, $addr)
+
+	private function genCourseSN($course, $coursetype, $room, $time, $cycle, $term)
+	{
+		$strs = [$course, $coursetype, $room, $time, $cycle, $term];
+		$ran = '';
+		foreach ($strs as $str)
+		{
+			if($str != null && $str != 'null')
+			{
+				$ran .= $str;
+			}
+			else
+			{
+				$ran .= '0';
+			}
+		}
+
+		return substr(hexdec(md5($ran)), 2, 8);
+	}
+
+	private function genRoomSN($name, $roomtype, $addr)
 	{
 		$ran = substr(hexdec(md5($name)), 2, 4);
 

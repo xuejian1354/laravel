@@ -17,6 +17,7 @@ class CreateCoursesTable extends Migration {
 			$table->increments('id');
 			$table->string('sn')->unique();
 			$table->string('course')->nullable();
+			$table->integer('coursetype');
 			$table->string('room')->nullable();
 			$table->string('time')->nullable();
 			$table->string('cycle')->nullable();
