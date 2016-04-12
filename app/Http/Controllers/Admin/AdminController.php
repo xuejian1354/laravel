@@ -17,6 +17,8 @@ use App\Model\Room\Room;
 use App\Model\Course\Course;
 use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller {
 
@@ -124,9 +126,30 @@ class AdminController extends Controller {
 					$room->statusstr = '未使用(0)';
 				}
 			}
+			
+			$roomtypestr = array();
+			foreach(Roomtype::all() as $roomtype)
+			{
+				array_push($roomtypestr, $roomtype->val.'('.$roomtype->id.')');
+			}
+
+			$roomaddrstr = array();
+			foreach(Roomaddr::all() as $roomaddr)
+			{
+				array_push($roomaddrstr, $roomaddr->val.'('.$roomaddr->id.')');
+			}
+			
+			$userstr = array();
+			foreach(User::all() as $user)
+			{
+				array_push($userstr, $user->name);
+			}
 
 			return view('admin.admin')
 				->withRooms($rooms)
+				->withRoomtypestr(json_encode($roomtypestr))
+				->withRoomaddrstr(json_encode($roomaddrstr))
+				->withUserstr(json_encode($userstr))
 				->withGlobalvals(Controller::getGlobalvals())
 				->withMenus($menus)
 				->withNmenus($nmenus)
@@ -367,5 +390,74 @@ class AdminController extends Controller {
 		$device->save();
 
 		return redirect("admin?action=devstats&tabpos=1");
+	}
+	
+	public function roomedt()
+	{
+		$roomtypes = Roomtype::all();
+		$roomaddrs = Roomaddr::all();
+
+		$data = Input::get('data');
+		$dobjs = json_decode($data);
+
+		foreach ($dobjs as $dobj)
+		{
+			$room = Room::find((int)$dobj->id);
+			if($room->sn == $dobj->sn)
+			{
+				$room->name = $dobj->name;
+				
+				foreach($roomtypes as $roomtype)
+				{
+					$roomtypestr = $roomtype->val.'('.$roomtype->roomtype.')'; 
+					if($roomtypestr == $dobj->roomtypestr)
+					{
+						$room->roomtype = $roomtype->roomtype;
+					}
+				}
+
+				foreach($roomaddrs as $roomaddr)
+				{
+					$roomaddrstr = $roomaddr->val.'('.$roomaddr->roomaddr.')';
+					if($roomaddrstr == $dobj->roomaddrstr)
+					{
+						$room->addr = $roomaddr->roomaddr;
+					}
+				}
+				
+				if($dobj->statustr == '正使用(1)')
+				{
+					$room->status = '1';
+				}
+				else
+				{
+					$room->status = '0';
+				}
+				
+				$room->user = $dobj->user;
+				$room->owner = $dobj->owner;
+				
+				$room->save();
+			}
+		}
+
+		return redirect("admin?action=roomstats");
+	}
+
+	public function roomdel()
+	{
+		$data = Input::get('data');
+		$dobjs = json_decode($data);
+	
+		foreach ($dobjs as $dobj)
+		{
+			$room = Room::find((int)$dobj->id);
+			if($room->sn == $dobj->sn)
+			{
+				$room->delete();
+			}
+		}
+	
+		return redirect("admin?action=roomstats");
 	}
 }

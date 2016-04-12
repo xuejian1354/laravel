@@ -13,7 +13,337 @@ $(document).ready(function() {
     $(".table-dev").removeClass("hidden");
     $(".table-gw").addClass("hidden");
   });
+
+  $(".roomcheckall").click(function() {
+	  var tr = $('#roomtbody').children('tr');
+	  var roomCheck = tr.children('td.roomedtcheck').children('input.roomcheck');
+
+	  if($(this).prop('checked'))
+	  {
+		  roomCheck.prop('checked', true);
+	  }
+	  else
+	  {
+		  roomCheck.prop('checked', false);
+	  }
+
+	  roomCheck.trigger("roomEdtEvent");
+  });
+
+  $(".roomcheck").click(function() {
+	  $(this).trigger("roomEdtEvent");
+  });
+
+  $(".roomcheck").bind("roomEdtEvent", function() {
+	  var roomtab = $(this).parent().parent();
+
+	  var roomsn = roomtab.children('td.roomsn');
+	  var roomname = roomtab.children('td.roomname');
+	  var roomtype = roomtab.children('td.roomtype');
+	  var roomaddr = roomtab.children('td.roomaddr');
+	  var roomstatus = roomtab.children('td.roomstatus');
+	  var roomuser = roomtab.children('td.roomuser');
+	  var roomadmin = roomtab.children('td.roomadmin');
+
+	  var x;
+	  var roomedts = new Array(roomname, roomtype, roomaddr, roomstatus, roomuser, roomadmin);
+
+	  if($(this).prop('checked'))
+	  {
+		if($('.roomcheckall').prop('checked') == false)
+		{
+			var isSet = true;
+			$('.roomcheck').each(function(){
+				if($(this).prop('checked') == false)
+				{
+					isSet = false;
+				}
+			});
+
+			if(isSet)
+			{
+				$('.roomcheckall').prop('checked', true);
+			}
+		}
+
+		$('.roomEdtBtn').removeClass('hidden');
+
+	    for(x in roomedts)
+		{
+	      if(x == 1)
+	      {
+	    	  var nowType = roomedts[x].children('span').text();
+	    	  if(nowType == '')
+	    	  {
+	    		  sType = roomedts[x].children('select').attr('defval');
+	    		  if(sType != undefined)
+	    		  {
+	    			continue;
+	    		  }
+	    	  }
+
+	    	  var types = $('span#typexml').text();
+	    	  var tobj = JSON.parse(types);
+
+	    	  var ttext = '<select defval="' + nowType + '">'
+
+	    	  var tx;
+	    	  for(tx in tobj)
+	    	  {
+	    		  if(tobj[tx] == nowType)
+	    		  {
+	    			  ttext += '<option selected="selected">' + tobj[tx] + '</option>';
+	    		  }
+	    		  else
+	    		  {
+		    		  ttext += '<option>' + tobj[tx] + '</option>';  
+	    		  }
+	    	  }
+	    	  ttext += '</select>';
+
+	    	  roomedts[x].html(ttext); 
+	      }
+
+	      if(x == 2)
+	      {
+	    	  var nowAddr = roomedts[x].children('span').text();
+	    	  if(nowAddr == '')
+	    	  {
+	    		sAddr = roomedts[x].children('select').attr('defval');
+	    		if(sAddr != undefined)
+	    		{
+	    			continue;
+	    		}
+	    	  }
+
+	    	  var addrs = $('span#addrxml').text();
+	    	  var aobj = JSON.parse(addrs);
+
+	    	  var atext = '<select defval="' + nowAddr + '">'
+
+	    	  var ax;
+	    	  for(ax in aobj)
+	    	  {
+	    		  if(aobj[ax] == nowAddr)
+	    		  {
+	    			  atext += '<option selected="selected">' + aobj[ax] + '</option>';
+	    		  }
+	    		  else
+	    		  {
+		    		  atext += '<option>' + aobj[ax] + '</option>';  
+	    		  }
+	    	  }
+	    	  atext += '</select>';
+
+	    	  roomedts[x].html(atext); 
+	      }
+
+	      if(x == 3)
+	      {
+	    	  var nowStatus = roomedts[x].children('span').text();
+	    	  if(nowStatus == '')
+	    	  {
+	    		  sStatus = roomedts[x].children('select').attr('defval');
+	    		  if(sStatus != undefined)
+	    		  {
+	    			continue;
+	    		  }
+	    	  }
+
+	    	  if(nowStatus.match('1'))
+	    	  {
+	    		roomedts[x].html('<select defval="' + nowStatus + '">'
+	    							+ '<option selected="selected">正使用(1)</option>'
+			  			  			+ '<option >未使用(0)</option>'
+			  			  			+ '</select>');  
+	    	  }
+	    	  else
+	    	  {
+	    		roomedts[x].html('<select defval="' + nowStatus + '">'
+	    							+ '<option>正使用(1)</option>'
+			  			  			+ '<option selected="selected">未使用(0)</option>'
+			  			  			+ '</select>');  
+	    	  }
+	    	  continue;
+	      }
+
+	      if(x == 4 || x == 5)
+	      {
+	    	  var nowUser = roomedts[x].children('span').text();
+	    	  if(nowUser == '')
+	    	  {
+	    		sUser = roomedts[x].children('select').attr('defval');
+	    		if(sUser != undefined)
+	    		{
+	    			continue;
+	    		}
+	    	  }
+
+	    	  var users = $('span#userxml').text();
+	    	  var uobj = JSON.parse(users);
+
+	    	  var utext = '<select defval="' + nowUser + '">'
+
+	    	  var ux;
+	    	  for(ux in uobj)
+	    	  {
+	    		  if(uobj[ux] == nowUser)
+	    		  {
+	    			  utext += '<option selected="selected">' + uobj[ux] + '</option>';
+	    		  }
+	    		  else
+	    		  {
+		    		  utext += '<option>' + uobj[ux] + '</option>';  
+	    		  }
+	    	  }
+	    	  utext += '</select>';
+
+	    	  roomedts[x].html(utext); 
+	      }
+
+          if(roomedts[x].children('span').width() > 0)
+          {
+            roomedts[x].html('<input type="text" value="' + roomedts[x].children('span').text() + '" style="width:' + roomedts[x].children('span').width() + 'pt;"></input>');
+          }
+		}
+	  }
+	  else
+	  {
+	    if($('.roomcheckall').prop('checked'))
+		{
+		  $('.roomcheckall').prop('checked', false);
+		}
+
+	    var isDisappear = true;
+	    $('.roomcheck').each(function(){
+	    	if($(this).prop('checked'))
+	    	{
+	    		isDisappear = false;
+	    	}
+	    });
+
+	    if(isDisappear)
+	    {
+	    	$('.roomEdtBtn').addClass('hidden');
+	    }
+
+		for(x in roomedts)
+		{
+          if(roomedts[x].children('input').val() != undefined)
+          {
+            roomedts[x].html('<span>' + roomedts[x].children('input').val() + '</span>');
+          }
+          else if(roomedts[x].children('select').attr('defval') != undefined)
+          {
+            roomedts[x].html('<span>' + roomedts[x].children('select').attr('defval') + '</span>');
+          }
+		}
+	  }
+  });
 })
+
+function roomEditAlert(token) {
+	var data = new Array();
+	
+	$('.roomcol').each(function(){
+		var checked = $(this).children('td.roomedtcheck').children('input.roomcheck').prop('checked');
+		if(checked == true && $(this).children('td.roomname').children('input').val() != undefined)
+		{
+			addRoomToData(data, getRoomData(this));
+		}
+	});
+	
+	roomEdtPost(JSON.stringify(data), token);
+}
+
+function roomDelAlert(token) {
+	var data = new Array();
+	
+	$('.roomcol').each(function(){
+		var checked = $(this).children('td.roomedtcheck').children('input.roomcheck').prop('checked');
+		if(checked == true && $(this).children('td.roomname').children('input').val() != undefined)
+		{
+			addRoomToData(data, getRoomId(this));
+		}
+	});
+	
+	roomDelPost(JSON.stringify(data), token);
+}
+
+function getRoomId(tr)
+{
+	var tobj = new Object();
+	tobj.id = $(tr).children('td.roomid').text();
+	tobj.sn = $(tr).children('td.roomsn').text(); 
+	
+	return tobj;
+}
+
+function getRoomData(tr)
+{
+	var tobj = new Object();
+	tobj.id = $(tr).children('td.roomid').text();
+	tobj.sn = $(tr).children('td.roomsn').text(); 
+	tobj.name = $(tr).children('td.roomname').children('input').val();
+	tobj.roomtypestr = $(tr).children('td.roomtype').children('select').val();
+	tobj.roomaddrstr = $(tr).children('td.roomaddr').children('select').val();
+	tobj.statustr = $(tr).children('td.roomstatus').children('select').val();
+	tobj.user = $(tr).children('td.roomuser').children('select').val();
+	tobj.owner = $(tr).children('td.roomadmin').children('select').val();
+	
+	return tobj;
+}
+
+function addRoomToData(target, data)
+{
+	target.push(data);
+}
+
+function roomEdtPost(data, token) {
+
+  if(confirm("确定修改教室信息?")) {
+    var postForm = document.createElement("form");
+    postForm.method="post";
+    postForm.action = "admin/roomedt";
+
+    var dataInput = document.createElement("input");
+    dataInput.setAttribute("name", "data");
+    dataInput.setAttribute("value", data);
+    postForm.appendChild(dataInput);
+
+    var tokenInput = document.createElement("input");
+    tokenInput.setAttribute("name", "_token");
+    tokenInput.setAttribute("value", token);
+    postForm.appendChild(tokenInput);
+
+    document.body.appendChild(postForm);
+    postForm.submit();
+    document.body.removeChild(postForm);
+  }
+}
+
+function roomDelPost(data, token) {
+
+  if(confirm("确定删除选中教室?")) {
+    var postForm = document.createElement("form");
+    postForm.method="post";
+    postForm.action = "admin/roomdel";
+
+    var dataInput = document.createElement("input");
+    dataInput.setAttribute("name", "data");
+    dataInput.setAttribute("value", data);
+    postForm.appendChild(dataInput);
+
+    var tokenInput = document.createElement("input");
+    tokenInput.setAttribute("name", "_token");
+    tokenInput.setAttribute("value", token);
+    postForm.appendChild(tokenInput);
+
+    document.body.appendChild(postForm);
+    postForm.submit();
+    document.body.removeChild(postForm);
+  }
+}
 
 function loadUserGrade(id) {
   $(".nav-li"+id).addClass("active");
