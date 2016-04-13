@@ -19,6 +19,10 @@ use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
+use App\Model\DBStatic\Cycle;
+use App\Model\DBStatic\Term;
+use App\Http\Controllers\ExcelController;
+use Illuminate\Database\QueryException;
 
 class AdminController extends Controller {
 
@@ -85,16 +89,57 @@ class AdminController extends Controller {
 			}
 		}
 
-		if($amenu->action == "courselist")
+		if($amenu->action == "courselist" || $amenu->action == "courseimport")
 		{
+			$rooms = Room::all();
+			$roomnames = array();
+			foreach ($rooms as $room)
+			{
+				array_push($roomnames, $room->name);
+			}
+			sort($roomnames);
+			
+			$cycles = Cycle::all();
+			$cyclestr = array();
+			foreach ($cycles as $cycle)
+			{
+				array_push($cyclestr, $cycle->val);
+			}
+			//sort($cyclestr);
+			
+			$termstr = array();
+			foreach (Term::all() as $term)
+			{
+				array_push($termstr, $term->val);
+			}
+			rsort($termstr);
+
+			$teacherstr = array();
+			foreach(User::all() as $user)
+			{
+				if($user->grade <= 2)
+				{
+					array_push($teacherstr, $user->name);
+				}
+			}
+			sort($teacherstr);
+
 			return view('admin.admin')
-			->withCourses(Course::all())
-			->withGlobalvals(Controller::getGlobalvals())
-			->withMenus($menus)
-			->withNmenus($nmenus)
-			->withAmenu($amenu);
+					->withCourses(Course::all())
+					->withRoomnames($roomnames)
+					->withRoomnamestr(json_encode($roomnames))
+					->withCycles($cyclestr)
+					->withCyclestr(json_encode($cyclestr))
+					->withTerms($termstr)
+					->withTermstr(json_encode($termstr))
+					->withTeachers($teacherstr)
+					->withTeacherstr(json_encode($teacherstr))
+					->withGlobalvals(Controller::getGlobalvals())
+					->withMenus($menus)
+					->withNmenus($nmenus)
+					->withAmenu($amenu);
 		}
-		else if($amenu->action == "roomstats")
+		else if($amenu->action == "roomstats" || $amenu->action == "roomimport")
 		{
 			$rooms = Room::all();
 			foreach ($rooms as $room)
@@ -130,30 +175,48 @@ class AdminController extends Controller {
 			$roomtypestr = array();
 			foreach(Roomtype::all() as $roomtype)
 			{
-				array_push($roomtypestr, $roomtype->val.'('.$roomtype->id.')');
+				array_push($roomtypestr, $roomtype->val.'('.$roomtype->roomtype.')');
 			}
+			//sort($roomtypestr);
 
 			$roomaddrstr = array();
 			foreach(Roomaddr::all() as $roomaddr)
 			{
-				array_push($roomaddrstr, $roomaddr->val.'('.$roomaddr->id.')');
+				array_push($roomaddrstr, $roomaddr->val.'('.$roomaddr->roomaddr.')');
 			}
+			//sort($roomaddrstr);
 			
 			$userstr = array();
+			$ownerstr = array();
 			foreach(User::all() as $user)
 			{
-				array_push($userstr, $user->name);
+				if($user->privilege >= 4)
+				{
+					array_push($userstr, $user->name);
+				}
+
+				if($user->privilege >= 5)
+				{
+					array_push($ownerstr, $user->name);
+				}
 			}
+			sort($userstr);
+			sort($ownerstr);
 
 			return view('admin.admin')
-				->withRooms($rooms)
-				->withRoomtypestr(json_encode($roomtypestr))
-				->withRoomaddrstr(json_encode($roomaddrstr))
-				->withUserstr(json_encode($userstr))
-				->withGlobalvals(Controller::getGlobalvals())
-				->withMenus($menus)
-				->withNmenus($nmenus)
-				->withAmenu($amenu);
+					->withRooms($rooms)
+					->withRoomtypes($roomtypestr)
+					->withRoomtypestr(json_encode($roomtypestr))
+					->withRoomaddrs($roomaddrstr)
+					->withRoomaddrstr(json_encode($roomaddrstr))
+					->withUsers($userstr)
+					->withUserstr(json_encode($userstr))
+					->withOwners($ownerstr)
+					->withOwnerstr(json_encode($ownerstr))
+					->withGlobalvals(Controller::getGlobalvals())
+					->withMenus($menus)
+					->withNmenus($nmenus)
+					->withAmenu($amenu);
 		}
 		else if($amenu->action == "devstats" || $amenu->action == "devctrl")
 		{
@@ -281,14 +344,14 @@ class AdminController extends Controller {
 			if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 			{
 				return view('admin.admin')
-					->withGlobalvals(Controller::getGlobalvals())
-					->withMenus($menus)
-					->withNmenus($nmenus)
-					->withAmenu($amenu)
-					->withGrades($grades)
-					->withPrivileges($privileges)
-					->withAreas(Room::all())
-					->withArgs($args);
+							->withGlobalvals(Controller::getGlobalvals())
+							->withMenus($menus)
+							->withNmenus($nmenus)
+							->withAmenu($amenu)
+							->withGrades($grades)
+							->withPrivileges($privileges)
+							->withAreas(Room::all())
+							->withArgs($args);
 			}
 			else
 			{
@@ -299,10 +362,10 @@ class AdminController extends Controller {
 		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 		{
 			return view('admin.admin')
-				->withGlobalvals(Controller::getGlobalvals())
-				->withMenus($menus)
-				->withNmenus($nmenus)
-				->withAmenu($amenu);
+					->withGlobalvals(Controller::getGlobalvals())
+					->withMenus($menus)
+					->withNmenus($nmenus)
+					->withAmenu($amenu);
 		}
 		else
 		{
@@ -459,5 +522,106 @@ class AdminController extends Controller {
 		}
 	
 		return redirect("admin?action=roomstats");
+	}
+
+	public function roomadd()
+	{
+		$data = Input::get('data');
+		$room = json_decode($data);
+
+		$roomtype;
+		$roomaddr;
+		preg_match('/\d+/', $room->roomtype, $roomtype);
+		preg_match('/\d+/', $room->addr, $roomaddr);
+		$roomtype = $roomtype[0];
+		$roomaddr = isset($roomaddr[0])?$roomaddr[0]:'';
+
+		try {
+			Room::create([
+					'sn' => ExcelController::genRoomSN($room->name, $roomtype, $roomaddr),
+					'name' => $room->name,
+					'roomtype' => $roomtype,
+					'addr' => $roomaddr,
+					'status' => ExcelController::getRoomStatus($room->status),
+					'user' => $room->user,
+					'owner' => $room->owner,
+			]);
+		} catch (QueryException $e) {
+			return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该教室是否已经存在");</script>';
+		}
+	
+		return redirect("admin?action=roomstats");
+	}
+	
+	public function courseedt()
+	{
+		$data = Input::get('data');
+		$dobjs = json_decode($data);
+	
+		foreach ($dobjs as $dobj)
+		{
+			$course = Course::find((int)$dobj->id);
+			if($course->sn == $dobj->sn)
+			{
+				if(isset($dobj->course)) $course->course = $dobj->course;
+				if(isset($dobj->room)) $course->room = $dobj->room;
+				if(isset($dobj->time)) $course->time = $dobj->time;
+				if(isset($dobj->cycle)) $course->cycle = $dobj->cycle;
+				if(isset($dobj->term)) $course->term = $dobj->term;
+				if(isset($dobj->teacher)) $course->teacher = $dobj->teacher;
+	
+				$course->save();
+			}
+		}
+	
+		return redirect("admin?action=courselist");
+	}
+	
+	public function coursedel()
+	{
+		$data = Input::get('data');
+		$dobjs = json_decode($data);
+	
+		foreach ($dobjs as $dobj)
+		{
+			$course = Course::find((int)$dobj->id);
+			if($course->sn == $dobj->sn)
+			{
+				$course->delete();
+			}
+		}
+	
+		return redirect("admin?action=courselist");
+	}
+
+	public function courseadd()
+	{
+		$data = Input::get('data');
+		$type = Input::get('type');
+		$course = json_decode($data);
+		
+		$sn = ExcelController::genCourseSN($course->course,
+										$type,
+										$course->room,
+										$course->time,
+										$course->cycle,
+										$course->term);
+
+		try {
+			Course::create([
+					'sn' => $sn,
+					'course' => $course->course,
+					'coursetype' => $type,
+					'room' => $course->room,
+					'time' => $course->time,
+					'cycle' => $course->cycle,
+					'term' => $course->term,
+					'teacher' => $course->teacher,
+			]);
+		} catch (QueryException $e) {
+			return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该课程是否已经存在");</script>';
+		}
+
+		return redirect("admin?action=courselist");
 	}
 }

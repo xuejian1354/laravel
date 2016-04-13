@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DevcmdTableSeeder::class);
         $this->call(GlobalvalTableSeeder::class);
         $this->call(RoomtypeTableSeeder::class);
+        $this->call(TermTableSeeder::class);
 
         if(count(DB::table('users')->where('email', 'root@loongsmart.com')->get()) == 0)
         {

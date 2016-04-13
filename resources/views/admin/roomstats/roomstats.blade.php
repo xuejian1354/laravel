@@ -2,7 +2,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   <h1 class="page-header">{{ $amenu->cmenu }}</h1>
   <div class="table-responsive">
-   <table class="table table-striped table-gw" style="min-width: 600px;">
+   <table class="table table-striped" style="min-width: 600px;">
       <thead>
        <tr>
           <th>#</th>
@@ -37,13 +37,14 @@
     </table>
   </div>
   <div class="nav navbar-nav navbar-right">
-    <a href="javascript:roomEditAlert('{{ csrf_token() }}');" class="btn btn-info roomEdtBtn hidden" role="button">修改</a>
+    <a href="javascript:roomEditAlert('{{ csrf_token() }}');" class="btn btn-primary roomEdtBtn hidden" role="button">修改</a>
     <a href="javascript:roomDelAlert('{{ csrf_token() }}');" class="btn btn-danger roomEdtBtn hidden" role="button">删除</a>
   </div>
   <div class="hidden">
     <span id="typexml">{{ $roomtypestr }}</span>
     <span id="addrxml">{{ $roomaddrstr }}</span>
     <span id="userxml">{{ $userstr }}</span>
+    <span id="ownerxml">{{ $ownerstr }}</span>
   </div>
 </div>
 @endsection

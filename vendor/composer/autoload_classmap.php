@@ -22,8 +22,10 @@ return array(
     'CreateMainreportsTable' => $baseDir . '/database/migrations/2016_01_06_155430_create_mainreports_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePrivilegesTable' => $baseDir . '/database/migrations/2016_01_06_000000_create_privileges_table.php',
+    'CreateRoomAddrsTable' => $baseDir . '/database/migrations/2016_04_10_154544_create_roomaddrs_table.php',
     'CreateRoomTypesTable' => $baseDir . '/database/migrations/2016_04_07_164355_create_roomtypes_table.php',
     'CreateRoomsTable' => $baseDir . '/database/migrations/2016_04_07_163540_create_rooms_table.php',
+    'CreateTermsTable' => $baseDir . '/database/migrations/2016_04_13_144544_create_terms_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'CycleTableSeeder' => $baseDir . '/database/seeds/CycleTableSeeder.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',
@@ -564,6 +566,7 @@ return array(
     'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => $vendorDir . '/sebastian/recursion-context/src/InvalidArgumentException.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
     'SessionHandlerInterface' => $vendorDir . '/symfony/http-foundation/Resources/stubs/SessionHandlerInterface.php',
+    'TermTableSeeder' => $baseDir . '/database/seeds/TermTableSeeder.php',
     'TestCase' => $baseDir . '/tests/TestCase.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
 );

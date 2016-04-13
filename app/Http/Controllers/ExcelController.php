@@ -122,7 +122,7 @@ class ExcelController extends Controller
 						{
 							try {
 								$name = $room->name;
-								$roomtype = $this->getRoomType($room->type);
+								$roomtype = $this->syncRoomType($room->type);
 								$addr = $this->syncRoomAddr($room->addr);
 
 								Room::create([
@@ -151,7 +151,7 @@ class ExcelController extends Controller
 		}
 	}
 
-	private function genCourseSN($course, $coursetype, $room, $time, $cycle, $term)
+	public static function genCourseSN($course, $coursetype, $room, $time, $cycle, $term)
 	{
 		$strs = [$course, $coursetype, $room, $time, $cycle, $term];
 		$ran = '';
@@ -170,7 +170,7 @@ class ExcelController extends Controller
 		return substr(hexdec(md5($ran)), 2, 8);
 	}
 
-	private function genRoomSN($name, $roomtype, $addr)
+	public static  function genRoomSN($name, $roomtype, $addr)
 	{
 		$ran = substr(hexdec(md5($name)), 2, 4);
 
@@ -187,7 +187,7 @@ class ExcelController extends Controller
 		return $addr.$roomtype.$ran;
 	}
 
-	private function getRoomType($s)
+	private function syncRoomType($s)
 	{
 		if($s == null)
 		{
@@ -216,17 +216,6 @@ class ExcelController extends Controller
 		]);
 
 		return $typeId;
-	}
-
-	private function getRoomStatus($s)
-	{
-		if(stristr('正使用', $s)
-				|| stristr('1', $s))
-		{
-			return '1';
-		}
-
-		return '0';
 	}
 
 	private function syncRoomAddr($s)
@@ -258,6 +247,17 @@ class ExcelController extends Controller
 
 			return $addrId;
 		}
+	}
+
+	public static function getRoomStatus($s)
+	{
+		if(stristr('正使用', $s)
+				|| stristr('1', $s))
+		{
+			return '1';
+		}
+	
+		return '0';
 	}
 
 	private function xlsFileMatch($file)

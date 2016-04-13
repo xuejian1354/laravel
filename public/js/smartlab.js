@@ -72,70 +72,18 @@ $(document).ready(function() {
 		{
 	      if(x == 1)
 	      {
-	    	  var nowType = roomedts[x].children('span').text();
-	    	  if(nowType == '')
+	    	  if(setSelectXml(roomedts[x], $('span#typexml').text()) < 0)
 	    	  {
-	    		  sType = roomedts[x].children('select').attr('defval');
-	    		  if(sType != undefined)
-	    		  {
-	    			continue;
-	    		  }
+	    		  continue;
 	    	  }
-
-	    	  var types = $('span#typexml').text();
-	    	  var tobj = JSON.parse(types);
-
-	    	  var ttext = '<select defval="' + nowType + '">'
-
-	    	  var tx;
-	    	  for(tx in tobj)
-	    	  {
-	    		  if(tobj[tx] == nowType)
-	    		  {
-	    			  ttext += '<option selected="selected">' + tobj[tx] + '</option>';
-	    		  }
-	    		  else
-	    		  {
-		    		  ttext += '<option>' + tobj[tx] + '</option>';  
-	    		  }
-	    	  }
-	    	  ttext += '</select>';
-
-	    	  roomedts[x].html(ttext); 
 	      }
 
 	      if(x == 2)
 	      {
-	    	  var nowAddr = roomedts[x].children('span').text();
-	    	  if(nowAddr == '')
+	    	  if(setSelectXml(roomedts[x], $('span#addrxml').text()) < 0)
 	    	  {
-	    		sAddr = roomedts[x].children('select').attr('defval');
-	    		if(sAddr != undefined)
-	    		{
-	    			continue;
-	    		}
+	    		  continue;
 	    	  }
-
-	    	  var addrs = $('span#addrxml').text();
-	    	  var aobj = JSON.parse(addrs);
-
-	    	  var atext = '<select defval="' + nowAddr + '">'
-
-	    	  var ax;
-	    	  for(ax in aobj)
-	    	  {
-	    		  if(aobj[ax] == nowAddr)
-	    		  {
-	    			  atext += '<option selected="selected">' + aobj[ax] + '</option>';
-	    		  }
-	    		  else
-	    		  {
-		    		  atext += '<option>' + aobj[ax] + '</option>';  
-	    		  }
-	    	  }
-	    	  atext += '</select>';
-
-	    	  roomedts[x].html(atext); 
 	      }
 
 	      if(x == 3)
@@ -167,38 +115,20 @@ $(document).ready(function() {
 	    	  continue;
 	      }
 
-	      if(x == 4 || x == 5)
+	      if(x == 4)
 	      {
-	    	  var nowUser = roomedts[x].children('span').text();
-	    	  if(nowUser == '')
+	    	  if(setSelectXml(roomedts[x], $('span#userxml').text()) < 0)
 	    	  {
-	    		sUser = roomedts[x].children('select').attr('defval');
-	    		if(sUser != undefined)
-	    		{
-	    			continue;
-	    		}
+	    		  continue;
 	    	  }
+	      }
 
-	    	  var users = $('span#userxml').text();
-	    	  var uobj = JSON.parse(users);
-
-	    	  var utext = '<select defval="' + nowUser + '">'
-
-	    	  var ux;
-	    	  for(ux in uobj)
+	      if(x == 5)
+	      {
+	    	  if(setSelectXml(roomedts[x], $('span#ownerxml').text()) < 0)
 	    	  {
-	    		  if(uobj[ux] == nowUser)
-	    		  {
-	    			  utext += '<option selected="selected">' + uobj[ux] + '</option>';
-	    		  }
-	    		  else
-	    		  {
-		    		  utext += '<option>' + uobj[ux] + '</option>';  
-	    		  }
+	    		  continue;
 	    	  }
-	    	  utext += '</select>';
-
-	    	  roomedts[x].html(utext); 
 	      }
 
           if(roomedts[x].children('span').width() > 0)
@@ -240,7 +170,264 @@ $(document).ready(function() {
 		}
 	  }
   });
+  
+  $(".coursecheckall").click(function() {
+	  var tr = $('#coursetbody').children('tr');
+	  var courseCheck = tr.children('td.courseedtcheck').children('input.coursecheck');
+
+	  if($(this).prop('checked'))
+	  {
+		  courseCheck.prop('checked', true);
+	  }
+	  else
+	  {
+		  courseCheck.prop('checked', false);
+	  }
+
+	  courseCheck.trigger("courseEdtEvent");
+  });
+
+  $(".coursecheck").click(function() {
+	  $(this).trigger("courseEdtEvent");
+  });
+
+  $(".coursecheck").bind("courseEdtEvent", function() {
+	  var coursetab = $(this).parent().parent();
+
+	  var coursesn = coursetab.children('td.coursesn');
+	  var course = coursetab.children('td.course');
+	  var courseroom = coursetab.children('td.courseroom');
+	  var coursetime = coursetab.children('td.coursetime');
+	  var coursecycle = coursetab.children('td.coursecycle');
+	  var courseterm = coursetab.children('td.courseterm');
+	  var courseteacher = coursetab.children('td.courseteacher');
+
+	  var x;
+	  var courseedts = new Array(course, courseroom, coursetime, coursecycle, courseterm, courseteacher);
+
+	  if($(this).prop('checked'))
+	  {
+		if($('.coursecheckall').prop('checked') == false)
+		{
+			var isAllSet = true;
+			$('.coursecheck').each(function(){
+				if($(this).prop('checked') == false)
+				{
+					isAllSet = false;
+				}
+			});
+
+			if(isAllSet)
+			{
+				$('.coursecheckall').prop('checked', true);
+			}
+		}
+
+		$('.courseedt').removeClass('hidden');
+
+	    for(x in courseedts)
+		{
+	      if(x == 1)
+	      {
+	    	if(setSelectXml(courseedts[x], $('span#roomxml').text()) < 0)
+		    {
+	    		continue;
+		    }
+	      }
+	    	
+	      if(x == 3)
+	      {
+	    	  if(setSelectXml(courseedts[x], $('span#cyclexml').text()) < 0)
+	    	  {
+	    		  continue;
+	    	  }
+	      }
+
+	      if(x == 4)
+	      {
+	    	  if(setSelectXml(courseedts[x], $('span#termxml').text()) < 0)
+	    	  {
+	    		  continue;
+	    	  }
+	      }
+	      
+	      if(x == 5)
+	      {
+	    	  if(setSelectXml(courseedts[x], $('span#teacherxml').text()) < 0)
+	    	  {
+	    		  continue;
+	    	  }
+	      }
+
+          if(courseedts[x].children('span').width() > 0)
+          {
+            courseedts[x].html('<input type="text" value="' + courseedts[x].children('span').text() + '" style="width:' + courseedts[x].children('span').width() + 'pt;"></input>');
+          }
+		}
+	  }
+	  else
+	  {
+	    if($('.coursecheckall').prop('checked'))
+		{
+		  $('.coursecheckall').prop('checked', false);
+		}
+
+	    var isDisappear = true;
+	    $('.coursecheck').each(function(){
+	    	if($(this).prop('checked'))
+	    	{
+	    		isDisappear = false;
+	    	}
+	    });
+
+	    if(isDisappear)
+	    {
+	    	$('.courseedt').addClass('hidden');
+	    }
+
+		for(x in courseedts)
+		{
+          if(courseedts[x].children('input').val() != undefined)
+          {
+            courseedts[x].html('<span>' + courseedts[x].children('input').val() + '</span>');
+          }
+          else if(courseedts[x].children('select').attr('defval') != undefined)
+          {
+            courseedts[x].html('<span>' + courseedts[x].children('select').attr('defval') + '</span>');
+          }
+		}
+	  }
+  });
 })
+
+function setSelectXml(target, jstr)
+{
+  var nowT = target.children('span').text();
+  if(nowT == '')
+  {
+	  if(target.children('select').attr('defval') != undefined)
+	  {
+		return -1;
+	  }
+  }
+
+  var jobj = JSON.parse(jstr);
+
+  var jtext = '<select defval="' + nowT + '">'
+
+  var jx;
+  for(jx in jobj)
+  {
+	  if(jobj[jx] == nowT)
+	  {
+		  jtext += '<option selected="selected">' + jobj[jx] + '</option>';
+	  }
+	  else
+	  {
+		  jtext += '<option>' + jobj[jx] + '</option>';
+	  }
+  }
+  jtext += '</select>';
+
+  target.html(jtext);
+  return 0;
+}
+
+function courseAddAlert(token) {
+	var type = 1;
+	if($('#caddtype').val() == '动态')
+	{
+		type = 2;
+	}
+
+	var tobj = new Object(); 
+	tobj.course = $('#caddcourse').val();
+	tobj.room = $('#caddroom').val();
+	tobj.time = $('#caddtime').val();
+	tobj.cycle = $('#caddcycle').val();
+	tobj.term = $('#caddterm').val();
+	tobj.teacher = $('#caddteacher').val();
+	
+	if($.trim(tobj.course).length > 0)
+	{
+		 if(confirm('确定要添加 "' + tobj.course + '"?')) {
+		    var postForm = document.createElement("form");
+		    postForm.method="post";
+		    postForm.action = '/admin/courseadd';
+	
+		    var dataInput = document.createElement("input");
+		    dataInput.setAttribute("name", "data");
+		    dataInput.setAttribute("value", JSON.stringify(tobj));
+		    postForm.appendChild(dataInput);
+
+		    var typeInput = document.createElement("input");
+		    typeInput.setAttribute("name", "type");
+		    typeInput.setAttribute("value", type);
+		    postForm.appendChild(typeInput);
+	
+		    var tokenInput = document.createElement("input");
+		    tokenInput.setAttribute("name", "_token");
+		    tokenInput.setAttribute("value", token);
+		    postForm.appendChild(tokenInput);
+	
+		    document.body.appendChild(postForm);
+		    postForm.submit();
+		    document.body.removeChild(postForm);
+		 }
+	}
+	else
+	{
+		alert('课程名称不能为空');
+	}
+}
+
+function courseEdtAlert(token) {
+	var data = new Array();
+	
+	$('.coursecol').each(function(){
+		var checked = $(this).children('td.courseedtcheck').children('input.coursecheck').prop('checked');
+		if(checked == true && $(this).children('td.course').children('input').val() != undefined)
+		{
+			data.push(getCourseData(this));
+		}
+	});
+	
+	dataPost('/admin/courseedt', JSON.stringify(data), token, '确定要修改课程信息?');
+}
+
+function courseDelAlert(token) {
+	var data = new Array();
+	
+	$('.coursecol').each(function(){
+		var checked = $(this).children('td.courseedtcheck').children('input.coursecheck').prop('checked');
+		if(checked == true && $(this).children('td.course').children('input').val() != undefined)
+		{
+			data.push(getCourseId(this));
+		}
+	});
+	
+	dataPost('/admin/coursedel', JSON.stringify(data), token, '确定要删除选中课程?');
+}
+
+function roomAddAlert(token) {
+
+	var tobj = new Object(); 
+	tobj.name = $('#raddname').val();
+	tobj.roomtype = $('#raddtype').val();
+	tobj.addr = $('#raddaddr').val();
+	tobj.status = $('#raddstatus').val();
+	tobj.user = $('#radduser').val();
+	tobj.owner = $('#raddowner').val();
+	
+	if($.trim(tobj.name).length > 0)
+	{
+		dataPost('/admin/roomadd', JSON.stringify(tobj), token, '确定要添加 "'+tobj.name+'"?');
+	}
+	else
+	{
+		alert('教室名称不能为空');
+	}
+}
 
 function roomEditAlert(token) {
 	var data = new Array();
@@ -268,6 +455,53 @@ function roomDelAlert(token) {
 	});
 	
 	roomDelPost(JSON.stringify(data), token);
+}
+
+function getCourseId(tr)
+{
+	var tobj = new Object();
+	tobj.id = $(tr).children('td.courseid').text();
+	tobj.sn = $(tr).children('td.coursesn').text();
+	
+	return tobj;
+}
+
+function getCourseData(tr)
+{
+	var tobj = new Object();
+	tobj.id = $(tr).children('td.courseid').text();
+	tobj.sn = $(tr).children('td.coursesn').text(); 
+	tobj.course = $(tr).children('td.course').children('input').val();
+	tobj.room = $(tr).children('td.courseroom').children('select').val();
+	tobj.time = $(tr).children('td.coursetime').children('input').val();
+	tobj.cycle = $(tr).children('td.coursecycle').children('select').val();
+	tobj.term = $(tr).children('td.courseterm').children('select').val();
+	tobj.teacher = $(tr).children('td.courseteacher').children('select').val();
+	
+	return tobj;
+}
+
+function dataPost(target, data, token, alert) {
+
+  if(confirm(alert)) {
+    var postForm = document.createElement("form");
+    postForm.method="post";
+    postForm.action = target;
+
+    var dataInput = document.createElement("input");
+    dataInput.setAttribute("name", "data");
+    dataInput.setAttribute("value", data);
+    postForm.appendChild(dataInput);
+
+    var tokenInput = document.createElement("input");
+    tokenInput.setAttribute("name", "_token");
+    tokenInput.setAttribute("value", token);
+    postForm.appendChild(tokenInput);
+
+    document.body.appendChild(postForm);
+    postForm.submit();
+    document.body.removeChild(postForm);
+  }
 }
 
 function getRoomId(tr)
