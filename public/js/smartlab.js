@@ -827,7 +827,35 @@ function deviceDelAlert(id, devsn, tabpos, token)
   }
 }
 
-function deviceEditAlert(id, token) {
+function deviceRemoveAreaAlert(id, devsn, roomsn, token)
+{
+  if(confirm("确定要要将该设备从列表中移除?\n\n序列号="+devsn)) {
+    var postForm = document.createElement("form");
+    postForm.method="post";
+    postForm.action = "admin/devmvarea";
+
+    var tokenInput = document.createElement("input");
+    tokenInput.setAttribute("name", "_token");
+    tokenInput.setAttribute("value", token);
+    postForm.appendChild(tokenInput);
+
+    var idInput = document.createElement("input");
+    idInput.setAttribute("name", "id");
+    idInput.setAttribute("value", id);
+    postForm.appendChild(idInput);
+
+    var tabposInput = document.createElement("input");
+    tabposInput.setAttribute("name", "roomsn");
+    tabposInput.setAttribute("value", roomsn);
+
+    postForm.appendChild(tabposInput);
+    document.body.appendChild(postForm);
+    postForm.submit();
+    document.body.removeChild(postForm);
+  }
+}
+
+function deviceEditAlert(id, token, roomsn = null) {
 	var postForm = document.createElement("form");
 	postForm.method="post";
 	postForm.action = "admin/devedit";
@@ -861,6 +889,14 @@ function deviceEditAlert(id, token) {
 	ownerInput.setAttribute("name", "owner");
 	ownerInput.setAttribute("value", $("#devowner"+id).val());
 	postForm.appendChild(ownerInput);
+
+	if(roomsn != null)
+	{
+		var roomsnInput = document.createElement("input");
+		roomsnInput.setAttribute("name", "roomsn");
+		roomsnInput.setAttribute("value", roomsn);
+		postForm.appendChild(roomsnInput);
+	}
 
 	document.body.appendChild(postForm);
 	postForm.submit();

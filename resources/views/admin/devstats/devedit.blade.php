@@ -100,7 +100,11 @@
     </table>
   @endfor
   <div class="nav navbar-nav navbar-right">
+  @if(isset($_GET['roomsn']))
+    <a href="javascript:deviceEditAlert('{{ $devices[0]->id }}','{{ csrf_token() }}', '{{ $_GET['roomsn'] }}');" class="btn btn-info" role="button">执行</a>
+  @else
     <a href="javascript:deviceEditAlert('{{ $devices[0]->id }}','{{ csrf_token() }}');" class="btn btn-info" role="button">执行</a>
+  @endif
   </div>
 </div>
 @endsection

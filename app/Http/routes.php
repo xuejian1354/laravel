@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/gwdel', 'AdminController@gwdel');
 	Route::post('/gwedit', 'AdminController@gwedit');
 	Route::post('/devdel', 'AdminController@devdel');
+	Route::post('/devmvarea', 'AdminController@devmvarea');
 	Route::post('/devedit', 'AdminController@devedit');
 	Route::post('/roomedt', 'AdminController@roomedt');
 	Route::post('/roomdel', 'AdminController@roomdel');

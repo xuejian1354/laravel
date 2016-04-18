@@ -98,7 +98,7 @@ class AdminController extends Controller {
 				array_push($roomnames, $room->name);
 			}
 			sort($roomnames);
-			
+
 			$cycles = Cycle::all();
 			$cyclestr = array();
 			foreach ($cycles as $cycle)
@@ -106,7 +106,7 @@ class AdminController extends Controller {
 				array_push($cyclestr, $cycle->val);
 			}
 			//sort($cyclestr);
-			
+
 			$termstr = array();
 			foreach (Term::all() as $term)
 			{
@@ -139,8 +139,70 @@ class AdminController extends Controller {
 					->withNmenus($nmenus)
 					->withAmenu($amenu);
 		}
-		else if($amenu->action == "roomstats" || $amenu->action == "roomimport")
+		else if($amenu->action == "roomstats"
+					|| $amenu->action == "roomctrl"
+					|| $amenu->action == "roomimport")
 		{
+			if($amenu['caction'] == 'opt')
+			{
+				if(isset($_GET['roomsn']))
+				{
+					$room = DB::table('rooms')->where('sn', Input::get('roomsn'))->get();
+					if(count($room) > 0)
+					{
+						$devices = Device::all();
+						$devtypes = Devtype::all();
+						$devcmds = Controller::getDevCmds();
+						$devargs = array();
+
+						foreach ($devices as $device)
+						{
+							foreach ($devcmds as $devcmd)
+							{
+								if($device->dev_type == $devcmd->dev_type)
+								{
+									$device['iscmdfound'] = 1;
+									goto devcmdfoundend;
+								}
+							}
+							$device['iscmdfound'] = 0;
+							devcmdfoundend:;
+
+							foreach($devtypes as $devtype)
+							{
+								if ($device->dev_type == $devtype->devtype)
+								{
+									$device['devtypename'] = $devtype->val;
+								}
+							}
+
+							if($device->area == $room[0]->name)
+							{
+								array_push($devargs, $device);
+							}
+						}
+
+						if(count($devargs) > 0)
+						{
+							return view('admin.admin')
+										->withRoom($room[0])
+										->withGlobalvals(Controller::getGlobalvals())
+										->withDevcmds($devcmds)
+										->withDevices($devargs)
+										->withMenus($menus)
+										->withNmenus($nmenus)
+										->withAmenu($amenu);
+						}
+						else
+						{
+							return '<script type="text/javascript">window.location.replace("/admin?action=roomctrl");alert("该教室中没有设备");</script>';
+						}
+					}
+				}
+
+				return $this->backView('未找到教室');
+			}
+
 			$rooms = Room::all();
 			foreach ($rooms as $room)
 			{
@@ -171,7 +233,7 @@ class AdminController extends Controller {
 					$room->statusstr = '未使用(0)';
 				}
 			}
-			
+
 			$roomtypestr = array();
 			foreach(Roomtype::all() as $roomtype)
 			{
@@ -185,7 +247,7 @@ class AdminController extends Controller {
 				array_push($roomaddrstr, $roomaddr->val.'('.$roomaddr->roomaddr.')');
 			}
 			//sort($roomaddrstr);
-			
+
 			$userstr = array();
 			$ownerstr = array();
 			foreach(User::all() as $user)
@@ -258,7 +320,10 @@ class AdminController extends Controller {
 					}
 				}
 
-				if($amenu['caction'] == 'devedit' && isset($_GET['id']) && $device->id != Input::get('id'))
+				if(($amenu['caction'] == 'devedit'
+						&& isset($_GET['id']) && $device->id != Input::get('id'))
+					|| ($amenu['caction'] == 'async'
+						&& isset($_GET['area']) && $device->area != Input::get('area')))
 				{}
 				else
 				{
@@ -268,15 +333,22 @@ class AdminController extends Controller {
 
 			if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 			{
+				$room = null;
 				if($amenu['caction'] == 'async')
 				{
 					$async = 'admin.devstats.gwasync';
 					if(Input::get('tabpos') == 1)
 					{
 						$async = 'admin.devstats.devasync';
+						if(isset($_GET['area']))
+						{
+							$room = DB::table('rooms')->where('name', Input::get('area'))->get();
+							$async = 'admin.roomctrl.devasync';
+						}
 					}
 
 					return view($async)
+								->withRoom($room[0])
 								->withGlobalvals(Controller::getGlobalvals())
 								->withDevcmds($devcmds)
 								->withMenus($menus)
@@ -439,6 +511,15 @@ class AdminController extends Controller {
 		return redirect("admin?action=devstats&tabpos=".Input::get('tabpos'));
 	}
 
+	public function devmvarea()
+	{
+		$device = Device::find(Input::get('id'));
+		$device->area = '未设置';
+		$device->save();
+
+		return redirect("admin?action=roomctrl/opt&roomsn=".Input::get('roomsn'));
+	}
+
 	public function devedit()
 	{
 		$device = Device::find(Input::get('id'));
@@ -452,7 +533,20 @@ class AdminController extends Controller {
 		$device->owner = Input::get('owner');
 		$device->save();
 
-		return redirect("admin?action=devstats&tabpos=1");
+		$roomsn = Input::get('roomsn');
+		if($roomsn == null )
+		{
+			return redirect("admin?action=devstats&tabpos=1");
+		}
+		else
+		{
+			$room = DB::table('rooms')->where('name', $area)->get();
+			if(count($room) > 0)
+			{
+				$roomsn = $room[0]->sn; 
+			}
+			return redirect("admin?action=roomctrl/opt&roomsn=".$roomsn);
+		}
 	}
 	
 	public function roomedt()
@@ -624,4 +718,10 @@ class AdminController extends Controller {
 
 		return redirect("admin?action=courselist");
 	}
+
+	public static function backView($info = 'Error')
+	{
+		return '<script type="text/javascript">history.back(-1);alert("'.$info.'");</script>';
+	}
+
 }

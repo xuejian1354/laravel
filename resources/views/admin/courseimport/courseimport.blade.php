@@ -70,4 +70,13 @@
     </table>
   </div>
 </div>
+<script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
+<script type="text/javascript">
+        laydate({
+            elem: '#caddtime',
+            format: 'YYYY年MM月DD日( hh:mm )',
+            istime: true,
+            istoday: false,
+        });
+</script>
 @endsection
