@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 
 use App\Model\DBStatic\Globalval;
 use App\Model\DBStatic\Devtype;
 use App\Model\DBStatic\Devcmd;
+use App\Http\Controllers\Academy\AcademyController;
 
 abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    
+
+	public function getGrades()
+	{
+		return $this->grades;
+	}
+
     public function getGlobalvals()
     {
     	$dbvals = Globalval::all();
@@ -23,7 +32,7 @@ abstract class Controller extends BaseController
     	{
     		$globalvals[$dbval->name] = $dbval->fieldval;
     	}
-    	
+
     	return $globalvals;
     }
 
@@ -53,4 +62,24 @@ abstract class Controller extends BaseController
 
     	return $devcmds;
     }
+
+    public function getUserView($view = null, $data = [], $mergeData = [])
+    {
+		$isMatch = false;
+		foreach ($this->getGrades() as $grade)
+		{
+			if($grade == Auth::user()->grade)
+			{
+				$isMatch = true;
+				break;
+			}
+		}
+
+		if($isMatch == false)
+		{
+			return view('errors.permitts');
+		}
+
+		return view($view, $data, $mergeData);
+	}
 }

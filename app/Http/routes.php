@@ -16,16 +16,43 @@ Route::group(['domain' => 'home.loongsmart.com'], function()
         Route::get('/', 'WelcomeController@home');
 });
 
-Route::group(['domain' => 'school.loongsmart.com'], function()
-{
-        Route::get('/', 'WelcomeController@school');
-});
-
 Route::get('/', 'WelcomeController@index');
 
 Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
 {
 	Route::get('/', 'HomeController@index');
+	Route::get('/news', 'HomeController@index');
+	Route::get('/tactive', 'HomeController@tactive');
+	Route::get('/sactive', 'HomeController@sactive');
+});
+
+Route::group(['prefix' => 'academy', 'namespace' => 'Academy'], function()
+{
+	Route::get('/', 'AcademyController@index');
+	Route::get('/info', 'AcademyController@index');
+	Route::get('/team', 'AcademyController@index');
+});
+
+Route::group(['prefix' => 'classgrade', 'namespace' => 'Classgrade'], function()
+{
+	Route::get('/', 'ClassgradeController@index');
+	Route::get('/info', 'ClassgradeController@index');
+	Route::get('/details', 'ClassgradeController@index');
+});
+
+Route::group(['prefix' => 'report', 'namespace' => 'Report'], function()
+{
+	Route::get('/', 'ReportController@index');
+	Route::get('/check', 'ReportController@index');
+	Route::get('/work', 'ReportController@index');
+});
+
+Route::group(['prefix' => 'service', 'namespace' => 'Service'], function()
+{
+	Route::get('/', 'ServiceController@index');
+	Route::get('/email', 'ServiceController@index');
+	Route::get('/file', 'ServiceController@index');
+	Route::get('/note', 'ServiceController@index');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()

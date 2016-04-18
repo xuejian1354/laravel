@@ -101,6 +101,14 @@ h6, .h6 {
 	background-color: #eeeeee;
 }
 
+.dropdown-link .dropdown-menu {
+	display: none;
+}
+
+.dropdown-link:hover .dropdown-menu {
+	display: block;
+}
+
 @media (max-width: 768px) {
 	.smartlab-nav  .dropdown:hover .dropdown-auto {
 		display: block;

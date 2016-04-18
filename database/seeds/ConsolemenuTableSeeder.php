@@ -26,5 +26,6 @@ class ConsolemenuTableSeeder extends Seeder
         Consolemenu::create(['mmenu' => '课程', 'cmenu' => '导入', 'action' => 'courseimport']);
         Consolemenu::create(['mmenu' => '用户', 'cmenu' => '管理', 'action' => 'usermanage']);
         Consolemenu::create(['mmenu' => '用户', 'cmenu' => '信息', 'action' => 'userinfo']);
+        Consolemenu::create(['mmenu' => '用户', 'cmenu' => '功能', 'action' => 'useropt']);
     }
 }

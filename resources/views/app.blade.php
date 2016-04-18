@@ -39,7 +39,48 @@
         </ul>
 	  @else
         <ul class="nav navbar-nav homenav-bar">
-	      <li><a href="{{ url('/') }}">Home</a></li>
+	      <li class="dropdown-link"><a href="{{ url('/home') }}">Home</a>
+	        <ul class="dropdown-menu">
+	          <li><a href="{{ url('/home/news') }}">News</a></li>
+	          @if(Auth::user()->grade <= 2)
+	            <li><a href="{{ url('/home/tactive') }}">Teacher Activities</a></li>
+	          @endif
+	          @if(Auth::user()->grade == 1 || Auth::user()->grade == 3)
+	            <li><a href="{{ url('/home/sactive') }}">Student Activities</a></li>
+	          @endif
+	        </ul>
+	      </li>
+	      @if(Auth::user()->grade <= 2)
+	        <li class="dropdown-link"><a href="{{ url('/academy') }}">Academy</a>
+	          <ul class="dropdown-menu">
+	            <li><a href="{{ url('/academy/info') }}">Info Manager</a></li>
+	            <li><a href="{{ url('/academy/team') }}">Teacher Teams</a></li>
+	          </ul>
+	        </li>
+	      @endif
+	      @if(Auth::user()->grade == 1 || Auth::user()->grade == 3)
+	        <li class="dropdown-link"><a href="{{ url('/classgrade') }}">Class</a>
+	          <ul class="dropdown-menu">
+	            <li><a href="{{ url('/classgrade/info') }}">Class Info</a></li>
+	            <li><a href="{{ url('/classgrade/details') }}">Student Details</a></li>
+	          </ul>
+	        </li>
+	      @endif
+	      @if(Auth::user()->grade <= 3)
+	        <li class="dropdown-link"><a href="{{ url('/report') }}">Report</a>
+	          <ul class="dropdown-menu">
+	            <li><a href="{{ url('/report/check') }}">Check Records</a></li>
+	            <li><a href="{{ url('/report/work') }}">Report Works</a></li>
+	          </ul>
+	        </li>
+	        <li class="dropdown-link"><a href="{{ url('/service') }}">Service</a>
+	          <ul class="dropdown-menu">
+	            <li><a href="{{ url('/service/email') }}">E-Mail</a></li>
+	            <li><a href="{{ url('/service/file') }}">File</a></li>
+	            <li><a href="{{ url('/service/note') }}">Note</a></li>
+	          </ul>
+	        </li>
+	      @endif
 	    </ul>
 
 	    <ul class="nav navbar-nav navbar-right homenav-bar">

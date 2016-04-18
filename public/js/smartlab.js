@@ -585,6 +585,15 @@ function loadUserGrade(id) {
   $(".targlist"+id).removeClass("hidden");
 }
 
+function loadUser(id) {
+  loadUserGrade(id);
+
+  $(".divcontent").removeClass("active");
+  $(".divcontent").addClass("hidden");
+  $("#userdiv"+id).removeClass("hidden");
+  $("#userdiv"+id).addClass("active");
+}
+
 function loadDeviceTab(pos) {
   if(pos == 1) {	//device
     $(".nav-li-gw").removeClass("active");
