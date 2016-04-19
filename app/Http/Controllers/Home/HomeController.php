@@ -19,9 +19,11 @@ class HomeController extends Controller {
 		$this->grades = $s;
 	}
 
-	public function index()
+	public function news()
 	{
-		return $this->getUserView('home.home')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('home.news')
+						->withTitle('news')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 	public function tactive()
@@ -31,7 +33,9 @@ class HomeController extends Controller {
 			return view('errors.permitts');
 		}
 
-		return $this->getUserView('home.home')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('home.tactive')
+						->withTitle('tactive')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 	public function sactive()
@@ -41,7 +45,9 @@ class HomeController extends Controller {
 			return view('errors.permitts');
 		}
 
-		return $this->getUserView('home.home')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('home.sactive')
+						->withTitle('sactive')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

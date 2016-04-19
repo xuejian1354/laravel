@@ -13,9 +13,18 @@ class ReportController extends Controller {
 		$this->middleware('auth');
 	}
 
-	public function index()
+	public function check()
 	{
-		return $this->getUserView('report.report')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('report.check')
+						->withTitle('check')
+						->withGlobalvals(Controller::getGlobalvals());
+	}
+
+	public function work()
+	{
+		return $this->getUserView('report.work')
+						->withTitle('work')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

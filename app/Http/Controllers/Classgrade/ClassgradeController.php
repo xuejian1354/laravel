@@ -13,9 +13,18 @@ class ClassgradeController extends Controller {
 		$this->middleware('auth');
 	}
 
-	public function index()
+	public function info()
 	{
-		return $this->getUserView('classgrade.classgrade')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('classgrade.info')
+						->withTitle('info')
+						->withGlobalvals(Controller::getGlobalvals());
+	}
+
+	public function details()
+	{
+		return $this->getUserView('classgrade.details')
+						->withTitle('details')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

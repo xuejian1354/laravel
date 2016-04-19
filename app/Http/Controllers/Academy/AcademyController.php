@@ -13,9 +13,18 @@ class AcademyController extends Controller {
 		$this->middleware('auth');
 	}
 
-	public function index()
+	public function info()
 	{
-		return $this->getUserView('academy.academy')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('academy.info')
+						->withTitle('info')
+						->withGlobalvals(Controller::getGlobalvals());
+	}
+	
+	public function team()
+	{
+		return $this->getUserView('academy.team')
+						->withTitle('team')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

@@ -9,18 +9,7 @@ class WelcomeController extends Controller {
 
 	public function index()
 	{
-		$globalvals = Controller::getGlobalvals();
-		if($globalvals['title'] == 'SmartHome')
-		{
-			return view('welcome.home')->withGlobalvals(Controller::getGlobalvals());
-		}
-		elseif ($globalvals['title'] == 'SmartLab')
-		{
-			return view('welcome.school')->withGlobalvals(Controller::getGlobalvals());
-		}
-		else {
-			return 'Hello world';
-		}
+		return view('welcome.home')->withGlobalvals(Controller::getGlobalvals());
 	}
 	
 	public function home()

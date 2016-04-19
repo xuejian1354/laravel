@@ -13,9 +13,25 @@ class ServiceController extends Controller {
 		$this->middleware('auth');
 	}
 
-	public function index()
+	public function email()
 	{
-		return $this->getUserView('service.service')->withGlobalvals(Controller::getGlobalvals());
+		return $this->getUserView('service.email')
+						->withTitle('email')
+						->withGlobalvals(Controller::getGlobalvals());
+	}
+
+	public function file()
+	{
+		return $this->getUserView('service.file')
+						->withTitle('file')
+						->withGlobalvals(Controller::getGlobalvals());
+	}
+	
+	public function note()
+	{
+		return $this->getUserView('service.note')
+						->withTitle('note')
+						->withGlobalvals(Controller::getGlobalvals());
 	}
 
 }

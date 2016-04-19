@@ -100,7 +100,21 @@
       </div>
     </div>
   </nav>
-
-  @yield('content')
+  <div class="container-fluid">
+    <div class="row">
+     @if (Auth::guest())
+       <div class="container">
+        @yield('content')
+      </div>
+     @else
+      <div class="col-sm-3 col-md-2 appside">
+	    @yield('sidemenu')
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+        @yield('content')
+      </div>
+    @endif
+    </div>
+  </div>
 </body>
 </html>
