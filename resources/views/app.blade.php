@@ -90,7 +90,7 @@
 		      @if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 		        <li><a href="{{ url('/admin') }}">Console</a></li>
 		      @endif
-		      <li><a href="{{ url('#') }}">Setting</a></li>
+		      <li><a href="{{ url('/setting') }}">Setting</a></li>
 		      <li class="divider"></li>
 			  <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
 		    </ul>

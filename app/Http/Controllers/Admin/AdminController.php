@@ -430,6 +430,10 @@ class AdminController extends Controller {
 				return view('errors.permitts');
 			}
 		}
+		else if(Input::get('action') == "setting")
+		{
+			return redirect('setting');
+		}
 
 		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 		{

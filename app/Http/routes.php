@@ -55,6 +55,13 @@ Route::group(['prefix' => 'service', 'namespace' => 'Service'], function()
 	Route::get('/note', 'ServiceController@note');
 });
 
+Route::group(['prefix' => 'setting', 'namespace' => 'Setting'], function()
+{
+	Route::get('/', 'SettingController@password');
+	Route::get('/password', 'SettingController@password');
+	Route::post('/resetpass', 'SettingController@resetpass');
+});
+
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
 	Route::get('/', 'AdminController@index');
