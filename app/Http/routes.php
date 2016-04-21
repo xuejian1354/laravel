@@ -78,6 +78,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/courseedt', 'AdminController@courseedt');
 	Route::post('/coursedel', 'AdminController@coursedel');
 	Route::post('/courseadd', 'AdminController@courseadd');
+	Route::post('/addnews', 'AdminController@addnews');
+	Route::post('/newsdel', 'AdminController@newsdel');
+	Route::post('/newsedts', 'AdminController@newsedts');
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');

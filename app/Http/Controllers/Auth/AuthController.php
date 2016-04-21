@@ -57,6 +57,7 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
+        	'sn' => substr(hexdec(md5($data['email'])), 2, 8),
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),

@@ -6,8 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AcademyTableSeeder' => $baseDir . '/database/seeds/AcademyTableSeeder.php',
+    'ClassgradeTableSeeder' => $baseDir . '/database/seeds/ClassgradeTableSeeder.php',
     'ConsolemenuTableSeeder' => $baseDir . '/database/seeds/ConsolemenuTableSeeder.php',
     'CoursetypeTableSeeder' => $baseDir . '/database/seeds/CoursetypeTableSeeder.php',
+    'CreateAcademiesTable' => $baseDir . '/database/migrations/2016_04_20_114239_create_academies_table.php',
+    'CreateClassgradesTable' => $baseDir . '/database/migrations/2016_04_20_124844_create_classgrades_table.php',
     'CreateConsoleMenusTable' => $baseDir . '/database/migrations/2016_01_11_160040_create_consolemenus_table.php',
     'CreateContentreportsTable' => $baseDir . '/database/migrations/2016_01_06_155430_create_contentreports_table.php',
     'CreateCourseTypesTable' => $baseDir . '/database/migrations/2016_01_06_033220_create_coursetypes_table.php',
@@ -19,7 +23,9 @@ return array(
     'CreateGatewaysTable' => $baseDir . '/database/migrations/2015_10_27_003648_create_gateways_table.php',
     'CreateGlobalvalsTable' => $baseDir . '/database/migrations/2016_01_12_160040_create_globalvals_table.php',
     'CreateGradesTable' => $baseDir . '/database/migrations/2016_01_06_000000_create_grades_table.php',
+    'CreateIdgradesTable' => $baseDir . '/database/migrations/2016_04_20_111056_create_idgrades_table.php',
     'CreateMainreportsTable' => $baseDir . '/database/migrations/2016_01_06_155430_create_mainreports_table.php',
+    'CreateNewsTable' => $baseDir . '/database/migrations/2016_04_19_144944_create_news_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreatePrivilegesTable' => $baseDir . '/database/migrations/2016_01_06_000000_create_privileges_table.php',
     'CreateRoomAddrsTable' => $baseDir . '/database/migrations/2016_04_10_154544_create_roomaddrs_table.php',
@@ -104,6 +110,7 @@ return array(
     'Hamcrest\\Type\\IsString' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Type/IsString.php',
     'Hamcrest\\Util' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Util.php',
     'Hamcrest\\Xml\\HasXPath' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Xml/HasXPath.php',
+    'IdgradeTableSeeder' => $baseDir . '/database/seeds/IdgradeTableSeeder.php',
     'IlluminateQueueClosure' => $vendorDir . '/laravel/framework/src/Illuminate/Queue/IlluminateQueueClosure.php',
     'Maatwebsite\\Excel\\Classes\\Cache' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Classes/Cache.php',
     'Maatwebsite\\Excel\\Classes\\FormatIdentifier' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Classes/FormatIdentifier.php',
@@ -132,6 +139,7 @@ return array(
     'Maatwebsite\\Excel\\Readers\\LaravelExcelReader' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Readers/LaravelExcelReader.php',
     'Maatwebsite\\Excel\\Writers\\CellWriter' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/CellWriter.php',
     'Maatwebsite\\Excel\\Writers\\LaravelExcelWriter' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/LaravelExcelWriter.php',
+    'NewsTableSeeder' => $baseDir . '/database/seeds/NewsTableSeeder.php',
     'PHPUnit_Exception' => $vendorDir . '/phpunit/phpunit/src/Exception.php',
     'PHPUnit_Extensions_GroupTestSuite' => $vendorDir . '/phpunit/phpunit/src/Extensions/GroupTestSuite.php',
     'PHPUnit_Extensions_PhptTestCase' => $vendorDir . '/phpunit/phpunit/src/Extensions/PhptTestCase.php',

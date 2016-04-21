@@ -298,6 +298,69 @@ $(document).ready(function() {
 		}
 	  }
   });
+  
+  $(".newscheckall").click(function() {
+
+	  if($(this).prop('checked'))
+	  {
+		  $(".newscheck").prop('checked', true);
+	  }
+	  else
+	  {
+		  $(".newscheck").prop('checked', false);
+	  }
+
+	  $(".newscheck").trigger("newsEdtEvent");
+  });
+
+  $(".newscheck").click(function() {
+	  $(this).trigger("newsEdtEvent");
+  });
+
+  $(".newscheck").bind("newsEdtEvent", function() {
+
+	  if($(this).prop('checked'))
+	  {
+		if($('.newscheckall').prop('checked') == false)
+		{
+			var isAllSet = true;
+			$('.newscheck').each(function(){
+				if($(this).prop('checked') == false)
+				{
+					isAllSet = false;
+				}
+			});
+
+			if(isAllSet)
+			{
+				$('.newscheckall').prop('checked', true);
+			}
+		}
+
+		$('.newsedt').removeClass('hidden');
+
+	  }
+	  else
+	  {
+	    if($('.newscheckall').prop('checked'))
+		{
+		  $('.newscheckall').prop('checked', false);
+		}
+
+	    var isDisappear = true;
+	    $('.newscheck').each(function(){
+	    	if($(this).prop('checked'))
+	    	{
+	    		isDisappear = false;
+	    	}
+	    });
+
+	    if(isDisappear)
+	    {
+	    	$('.newsedt').addClass('hidden');
+	    }
+	  }
+  });
 })
 
 function setSelectXml(target, jstr)
@@ -407,6 +470,33 @@ function courseDelAlert(token) {
 	});
 	
 	dataPost('/admin/coursedel', JSON.stringify(data), token, '确定要删除选中课程?');
+}
+
+function newsEdtWin(token) {
+	var data = new Array();
+
+	$('.newscheck').each(function(){
+		if($(this).prop('checked'))
+		{
+			data.push($(this).attr('eleid'));
+		}
+	});
+
+	var codedata = encodeURI(JSON.stringify(data));
+	loadContent('noticebody', '/admin?action=userinfo/newsedts&data=' + codedata);
+}
+
+function newsDelAlert(token) {
+	var data = new Array();
+
+	$('.newscheck').each(function(){
+		if($(this).prop('checked'))
+		{
+			data.push($(this).attr('eleid'));
+		}
+	});
+	
+	dataPost('/admin/newsdel', JSON.stringify(data), token, '确定要删除所选公告?');
 }
 
 function roomAddAlert(token) {
@@ -607,6 +697,30 @@ function loadDeviceTab(pos) {
     $(".nav-li-gw").addClass("active");
     $(".table-gw").removeClass("hidden");
   }
+}
+
+function loadContent(bodyid, url) {
+  var xmlhttp;
+
+  if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+  }
+  else
+  {// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      document.getElementById(bodyid).innerHTML=xmlhttp.responseText;
+    }
+  }
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
 }
 
 function loadDeviceContent(pos) {
@@ -1000,4 +1114,129 @@ function deviceOptAdd(token) {
 
 	xmlhttp.open("POST", "/admin/devoptadd?_token="+token+"&devtype="+devtype+"&action="+action+"&data="+data, true);
 	xmlhttp.send(null);
+}
+
+function newsAllowChange(id = 0){
+  if(id > 0)
+  {
+	  var newsallowspan = $('#newsallowspan'+id); 
+	  var newsallowinput = $('#newsallowinput'+id);
+	  var addstr = $('#newsallowgrade'+id).val();
+	  newsallowspan.text('');
+
+	  $('.nallow'+id).addClass('hidden');
+
+	  if( $('#newsallowgrade'+id).val() == '全校')
+	  {
+	    newsallowspan.text(addstr);
+	    newsallowinput.val(addstr);
+	  }
+	  else if( $('#newsallowgrade'+id).val() == '院系')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowacademy'+id).val());
+	    newsallowinput.val($('#newsallowacademy'+id).val());
+	    $('.nallowacdemy'+id).removeClass('hidden');
+	  }
+	  else if( $('#newsallowgrade'+id).val() == '专业'
+	    || $('#newsallowgrade'+id).val() == '班级')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowclassgrade'+id).val());
+	    newsallowinput.val($('#newsallowclassgrade'+id).val());
+	    $('.nallowclassgrade'+id).removeClass('hidden');
+	  }
+	  else if( $('#newsallowgrade'+id).val() == '指定用户')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowuser'+id).val());
+	    newsallowinput.val($('#newsallowuser'+id).val());
+	    $('.nallowuser'+id).removeClass('hidden');
+	  }
+  }
+  else
+  {
+	  var newsallowspan = $('#newsallowspan'); 
+	  var newsallowinput = $('#newsallowinput');
+	  var addstr = $('#newsallowgrade').val();
+	  newsallowspan.text('');
+	
+	  $('.nallow').addClass('hidden');
+	
+	  if( $('#newsallowgrade').val() == '全校')
+	  {
+	    newsallowspan.text(addstr);
+	    newsallowinput.val(addstr);
+	  }
+	  else if( $('#newsallowgrade').val() == '院系')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowacademy').val());
+	    newsallowinput.val($('#newsallowacademy').val());
+	    $('.nallowacdemy').removeClass('hidden');
+	  }
+	  else if( $('#newsallowgrade').val() == '专业'
+	    || $('#newsallowgrade').val() == '班级')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowclassgrade').val());
+	    newsallowinput.val($('#newsallowclassgrade').val());
+	    $('.nallowclassgrade').removeClass('hidden');
+	  }
+	  else if( $('#newsallowgrade').val() == '指定用户')
+	  {
+	    newsallowspan.text(addstr + ',' + $('#newsallowuser').val());
+	    newsallowinput.val($('#newsallowuser').val());
+	    $('.nallowuser').removeClass('hidden');
+	  }
+  }
+}
+
+function newsAllowSelect(i,  id = 0)
+{
+	if(id > 0)
+	{
+		var newsallowspan = $('#newsallowspan' + id);
+		var newsallowinput = $('#newsallowinput' + id);
+		var addstr = $('#newsallowgrade' + id).val();
+		var extstr = addstr;
+	
+		switch(i)
+		{
+		case 1:
+			extstr = $('#newsallowacademy' + id).val();
+			break;
+	
+		case 2:
+			extstr = $('#newsallowclassgrade' + id).val();
+			break;
+	
+		case 3:
+			extstr = $('#newsallowuser' + id).val();
+			break;
+		}
+	
+		newsallowspan.text(addstr + ',' + extstr);
+		newsallowinput.val(extstr);
+	}
+	else
+	{
+		var newsallowspan = $('#newsallowspan');
+		var newsallowinput = $('#newsallowinput');
+		var addstr = $('#newsallowgrade').val();
+		var extstr = addstr;
+	
+		switch(i)
+		{
+		case 1:
+			extstr = $('#newsallowacademy').val();
+			break;
+	
+		case 2:
+			extstr = $('#newsallowclassgrade').val();
+			break;
+	
+		case 3:
+			extstr = $('#newsallowuser').val();
+			break;
+		}
+	
+		newsallowspan.text(addstr + ',' + extstr);
+		newsallowinput.val(extstr);
+	}
 }

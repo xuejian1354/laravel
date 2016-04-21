@@ -7,16 +7,16 @@
     <li role="presentation" class="nav-li nav-li3"><a href="javascript:loadUser(3);">班级</a></li>
     <li role="presentation" class="nav-li nav-li4"><a href="javascript:loadUser(4);">报告</a></li>
   </ul>
-  <div id="userdiv1" class="divcontent">
+  <div id="userdiv1" class="divcontent hidden">
     @include('admin.userinfo.notice')
   </div>
-  <div id="userdiv2" class="divcontent">
+  <div id="userdiv2" class="divcontent hidden">
     @include('admin.userinfo.academy')
   </div>
-  <div id="userdiv3" class="divcontent">
+  <div id="userdiv3" class="divcontent hidden">
     @include('admin.userinfo.classgrade')
   </div>
-  <div id="userdiv4" class="divcontent">
+  <div id="userdiv4" class="divcontent hidden">
     @include('admin.userinfo.report')
   </div>
 </div>

@@ -1,19 +1,36 @@
-<br><h3>1. 公告</h3>
-<br><h4>1.1 重要通知</h4>
-<br><h4>1.2 教师活动</h4>
-<br><h4>1.3 学生活动</h4>
-<br><h3>2. 院系</h3>
-<br><h4>2.1 信息管理</h4>
-<br><h4>2.1 教师团队</h4>
-<br><h3>3. 班级</h3>
-<br><h4>3.1 班级概况</h4>
-<br><h4>3.1 学生资料</h4>
-<br><h3>4. 教室</h3>
-<br><h4>4.1 教室查询</h4>
-<br><h4>4.2 教室申请</h4>
-<br><h4>4.2 教室控制</h4>
-<br><h3>5. 课程</h3>
-<br><h4>5.1 课程查询</h4>
-<br><h4>5.2 考勤记录</h4>
-<br><h4>5.3 作业报告</h4>
-
+<div id="noticebody">
+<div class="table-responsive">
+  <table class="table table-striped" style="min-width: 600px;">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>标题</th>
+        <th>副标</th>
+        <th>发布者</th>
+        <th>允许访问</th>
+        <th>创建时间</th>
+        <th><a href="javascript:loadContent('noticebody', 'admin?action=userinfo/addnews');">添加</a></th>
+        <th><input type="checkbox" class="newscheckall"></th>
+      </tr>
+    </thead>
+    <tbody id="newstbody">
+    @for($index=0; $index < count($news); $index++)
+      <tr>
+        <td>{{ $index+1 }}</td>
+        <td>{{ $news[$index]->title }}</td>
+        <td>{{ $news[$index]->subtitle }}</td>
+        <td>{{ $news[$index]->owner }}</td>
+        <td>{{ $news[$index]->allowgradestr }}</td>
+        <td>{{ $news[$index]->updated_at }}</td>
+        <td><a href="javascript:loadContent('noticebody', 'admin?action=userinfo/newscontent&id={{ $news[$index]->id }}');">查看</a></td>
+        <th><input type="checkbox" class="newscheck" eleid="{{ $news[$index]->id }}"></th>
+      </tr>
+    @endfor
+    </tbody>
+  </table>
+  <div class="newsedt hidden" style="float: right;">
+    <a href="javascript:newsEdtWin('{{ csrf_token() }}');" class="btn btn-primary" role="button">修改</a>
+    <a href="javascript:newsDelAlert('{{ csrf_token() }}');" class="btn btn-danger" role="button">删除</a>
+  </div>
+</div>
+</div>

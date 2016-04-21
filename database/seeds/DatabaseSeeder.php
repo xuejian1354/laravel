@@ -27,10 +27,15 @@ class DatabaseSeeder extends Seeder
         $this->call(GlobalvalTableSeeder::class);
         $this->call(RoomtypeTableSeeder::class);
         $this->call(TermTableSeeder::class);
+        $this->call(NewsTableSeeder::class);
+        $this->call(IdgradeTableSeeder::class);
+        $this->call(AcademyTableSeeder::class);
+        $this->call(ClassgradeTableSeeder::class);
 
         if(count(DB::table('users')->where('email', 'root@loongsmart.com')->get()) == 0)
         {
 	        User::create([
+	        		'sn' => substr(hexdec(md5('root@loongsmart.com')), 2, 8),
 	                'name' => 'root',
 	                'email' => 'root@loongsmart.com',
 	                'password' => bcrypt('root'),
