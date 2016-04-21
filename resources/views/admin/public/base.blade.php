@@ -23,10 +23,12 @@
       </div>
       @foreach ($nmenus as $nmenu)
         <div class="nav navbar-nav dropdown">
-          @if($nmenu->mmenu == $amenu->mmenu)
-            <a class="menu disabled active" href="javascript:void(0);">{{ $nmenu->mmenu }}</a>
-          @else
-            <a class="menu disabled " href="{{ url('/admin?action='.$nmenu->action) }}">{{ $nmenu->mmenu }}</a>
+          @if($nmenu->mmenu != '设置')
+            @if($nmenu->mmenu == $amenu->mmenu)
+              <a class="menu disabled active" href="javascript:void(0);">{{ $nmenu->mmenu }}</a>
+            @else
+              <a class="menu disabled " href="{{ url('/admin?action='.$nmenu->action) }}">{{ $nmenu->mmenu }}</a>
+            @endif
           @endif
           <ul class="dropdown-menu dropdown-auto">
             @foreach ($menus as $tmenu)

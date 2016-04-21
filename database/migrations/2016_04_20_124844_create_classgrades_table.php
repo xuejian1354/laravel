@@ -18,8 +18,9 @@ class CreateClassgradesTable extends Migration {
 			$table->integer('classgrade');
 			$table->integer('academy');
 			$table->string('val');
-			$table->string('classteacher');
-			$table->string('otherteachers')->nullable();
+			$table->string('classteacher')->nullable();
+			$table->string('assistant')->nullable();
+			$table->string('leader')->nullable();
 			$table->text('text')->nullable();
             $table->timestamps();
 		});

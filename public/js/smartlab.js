@@ -361,6 +361,132 @@ $(document).ready(function() {
 	    }
 	  }
   });
+  
+  $(".academiescheckall").click(function() {
+
+	  if($(this).prop('checked'))
+	  {
+		  $(".academycheck").prop('checked', true);
+	  }
+	  else
+	  {
+		  $(".academycheck").prop('checked', false);
+	  }
+
+	  $(".academycheck").trigger("academyEdtEvent");
+  });
+
+  $(".academycheck").click(function() {
+	  $(this).trigger("academyEdtEvent");
+  });
+
+  $(".academycheck").bind("academyEdtEvent", function() {
+
+	  if($(this).prop('checked'))
+	  {
+		if($('.academiescheckall').prop('checked') == false)
+		{
+			var isAllSet = true;
+			$('.academycheck').each(function(){
+				if($(this).prop('checked') == false)
+				{
+					isAllSet = false;
+				}
+			});
+
+			if(isAllSet)
+			{
+				$('.academiescheckall').prop('checked', true);
+			}
+		}
+
+		$('.academiesedt').removeClass('hidden');
+
+	  }
+	  else
+	  {
+	    if($('.academiescheckall').prop('checked'))
+		{
+		  $('.academiescheckall').prop('checked', false);
+		}
+
+	    var isDisappear = true;
+	    $('.academycheck').each(function(){
+	    	if($(this).prop('checked'))
+	    	{
+	    		isDisappear = false;
+	    	}
+	    });
+
+	    if(isDisappear)
+	    {
+	    	$('.academiesedt').addClass('hidden');
+	    }
+	  }
+  });
+  
+  $(".classgradecheckall").click(function() {
+
+	  if($(this).prop('checked'))
+	  {
+		  $(".classgradecheck").prop('checked', true);
+	  }
+	  else
+	  {
+		  $(".classgradecheck").prop('checked', false);
+	  }
+
+	  $(".classgradecheck").trigger("classgradeEdtEvent");
+  });
+
+  $(".classgradecheck").click(function() {
+	  $(this).trigger("classgradeEdtEvent");
+  });
+
+  $(".classgradecheck").bind("classgradeEdtEvent", function() {
+
+	  if($(this).prop('checked'))
+	  {
+		if($('.classgradecheckall').prop('checked') == false)
+		{
+			var isAllSet = true;
+			$('.classgradecheck').each(function(){
+				if($(this).prop('checked') == false)
+				{
+					isAllSet = false;
+				}
+			});
+
+			if(isAllSet)
+			{
+				$('.classgradecheckall').prop('checked', true);
+			}
+		}
+
+		$('.classgradeedt').removeClass('hidden');
+
+	  }
+	  else
+	  {
+	    if($('.classgradecheckall').prop('checked'))
+		{
+		  $('.classgradecheckall').prop('checked', false);
+		}
+
+	    var isDisappear = true;
+	    $('.classgradecheck').each(function(){
+	    	if($(this).prop('checked'))
+	    	{
+	    		isDisappear = false;
+	    	}
+	    });
+
+	    if(isDisappear)
+	    {
+	    	$('.classgradeedt').addClass('hidden');
+	    }
+	  }
+  });
 })
 
 function setSelectXml(target, jstr)

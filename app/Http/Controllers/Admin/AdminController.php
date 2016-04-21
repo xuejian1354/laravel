@@ -30,6 +30,8 @@ use App\Model\DBStatic\Classgrade;
 
 class AdminController extends Controller {
 
+	protected  $grades = [1, 2, 3, 4];
+
 	public function __construct()
 	{
 		$this->middleware('auth');
@@ -60,10 +62,14 @@ class AdminController extends Controller {
 
 		foreach ($menus as $menu)
 		{
-			if($actions[0] == $menu->action)
+			if($actions[0] == $menu->action
+				|| ($actions[0] == 'setting' && $menu->mmenu == '设置'))
 			{
-				$amenu = $menu;
-				$amenu['caction'] = $menu->action;
+				if($amenu == "#")
+				{
+					$amenu = $menu;
+					$amenu['caction'] = $menu->action;
+				}
 			}
 			array_push($mmenus, $menu->mmenu);
 		}
@@ -546,12 +552,26 @@ class AdminController extends Controller {
 					endnews:;
 				}
 
+				$classgrades = Classgrade::all();
+				foreach ($classgrades as $classgrade)
+				{
+					foreach (Academy::all() as $academy)
+					{
+						if($academy->academy == $classgrade->academy)
+						{
+							$classgrade->academystr = $academy->val;
+						}
+					}
+				}
+
 				return view('admin.admin')
 							->withGlobalvals(Controller::getGlobalvals())
 							->withMenus($menus)
 							->withNmenus($nmenus)
 							->withAmenu($amenu)
 							->withNews($news)
+							->withAcademies(Academy::all())
+							->withClassgrades($classgrades)
 							->withGrades(Grade::all());
 			}
 			else
@@ -559,9 +579,21 @@ class AdminController extends Controller {
 				return view('errors.permitts');
 			}
 		}
-		else if(Input::get('action') == "setting")
+		else if($amenu->action == "password")
 		{
-			return redirect('setting');
+			if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
+			{
+				return view('admin.admin')
+						->withUsers(User::all())
+						->withGlobalvals(Controller::getGlobalvals())
+						->withMenus($menus)
+						->withNmenus($nmenus)
+						->withAmenu($amenu);
+			}
+			else
+			{
+				return view('errors.permitts');
+			}
 		}
 
 		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
@@ -1023,6 +1055,77 @@ class AdminController extends Controller {
 		}
 
 		return redirect("admin?action=userinfo&tabpos=0");
+	}
+
+	public function resetpass()
+	{
+		$email = Input::get('email');
+		$newpass = Input::get('new_pass');
+		$confirmpass = Input::get('confirm_pass');
+
+		if($newpass == null)
+		{
+			return redirect('admin?action=password')->withErrors('No input new password');
+		}
+	
+		if($newpass != $confirmpass)
+		{
+			return redirect('admin?action=password')->withErrors('Input new password with confirm dismatch');
+		}
+	
+		if(Auth::attempt(['email' => $email, 'password' => $newpass]))
+		{
+			return redirect('admin?action=password')->withErrors('Input different password with old');
+		}
+
+		DB::table('users')
+				->where('email', $email)
+				->update(['password' => bcrypt($newpass)]);
+
+		$amenu = "#";
+		$menus = Consolemenu::all();
+		$mmenus = array();
+
+		foreach ($menus as $menu)
+		{
+			if($menu->action == 'password')
+			{
+				if($amenu == "#")
+				{
+					$amenu = $menu;
+					$amenu['caction'] = $menu->action;
+				}
+			}
+			array_push($mmenus, $menu->mmenu);
+		}
+
+		if($amenu == "#")
+		{
+			$amenu = $menus[0];
+			$amenu['caction'] = $menus[0]->action;
+		}
+
+		$umenus = array_unique($mmenus);
+		$nmenus = array();
+		foreach($umenus as $umenu)
+		{
+			foreach ($menus as $menu)
+			{
+				if ($umenu == $menu->mmenu)
+				{
+					array_push($nmenus, $menu);
+					break;
+				}
+			}
+		}
+
+		return $this->getUserView('admin.admin')
+							->withUsers(User::all())
+							->withGlobalvals(Controller::getGlobalvals())
+							->withMenus($menus)
+							->withNmenus($nmenus)
+							->withAmenu($amenu)
+							->withInfo('Reset password success !');
 	}
 
 	public static function backView($info = 'Error')
