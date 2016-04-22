@@ -625,6 +625,32 @@ function newsDelAlert(token) {
 	dataPost('/admin/newsdel', JSON.stringify(data), token, '确定要删除所选公告?');
 }
 
+function academiesDelAlert(token) {
+	var data = new Array();
+
+	$('.academycheck').each(function(){
+		if($(this).prop('checked'))
+		{
+			data.push($(this).attr('eleid'));
+		}
+	});
+	
+	dataPost('/admin/academydel', JSON.stringify(data), token, '确定要删除所选学院?');
+}
+
+function classgradeDelAlert(token) {
+	var data = new Array();
+
+	$('.classgradecheck').each(function(){
+		if($(this).prop('checked'))
+		{
+			data.push($(this).attr('eleid'));
+		}
+	});
+	
+	dataPost('/admin/classgradedel', JSON.stringify(data), token, '确定要删除所选班级?');
+}
+
 function roomAddAlert(token) {
 
 	var tobj = new Object(); 
@@ -1364,5 +1390,32 @@ function newsAllowSelect(i,  id = 0)
 	
 		newsallowspan.text(addstr + ',' + extstr);
 		newsallowinput.val(extstr);
+	}
+}
+
+function otherTeachersChange() {
+	var tval = $('#otherteacher').val();
+
+	var ospan = $('#otherteacherspan');
+	var oinput = $('#otherteachersinput');
+
+	if(tval == '清除...')
+	{
+		ospan.text('');
+		oinput.val('');
+	}
+	else if(!ospan.text().match(tval))
+	{
+		var res;
+		if(ospan.text() != '')
+		{
+			res = ospan.text() + ', ' + tval;
+		}
+		else
+		{
+			res = tval;
+		}
+		ospan.text(res);
+		oinput.val(res);
 	}
 }

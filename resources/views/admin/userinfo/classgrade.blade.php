@@ -11,7 +11,7 @@
         <th>班长</th>
         <th>说明</th>
         <th>创建时间</th>
-        <th><a href="javascript:loadContent('classgradebody', 'admin?action=userinfo/addclassgradebody');">添加</a></th>
+        <th><a href="javascript:loadContent('classgradebody', 'admin?action=userinfo/addclassgrade');">添加</a></th>
         <th><input type="checkbox" class="classgradecheckall"></th>
       </tr>
     </thead>

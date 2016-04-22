@@ -82,6 +82,12 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/newsdel', 'AdminController@newsdel');
 	Route::post('/newsedts', 'AdminController@newsedts');
 	Route::post('/resetpass', 'AdminController@resetpass');
+	Route::post('/academydel', 'AdminController@academydel');
+	Route::post('/addacademy', 'AdminController@addacademy');
+	Route::post('/academyedt', 'AdminController@academyedt');
+	Route::post('/classgradedel', 'AdminController@classgradedel');
+	Route::post('/addclassgrade', 'AdminController@addclassgrade');
+	Route::post('/classgradeedt', 'AdminController@classgradeedt');
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');

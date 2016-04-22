@@ -535,6 +535,34 @@ class AdminController extends Controller {
 								->withEleids(json_encode($eleIds))
 								->withNews($news);
 				}
+				else if($amenu['caction'] == 'addacademy')
+				{
+					$users = DB::select('SELECT * FROM users where grade<=\'2\'');
+					return view('admin.userinfo.addacademy')
+								->withUsers($users);
+				}
+				else if($amenu['caction'] == 'academyedt')
+				{
+					$academy = Academy::find(Input::get('id'));
+					$users = DB::select('SELECT * FROM users where grade<=\'2\'');
+					return view('admin.userinfo.academyedt')
+								->withAcademy($academy)
+								->withUsers($users);
+				}
+				else if($amenu['caction'] == 'addclassgrade')
+				{
+					return view('admin.userinfo.addclassgrade')
+								->withAcademies(Academy::all())
+								->withUsers(User::all());
+				}
+				else if($amenu['caction'] == 'classgradeedt')
+				{
+					$classgrade = Classgrade::find(Input::get('id'));
+					return view('admin.userinfo.classgradeedt')
+								->withClassgrade($classgrade)
+								->withAcademies(Academy::all())
+								->withUsers(User::all());
+				}
 
 				//$news = News::all();
 				$news = DB::select('SELECT * FROM news ORDER BY updated_at DESC');
@@ -1055,6 +1083,214 @@ class AdminController extends Controller {
 		}
 
 		return redirect("admin?action=userinfo&tabpos=0");
+	}
+
+	public function academydel(){
+		$data = json_decode(Input::get('data'));
+		foreach ($data as $id)
+		{
+			Academy::find($id)->delete();
+		}
+
+		return redirect("admin?action=userinfo&tabpos=1");
+	}
+
+	public function addacademy()
+	{
+		$content = array();
+		$val = Input::get('val');
+		if($val == null)
+		{
+			return $this->backView("学院不能为空");
+		}
+	
+		$academyId = 1;
+		foreach(Academy::all() as $academy)
+		{
+			$academyId = max([$academyId, $academy->academy]);
+		}
+		$academyId++;
+
+		$content['academy'] = $academyId;
+		$content['val'] = $val;
+	
+		$academyteacher = Input::get('academyteacher');
+		if($academyteacher != null)
+		{
+			$content['academyteacher'] = $academyteacher;
+		}
+
+		$otherteachers = Input::get('otherteachers');
+		if($otherteachers != null)
+		{
+			$content['otherteachers'] = $otherteachers;
+		}
+
+		$text = Input::get('text');
+		if($text != null)
+		{
+			$content['text'] = $text;
+		}
+
+		Academy::create($content);
+
+		return redirect("admin?action=userinfo&tabpos=1");
+	}
+
+	public function academyedt()
+	{
+		$academy = Academy::find(Input::get('id'));
+
+		$val = Input::get('val');
+		if($val != null)
+		{
+			$academy->val = $val;
+		}
+
+		$academyteacher = Input::get('academyteacher');
+		if($academyteacher != null)
+		{
+			$academy->academyteacher = $academyteacher;
+		}
+	
+		$otherteachers = Input::get('otherteachers');
+		if($otherteachers != null)
+		{
+			$academy->otherteachers = $otherteachers;
+		}
+	
+		$text = Input::get('text');
+		if($text != null)
+		{
+			$academy->text = $text;
+		}
+	
+		$academy->save();
+	
+		return redirect("admin?action=userinfo&tabpos=1");
+	}
+
+	public function classgradedel(){
+		$data = json_decode(Input::get('data'));
+		foreach ($data as $id)
+		{
+			Classgrade::find($id)->delete();
+		}
+
+		return redirect("admin?action=userinfo&tabpos=2");
+	}
+
+	public function addclassgrade()
+	{
+		$content = array();
+		$val = Input::get('val');
+		if($val == null)
+		{
+			return $this->backView("班级不能为空");
+		}
+	
+		$classgradeId = 1;
+		foreach(Classgrade::all() as $classgrade)
+		{
+			$classgradeId = max([$classgradeId, $classgrade->classgrade]);
+		}
+		$classgradeId++;
+	
+		$content['classgrade'] = $classgradeId;
+		$content['val'] = $val;
+	
+		$ga = Input::get('academy');
+		if($ga != null)
+		{
+			foreach (Academy::all() as $academy)
+			{
+				if($academy->val == $ga)
+				{
+					$content['academy'] = $academy->academy;
+					break;
+				}
+			}
+		}
+	
+		$classteacher = Input::get('classteacher');
+		if($classteacher != null)
+		{
+			$content['classteacher'] = $classteacher;
+		}
+
+		$assistant = Input::get('assistant');
+		if($assistant != null)
+		{
+			$content['assistant'] = $assistant;
+		}
+
+		$leader = Input::get('leader');
+		if($leader != null)
+		{
+			$content['leader'] = $leader;
+		}
+	
+		$text = Input::get('text');
+		if($text != null)
+		{
+			$content['text'] = $text;
+		}
+	
+		Classgrade::create($content);
+	
+		return redirect("admin?action=userinfo&tabpos=2");
+	}
+
+	public function classgradeedt()
+	{
+		$classgrade = Classgrade::find(Input::get('id'));
+
+		$val = Input::get('val');
+		if($val != null)
+		{
+			$classgrade->val = $val;
+		}
+
+		$ga = Input::get('academy');
+		if($ga != null)
+		{
+			foreach (Academy::all() as $academy)
+			{
+				if($academy->val == $ga)
+				{
+					$classgrade->academy = $academy->academy;
+					break;
+				}
+			}
+		}
+	
+		$classteacher = Input::get('classteacher');
+		if($classteacher != null)
+		{
+			$classgrade->classteacher = $classteacher;
+		}
+	
+		$assistant = Input::get('assistant');
+		if($assistant != null)
+		{
+			$classgrade->assistant = $assistant;
+		}
+	
+		$leader = Input::get('leader');
+		if($leader != null)
+		{
+			$classgrade->leader = $leader;
+		}
+	
+		$text = Input::get('text');
+		if($text != null)
+		{
+			$classgrade->text = $text;
+		}
+	
+		$classgrade->save();
+	
+		return redirect("admin?action=userinfo&tabpos=2");
 	}
 
 	public function resetpass()

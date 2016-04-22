@@ -19,7 +19,7 @@
         <td>{{ $academies[$index]->academy }}</td>
         <td>{{ $academies[$index]->val }}</td>
         <td>{{ $academies[$index]->academyteacher }}</td>
-        <td>{{ $academies[$index]->otherteacher }}</td>
+        <td>{{ $academies[$index]->otherteachers }}</td>
         <td>{{ $academies[$index]->text }}</td>
         <td>{{ $academies[$index]->updated_at }}</td>
         <td><a href="javascript:loadContent('academybody', 'admin?action=userinfo/academyedt&id={{ $academies[$index]->id }}');">修改</a></td>
