@@ -34,6 +34,7 @@ class ConsolemenuTableSeeder extends Seeder
         Consolemenu::create(['mmenu' => '功能', 'cmenu' => '考试安排', 'action' => 'userexam']);
         Consolemenu::create(['mmenu' => '功能', 'cmenu' => '成绩查询', 'action' => 'userscore']);
         Consolemenu::create(['mmenu' => '功能', 'cmenu' => '个人资料', 'action' => 'userdetails']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '操作记录', 'action' => 'userrecord']);
         Consolemenu::create(['mmenu' => '设置', 'cmenu' => '密码', 'action' => 'password']);
         Consolemenu::create(['mmenu' => '设置', 'cmenu' => '关于', 'action' => 'about']);
     }

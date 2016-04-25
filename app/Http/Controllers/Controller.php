@@ -24,7 +24,7 @@ abstract class Controller extends BaseController
 		return $this->grades;
 	}
 
-    public function getGlobalvals()
+    public static function getGlobalvals()
     {
     	$dbvals = Globalval::all();
     	$globalvals = array();
@@ -36,7 +36,7 @@ abstract class Controller extends BaseController
     	return $globalvals;
     }
 
-    public function getDevCmds()
+    public static function getDevCmds()
     {
     	$devcmds = Devcmd::all();
     	$devtypes = Devtype::all();

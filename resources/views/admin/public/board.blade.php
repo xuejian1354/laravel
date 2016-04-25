@@ -5,17 +5,14 @@
       <ul class="nav nav-sidebar">
         @foreach ($menus as $menu)
           @if($menu->mmenu == $amenu->mmenu)
-            <li
-              @if($menu->cmenu == $amenu->cmenu)
-                class="active">
-                @if($amenu->action == $amenu->caction)
-                <a href="javascript:void(0);">
-                @else
-                  <a href="{{ url('/admin?action='.$menu->action) }}">
-                @endif
-              @else
-                ><a href="{{ url('/admin?action='.$menu->action) }}">
-              @endif{{ $menu->cmenu }}</a></li>
+            @if($menu->cmenu == $amenu->cmenu)
+              <li class="active"><a href="javascript:void(0);">
+            @elseif($amenu->action == 'useractivity' || $amenu->action == 'usercourse' || $amenu->action == 'userclassgrade' || $amenu->action == 'userreport' || $amenu->action == 'userexam' || $amenu->action == 'userscore' || $amenu->action == 'userdetails' || $amenu->action == 'userrecord')
+              <li><a href="{{ url('/admin?action='.$menu->action).'&id='.$user->id }}">
+            @else
+              <li><a href="{{ url('/admin?action='.$menu->action) }}">
+            @endif
+              {{ $menu->cmenu }}</a></li>
           @endif
         @endforeach
       </ul>
