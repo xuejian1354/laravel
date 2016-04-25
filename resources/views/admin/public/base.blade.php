@@ -23,7 +23,7 @@
       </div>
       @foreach ($nmenus as $nmenu)
         <div class="nav navbar-nav dropdown">
-          @if($nmenu->mmenu != '设置')
+          @if($nmenu->mmenu != '设置' && $nmenu->mmenu != '功能')
             @if($nmenu->mmenu == $amenu->mmenu)
               <a class="menu disabled active" href="javascript:void(0);">{{ $nmenu->mmenu }}</a>
             @else

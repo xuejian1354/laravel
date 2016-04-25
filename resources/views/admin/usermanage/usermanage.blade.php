@@ -17,7 +17,8 @@
           <th>权限</th>
           <th>位置</th>
           <th>修改时间</th>
-          <th></th>
+          <th>功能</th>
+          <th>编辑</th>
         </tr>
       </thead>
       <tbody>
@@ -37,20 +38,19 @@
             <td>{{ $arg->area }}</td>
             <td>{{ $arg->updated_at }}</td>
             <td>
-              <button onclick="location='{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}'"
+              <a href="{{ url('/admin?action=userfunc&id='.$arg->id) }}" class="btn btn-sm btn-primary">操作</a>
+            </td>
+            <td>
+              <a href="{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}"
                 @if(Auth::user()->privilege < 5)
-                  class="btn btn-primary disabled"
-                @else
-                  class="btn btn-primary"
+                  class="hidden"
                 @endif
-                  type="button" role="button">修改</button>
-              <button onclick="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
+                >修改</a>
+              <a href="javascript:userDelAlert('{{ $arg->id }}','{{ Auth::user()->id }}','{{ $arg->grade-1 }}','{{ csrf_token() }}');"
                 @if(Auth::user()->name == $arg->name || Auth::user()->privilege < 5)
-                  class="btn btn-danger disabled"
-                @else
-                  class="btn btn-danger"
+                  class="hidden"
                 @endif
-                type="button" role="button">删除</button>
+                >删除</button>
             </td>
           </tr>
         @endforeach

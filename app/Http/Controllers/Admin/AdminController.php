@@ -63,7 +63,8 @@ class AdminController extends Controller {
 		foreach ($menus as $menu)
 		{
 			if($actions[0] == $menu->action
-				|| ($actions[0] == 'setting' && $menu->mmenu == '设置'))
+				|| ($actions[0] == 'setting' && $menu->mmenu == '设置')
+				|| ($actions[0] == 'userfunc' && $menu->mmenu == '功能'))
 			{
 				if($amenu == "#")
 				{

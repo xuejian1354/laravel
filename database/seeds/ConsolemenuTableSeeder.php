@@ -27,6 +27,13 @@ class ConsolemenuTableSeeder extends Seeder
         Consolemenu::create(['mmenu' => '用户', 'cmenu' => '管理', 'action' => 'usermanage']);
         Consolemenu::create(['mmenu' => '用户', 'cmenu' => '信息', 'action' => 'userinfo']);
         Consolemenu::create(['mmenu' => '用户', 'cmenu' => '功能', 'action' => 'useropt']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '活动通知', 'action' => 'useractivity']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '课程查询', 'action' => 'usercourse']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '教室查询', 'action' => 'userclassgrade']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '作业报告', 'action' => 'userreport']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '考试安排', 'action' => 'userexam']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '成绩查询', 'action' => 'userscore']);
+        Consolemenu::create(['mmenu' => '功能', 'cmenu' => '个人资料', 'action' => 'userdetails']);
         Consolemenu::create(['mmenu' => '设置', 'cmenu' => '密码', 'action' => 'password']);
         Consolemenu::create(['mmenu' => '设置', 'cmenu' => '关于', 'action' => 'about']);
     }
