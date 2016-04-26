@@ -27,6 +27,53 @@ class AdminUserInfo {
 			if($this->menus->getAmenu()['caction'] == 'newscontent')
 			{
 				$news = News::find(Input::get('id'));
+				
+				switch($news->allowgrade)
+				{
+				case 1:
+					$news->allowtext = '全校';
+					break;
+			
+				case 2:
+					foreach (Academy::all() as $academy)
+					{
+						if($academy->academy == $news->visitor)
+						{
+							$news->allowtext = $academy->val;
+							break;
+						}
+					}
+					break;
+			
+				case 3:
+				case 4:
+					foreach (Classgrade::all() as $classgrade)
+					{
+						if($classgrade->classgrade == $news->visitor)
+						{
+							$news->allowtext = $classgrade->val;
+							break;
+						}
+					}
+					break;
+			
+				case 5:
+					foreach (User::all() as $user)
+					{
+						if($user->name == $news->visitor)
+						{
+							$news->allowtext = $user->name;
+							if($user->grade == 4)
+							{
+								$news->allowtext = '全校';
+							}
+							break;
+						}
+					}
+					break;
+				}
+				
+
 				return view('admin.userinfo.newscontent')
 							->withNews($news);
 			}

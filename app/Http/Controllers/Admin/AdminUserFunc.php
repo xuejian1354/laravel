@@ -40,11 +40,26 @@ class AdminUserFunc {
 				$enews = array();
 				foreach ($news as $anew)
 				{
+					$this->addAllowTextToNews($anew);
+
+					$opt = Input::get('opt');
+					if($opt == 'all')
+					{
+						$newsid = Input::get('newsid');
+						if($newsid != null && $newsid == $anew->id)
+						{
+							return view('admin.userinfo.newscontent')
+										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
+										->withNews($anew);
+						}
+						continue;
+					}
+
 					if(strlen($anew->text) > 600)
 					{
 						$anew->text = substr($anew->text, 0, 600).' ...';
 					}
-					
+
 					if($anew->owner == $user->name)
 					{
 						$anew->isrecv = false;
@@ -53,9 +68,106 @@ class AdminUserFunc {
 					else
 					{
 						$anew->isrecv = true;
-						if($anew->allowgrade == 1)
+
+						$userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
+						if($userdetail != null)
 						{
+							$userdetail = $userdetail[0];
+						}
+
+						switch($anew->allowgrade)
+						{
+						case 1: //school
 							array_push($enews, $anew);
+							break;
+						
+						case 2: //academy
+							if($userdetail == null)
+							{
+								break;
+							}
+
+							if($userdetail->grade == 1)	//administrator
+							{
+								array_push($enews, $anew);
+							}
+							else if($userdetail->grade == 2) //teacher
+							{
+								if($anew->visitor == $userdetail->type)
+								{
+									array_push($enews, $anew);
+								}
+							}
+							else if($userdetail->grade == 3) //student
+							{
+								$classgrade = DB::table('classgrades')->where('classgrade', $userdetail->type)->get();
+								if($classgrade != null)
+								{
+									$classgrade = $classgrade[0];
+									if($anew->visitor == $classgrade->academy)
+									{
+										array_push($enews, $anew);
+									}
+								}
+							}
+							break;
+
+						case 3:
+						case 4:  //class
+							if($userdetail == null)
+							{
+								break;
+							}
+
+							if($userdetail->grade == 1)	//administrator
+							{
+								array_push($enews, $anew);
+							}
+							else if($userdetail->grade == 2) //teacher
+							{
+								$classgrade = DB::table('classgrades')->where('classgrade', $anew->visitor)->get();
+								if($classgrade != null)
+								{
+									$classgrade = $classgrade[0];
+									if($classgrade->academy == $userdetail->type)
+									{
+										array_push($enews, $anew);
+									}
+								}
+							}
+							else if($userdetail->grade == 3) //student
+							{
+								if($anew->visitor == $userdetail->type)
+								{
+									array_push($enews, $anew);
+								}
+							}
+							break;
+						
+						case 5:
+							$guest = DB::table('users')->where('name', $anew->visitor)->get();
+							if($guest != null)
+							{
+								$guest = $guest[0];
+								if($guest->grade == 4)
+								{
+									array_push($enews, $anew);
+									break;
+								}
+							}
+
+							if($userdetail != null)
+							{
+								if($userdetail->grade == 1)	//administrator
+								{
+									array_push($enews, $anew);
+								}
+								else if($anew->visitor == $user->name)
+								{
+									array_push($enews, $anew);
+								}
+							}
+							break;
 						}
 					}
 				}
@@ -171,7 +283,7 @@ class AdminUserFunc {
 		if(($gradestr != null && $gradestr != '')
 			|| ($user->grade != 2 && $user->grade != 3))
 		{
-			$content['grade'] = 3;
+			$content['grade'] = $user->grade;
 
 			foreach (Grade::all() as $dbgrade)
 			{
@@ -314,5 +426,53 @@ adddtailreturn:
 									->withUserdetail($userdetail)
 									->withUser($user)
 									->withInfo($info);
+	}
+	
+	public function addAllowTextToNews($news)
+	{
+		switch($news->allowgrade)
+		{
+			case 1:
+				$news->allowtext = '全校';
+				break;
+					
+			case 2:
+				foreach (Academy::all() as $academy)
+				{
+					if($academy->academy == $news->visitor)
+					{
+						$news->allowtext = $academy->val;
+						break;
+					}
+				}
+				break;
+					
+			case 3:
+			case 4:
+				foreach (Classgrade::all() as $classgrade)
+				{
+					if($classgrade->classgrade == $news->visitor)
+					{
+						$news->allowtext = $classgrade->val;
+						break;
+					}
+				}
+				break;
+					
+			case 5:
+				foreach (User::all() as $user)
+				{
+					if($user->name == $news->visitor)
+					{
+						$news->allowtext = $user->name;
+						if($user->grade == 4)
+						{
+							$news->allowtext = '全校';
+						}
+						break;
+					}
+				}
+				break;
+		}
 	}
 }
