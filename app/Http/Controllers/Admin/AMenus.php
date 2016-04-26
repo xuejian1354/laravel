@@ -9,10 +9,17 @@ class AMenus {
 	protected $menus;
 	protected $nmenus;
 	
-	public function __construct()
+	public function __construct($actions = null)
 	{
 		//$action = isset($_GET['action'])?$_GET['action']:"#";
-		$actions = explode('/', Input::get('action'));
+		if($actions == null)
+		{
+			$actions = explode('/', Input::get('action'));
+		}
+		else
+		{
+			$actions = explode('/', $actions);
+		}
 
 		$this->menus = Consolemenu::all();
 		$mmenus = array();

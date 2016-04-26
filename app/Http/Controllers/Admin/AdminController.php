@@ -37,20 +37,6 @@ class AdminController extends Controller {
 		$this->middleware('auth');
 	}
 
-	public function getGradeFromVal($val)
-	{
-		$grades = Grade::all();
-		foreach($grades as $grade)
-		{
-			if ($grade->val == $val)
-			{
-				return $grade->grade;
-			}
-		}
-
-		return 4;
-	}
-
 	public function index()
 	{
 		$menus = new AMenus();
@@ -291,6 +277,14 @@ class AdminController extends Controller {
 		return $adminuserinfo->classgradeedt();
 	}
 
+	public function adddetail()
+	{
+		$menus = new AMenus();
+		$adminuserfunc = new AdminUserFunc($menus);
+		
+		return $adminuserfunc->adddetail();
+	}
+
 	public function resetpass()
 	{
 		$email = Input::get('email');
@@ -362,9 +356,9 @@ class AdminController extends Controller {
 							->withInfo('Reset password success !');
 	}
 
-	public static function getViewWithMenus($view = null, $data = [], $mergeData = [])
+	public static function getViewWithMenus($view = null, $actions = null, $data = [], $mergeData = [])
 	{
-		$menus = new AMenus();
+		$menus = new AMenus($actions);
 
 		return view($view, $data, $mergeData)
 					->withGlobalvals(Controller::getGlobalvals())

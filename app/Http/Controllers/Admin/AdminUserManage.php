@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Input, Auth;
+use Input, Auth, DB;
+use Carbon\Carbon;
 use App\User;
 use App\Model\DBStatic\Grade;
 use App\Model\DBStatic\Privilege;
@@ -47,6 +48,20 @@ class AdminUserManage {
 				array_push($this->args, $user);
 			}
 		}
+	}
+
+	public function getGradeFromVal($val)
+	{
+		$grades = Grade::all();
+		foreach($grades as $grade)
+		{
+			if ($grade->val == $val)
+			{
+				return $grade->grade;
+			}
+		}
+	
+		return 4;
 	}
 
 	public function getUserView()
