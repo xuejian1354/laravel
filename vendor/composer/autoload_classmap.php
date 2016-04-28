@@ -32,6 +32,9 @@ return array(
     'CreateRoomTypesTable' => $baseDir . '/database/migrations/2016_04_07_164355_create_roomtypes_table.php',
     'CreateRoomsTable' => $baseDir . '/database/migrations/2016_04_07_163540_create_rooms_table.php',
     'CreateTermsTable' => $baseDir . '/database/migrations/2016_04_13_144544_create_terms_table.php',
+    'CreateUserActionsTable' => $baseDir . '/database/migrations/2016_04_28_103056_create_useractions_table.php',
+    'CreateUserDetailsTable' => $baseDir . '/database/migrations/2016_04_25_190443_create_userdetails_table.php',
+    'CreateUserRecordsTable' => $baseDir . '/database/migrations/2016_04_28_102643_create_userrecords_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'CycleTableSeeder' => $baseDir . '/database/seeds/CycleTableSeeder.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',
@@ -577,4 +580,5 @@ return array(
     'TermTableSeeder' => $baseDir . '/database/seeds/TermTableSeeder.php',
     'TestCase' => $baseDir . '/tests/TestCase.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
+    'UseractionTableSeeder' => $baseDir . '/database/seeds/UseractionTableSeeder.php',
 );

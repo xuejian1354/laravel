@@ -27,7 +27,7 @@ class AdminUserInfo {
 			if($this->menus->getAmenu()['caction'] == 'newscontent')
 			{
 				$news = News::find(Input::get('id'));
-				
+
 				switch($news->allowgrade)
 				{
 				case 1:
@@ -195,6 +195,11 @@ class AdminUserInfo {
 			$news = DB::select('SELECT * FROM news ORDER BY updated_at DESC');
 			foreach ($news as $new)
 			{
+				if(strlen($new->subtitle) > 81)
+				{
+					$new->subtitle = mb_substr($new->subtitle, 0, 27, 'utf-8').' ...';
+				}
+
 				foreach (Idgrade::all() as $idgrade)
 				{
 					if ($new->allowgrade == $idgrade->idgrade)
@@ -240,6 +245,7 @@ class AdminUserInfo {
 			return $this->backView("标题不能为空");
 		}
 
+		$content['sn'] = $this->genNewsSN($title);
 		$content['title'] = $title;
 
 		$subtitle = Input::get('subtitle');
@@ -298,7 +304,15 @@ class AdminUserInfo {
 			}
 		}
 
-		$content['owner'] = Auth::user()->name;
+		$owner = Input::get('newsowner');
+		if($owner != null)
+		{
+			$content['owner'] = $owner;
+		}
+		else
+		{
+			$content['owner'] = Auth::user()->name;
+		}
 
 		$text = Input::get('text');
 		if($text != null)
@@ -308,6 +322,12 @@ class AdminUserInfo {
 	
 		News::create($content);
 	
+		$returnurl = Input::get('returnurl');
+		if($returnurl != null)
+		{
+			return redirect($returnurl);
+		}
+
 		return redirect("admin?action=userinfo&tabpos=0");
 	}
 
@@ -390,7 +410,15 @@ class AdminUserInfo {
 				}
 			}
 
-			$new->owner = Auth::user()->name;
+			$owner = Input::get('newsowner'.$newsids[$index]);
+			if($owner != null)
+			{
+				$new->owner = $owner;
+			}
+			else
+			{
+				$new->owner = Auth::user()->name;
+			}
 
 			$text = Input::get('text'.$newsids[$index]);
 			if($text != null)
@@ -399,6 +427,12 @@ class AdminUserInfo {
 			}
 
 			$new->save();
+		}
+
+		$returnurl = Input::get('returnurl');
+		if($returnurl != null)
+		{
+			return redirect($returnurl);
 		}
 
 		return redirect("admin?action=userinfo&tabpos=0");
@@ -610,5 +644,13 @@ class AdminUserInfo {
 		$classgrade->save();
 
 		return redirect("admin?action=userinfo&tabpos=2");
+	}
+
+	public static  function genNewsSN($title)
+	{
+		$ran = rand(1, 1000000);
+		$sn = substr(hexdec(md5($title.$ran)), 2, 8);
+	
+		return $sn;
 	}
 }

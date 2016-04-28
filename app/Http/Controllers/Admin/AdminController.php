@@ -221,6 +221,14 @@ class AdminController extends Controller {
 		return $adminuserinfo->newsdel();
 	}
 
+	public function newsadel()
+	{
+		$menus = new AMenus();
+		$adminuserfunc = new AdminUserFunc($menus);
+	
+		return $adminuserfunc->newsadel();
+	}
+
 	public function newsedts()
 	{
 		$menus = new AMenus();

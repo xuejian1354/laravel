@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(IdgradeTableSeeder::class);
         $this->call(AcademyTableSeeder::class);
         $this->call(ClassgradeTableSeeder::class);
+        $this->call(UseractionTableSeeder::class);
 
         if(count(DB::table('users')->where('email', 'root@loongsmart.com')->get()) == 0)
         {

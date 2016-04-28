@@ -1,10 +1,27 @@
 <div style="padding: 20px;">
   <form method="POST" action="{{ url('/admin/addnews') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    @if(isset($returnurl))
+      <input type="hidden" name="returnurl" value="{{ $returnurl }}">
+    @endif
     <label>标题</label>
     <input name="title" type="text" class="form-control" placeholder="必填">
     <label style="margin-top: 10px;">副标题</label>
     <textarea name="subtitle" rows="2" class="form-control" placeholder="对内容的简短说明"></textarea>
+    @if(!isset($hasowner) || $hasowner == false)
+      <label style="margin-top: 10px; margin-right: 10px;">发布者</label>
+      <select name="newsowner">
+      @foreach($users as $user)
+        @if($user->sn == Auth::user()->sn)
+        <option selected="selected">{{ $user->name }}</option>
+        @else
+        <option>{{ $user->name }}</option>
+        @endif
+      @endforeach
+      </select><br>
+    @else
+      <input type="hidden" name="newsowner" value="{{ $optuser->name }}">
+    @endif
     <label style="margin-top: 10px; margin-right: 10px;">允许访问</label>
     <select id="newsallowgrade" name="allowgrade" onchange="javascript:newsAllowChange();">
     @foreach($idgrades as $idgrade)
@@ -37,7 +54,11 @@
     <textarea name="text" rows="12" class="form-control"></textarea>
     <div style="margin-top: 10px;">
       <button type="submit" class="btn btn-primary">添加</button>
+      @if(isset($returnurl))
+      <a href="{{ $returnurl }}" class="btn btn-info">返回</a>
+      @else
       <a href="admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
+      @endif
     </div>
   </form>
 </div>

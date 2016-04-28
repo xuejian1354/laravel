@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Model\DBStatic\News;
+use App\Http\Controllers\Admin\AdminUserInfo;
 
 class NewsTableSeeder extends Seeder
 {
@@ -16,7 +17,9 @@ class NewsTableSeeder extends Seeder
     {
         if(count(News::all()) == 0)
         {
-	        News::create(['title' => 'Welcome to SmartLab',
+	        News::create([
+	        		'sn' => AdminUserInfo::genNewsSN('Welcome to SmartLab'),
+	        		'title' => 'Welcome to SmartLab',
 	        		'subtitle' => 'Welcome longyuan smart labrotary or classroom main console',
 	        		'owner' => 'root',
 	        		'allowgrade' => '1',

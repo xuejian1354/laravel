@@ -1,16 +1,37 @@
 <div style="padding: 20px;">
   <form method="POST" action="{{ url('/admin/newsedts') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    @if(isset($returnurl))
+    <input type="hidden" name="returnurl" value="{{ $returnurl }}">
+    @endif
     @for($index=0; $index < count($news); $index++)
+      @if(!isset($hasowner) || $hasowner == false)
       <h3
       @if($index > 0)
         style="margin-top: 30px;"
       @endif
       >{{ $index+1 }}</h3>
+      @endif
       <label>标题</label>
       <input name="title{{ $news[$index]->id }}" type="text" class="form-control" value="{{ $news[$index]->title }}">
       <label style="margin-top: 10px;">副标题</label>
       <textarea name="subtitle{{ $news[$index]->id }}" rows="2" class="form-control">{{ $news[$index]->subtitle }}</textarea>
+      
+      @if(!isset($hasowner) || $hasowner == false)
+      <label style="margin-top: 10px; margin-right: 10px;">发布者</label>
+      <select name="newsowner{{ $news[$index]->id }}">
+      @foreach($users as $user)
+        @if($user->name == $news[$index]->owner)
+        <option selected="selected">{{ $user->name }}</option>
+        @else
+        <option>{{ $user->name }}</option>
+        @endif
+      @endforeach
+      </select><br>
+      @else
+        <input type="hidden" name="newsowner{{ $news[$index]->id }}" value="{{ $optuser->name }}">
+      @endif
+      
       <label style="margin-top: 10px; margin-right: 10px;">允许访问</label>
       <select id="newsallowgrade{{ $news[$index]->id }}" name="allowgrade{{ $news[$index]->id }}" onchange="javascript:newsAllowChange('{{ $news[$index]->id }}');">
       @foreach($idgrades as $idgrade)
@@ -97,7 +118,11 @@
       <input id="newsids" name="newsids" type="text" class="form-control hidden" value="{{ $eleids }}">
       <div style="margin-top: 10px;">
         <button type="submit" class="btn btn-primary">修改</button>
+        @if(isset($returnurl))
+        <a href="{{ $returnurl }}" class="btn btn-info">返回</a>
+        @else
         <a href="admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
+        @endif
       </div>
   </form>
 </div>

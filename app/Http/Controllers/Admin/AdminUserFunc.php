@@ -8,6 +8,9 @@ use App\Model\DBStatic\Academy;
 use App\Model\DBStatic\Classgrade;
 use App\Model\DBStatic\Userdetail;
 use App\Model\DBStatic\Grade;
+use App\Model\DBStatic\Userrecord;
+use App\Model\DBStatic\Useraction;
+use App\Model\DBStatic\Idgrade;
 
 class AdminUserFunc {
 
@@ -38,6 +41,11 @@ class AdminUserFunc {
 			{
 				$news = DB::select('SELECT * FROM news ORDER BY updated_at DESC');
 				$enews = array();
+
+				$user->recvcount = 0;
+				$user->noreadcount = 0;
+				$user->sendcount = 0;
+
 				foreach ($news as $anew)
 				{
 					$this->addAllowTextToNews($anew);
@@ -48,26 +56,139 @@ class AdminUserFunc {
 						$newsid = Input::get('newsid');
 						if($newsid != null && $newsid == $anew->id)
 						{
+							$lnews = News::find($newsid);
+							$userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
+														.$user->sn
+														.'\' AND action=\'2\' AND optnum=\''
+														.$lnews->sn
+														.'\'');
+							if($userrecord == null)
+							{
+								$lname = '查看消息:"'.$lnews->title.'"';
+
+								Userrecord::create([
+										'sn' => AdminUserInfo::genNewsSN($lname),
+										'name' => $lname,
+										'usersn' => $user->sn,
+										'action' => 2,
+										'optnum' => $lnews->sn,
+								]);
+							}
+
 							return view('admin.userinfo.newscontent')
+										->withTabpos(Input::get('tabpos'))
 										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
+										->withUserid(Input::get('id'))
 										->withNews($anew);
+						}
+						continue;
+					}
+					else if($opt == 'add')
+					{
+						$newsid = Input::get('newsid');
+						if($newsid != null && $newsid == $anew->id)
+						{
+							return view('admin.userinfo.addnews')
+										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
+										->withHasowner(true)
+										->withIdgrades(Idgrade::all())
+										->withAcademies(Academy::all())
+										->withclassgrades(Classgrade::all())
+										->withoptuser(User::find(Input::get('id')))
+										->withUsers(User::all());
+						}
+						continue;
+					}
+					else if($opt == 'edt')
+					{
+						$newsid = Input::get('newsid');
+						if($newsid != null && $newsid == $anew->id)
+						{
+							$academies = Academy::all();
+							$classgrades = Classgrade::all();
+							$users = User::all();
+
+							switch($anew->allowgrade)
+							{
+								case 1:
+									$anew->allowtext = '全校';
+									break;
+						
+								case 2:
+									$anew->allowtext = '院系';
+									foreach ($academies as $academy)
+									{
+										if($academy->academy == $anew->visitor)
+										{
+											$anew->visitortext = $academy->val;
+										}
+									}
+									break;
+						
+								case 3:
+									$anew->allowtext = '专业';
+									foreach ($classgrades as $classgrade)
+									{
+										if($classgrade->classgrade == $anew->visitor)
+										{
+											$anew->visitortext = $classgrade->val;
+										}
+									}
+									break;
+						
+								case 4:
+									$anew->allowtext = '班级';
+									foreach ($classgrades as $classgrade)
+									{
+										if($classgrade->classgrade == $anew->visitor)
+										{
+											$anew->visitortext = $classgrade->val;
+										}
+									}
+									break;
+						
+								case 5:
+									$anew->allowtext = '指定用户';
+									foreach ($users as $user)
+									{
+										if($user->name == $anew->visitor)
+										{
+											$anew->visitortext = $user->name;
+										}
+									}
+									break;
+							}
+
+							return view('admin.userinfo.newsedts')
+										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
+										->withHasowner(true)
+										->withIdgrades(Idgrade::all())
+										->withAcademies($academies)
+										->withclassgrades($classgrades)
+										->withEleids('['.$newsid.']')
+										->withNews([$anew])
+										->withoptuser(User::find(Input::get('id')))
+										->withUsers($users);
 						}
 						continue;
 					}
 
 					if(strlen($anew->text) > 600)
 					{
-						$anew->text = substr($anew->text, 0, 600).' ...';
+						$anew->text = mb_substr($anew->text, 0, 200, "utf-8").' ...';
 					}
 
 					if($anew->owner == $user->name)
 					{
 						$anew->isrecv = false;
+						$user->sendcount++;
+
 						array_push($enews, $anew);
 					}
 					else
 					{
 						$anew->isrecv = true;
+						$ischoose = false;
 
 						$userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
 						if($userdetail != null)
@@ -78,7 +199,7 @@ class AdminUserFunc {
 						switch($anew->allowgrade)
 						{
 						case 1: //school
-							array_push($enews, $anew);
+							$ischoose = true;
 							break;
 						
 						case 2: //academy
@@ -89,13 +210,13 @@ class AdminUserFunc {
 
 							if($userdetail->grade == 1)	//administrator
 							{
-								array_push($enews, $anew);
+								$ischoose = true;
 							}
 							else if($userdetail->grade == 2) //teacher
 							{
 								if($anew->visitor == $userdetail->type)
 								{
-									array_push($enews, $anew);
+									$ischoose = true;
 								}
 							}
 							else if($userdetail->grade == 3) //student
@@ -106,7 +227,7 @@ class AdminUserFunc {
 									$classgrade = $classgrade[0];
 									if($anew->visitor == $classgrade->academy)
 									{
-										array_push($enews, $anew);
+										$ischoose = true;
 									}
 								}
 							}
@@ -121,7 +242,7 @@ class AdminUserFunc {
 
 							if($userdetail->grade == 1)	//administrator
 							{
-								array_push($enews, $anew);
+								$ischoose = true;
 							}
 							else if($userdetail->grade == 2) //teacher
 							{
@@ -131,7 +252,7 @@ class AdminUserFunc {
 									$classgrade = $classgrade[0];
 									if($classgrade->academy == $userdetail->type)
 									{
-										array_push($enews, $anew);
+										$ischoose = true;
 									}
 								}
 							}
@@ -139,7 +260,7 @@ class AdminUserFunc {
 							{
 								if($anew->visitor == $userdetail->type)
 								{
-									array_push($enews, $anew);
+									$ischoose = true;
 								}
 							}
 							break;
@@ -151,7 +272,7 @@ class AdminUserFunc {
 								$guest = $guest[0];
 								if($guest->grade == 4)
 								{
-									array_push($enews, $anew);
+									$ischoose = true;
 									break;
 								}
 							}
@@ -160,14 +281,36 @@ class AdminUserFunc {
 							{
 								if($userdetail->grade == 1)	//administrator
 								{
-									array_push($enews, $anew);
+									$ischoose = true;
 								}
 								else if($anew->visitor == $user->name)
 								{
-									array_push($enews, $anew);
+									$ischoose = true;
 								}
 							}
 							break;
+						}
+						
+						if($ischoose)
+						{
+							//action=2 looking for news
+							$userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
+														.$user->sn
+														.'\' AND action=\'2\' AND optnum=\''
+														.$anew->sn
+														.'\'');
+							if($userrecord != null)
+							{
+								$anew->isread = true;
+							}
+							else
+							{
+								$user->noreadcount++;
+								$anew->isread = false;
+							}
+
+							$user->recvcount++;
+							array_push($enews, $anew);
 						}
 					}
 				}
@@ -427,7 +570,7 @@ adddtailreturn:
 									->withUser($user)
 									->withInfo($info);
 	}
-	
+
 	public function addAllowTextToNews($news)
 	{
 		switch($news->allowgrade)
@@ -474,5 +617,13 @@ adddtailreturn:
 				}
 				break;
 		}
+	}
+
+	public function newsadel(){
+		$userid = Input::get('userid');
+		$newsid = Input::get('newsid');
+		News::find($newsid)->delete();
+	
+		return redirect("admin?action=useractivity&id=".$userid."&tabpos=1");
 	}
 }

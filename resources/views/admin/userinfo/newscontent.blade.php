@@ -1,6 +1,11 @@
 <div style="margin: 10px">
 @if(isset($returnurl))
-  <h4><a href="{{ $returnurl }}" style="margin-top: 200px;">返回</a></h4>
+  <h4>
+    @if($tabpos == 1)
+    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $userid }}&opt=edt&newsid={{ $news->id }}&tabpos=1');" style="margin-top: 200px;">编辑</a>
+    @endif
+    <a href="{{ $returnurl }}" style="margin-top: 200px;">返回</a>
+  </h4>
 @else
   <h4><a href="admin?action=userinfo&tabpos=0" style="margin-top: 200px;">返回</a></h4>
 @endif
