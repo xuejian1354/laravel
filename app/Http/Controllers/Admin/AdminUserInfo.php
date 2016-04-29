@@ -238,11 +238,22 @@ class AdminUserInfo {
 
 	public function addnews()
 	{
+		$user = User::find(Input::get('optid'));
+
+		if(($user!= null && $user->grade == 4)
+			|| ($user != null && $user->privilege == 1)
+			|| Auth::user()->grade == 4
+			|| Auth::user()->privilege == 1
+			|| (Auth::user()->grade != 1 && Auth::user()->privilege != 5))
+		{
+			return view('errors.permitts');
+		}
+
 		$content = array();
 		$title = Input::get('title');
 		if($title == null)
 		{
-			return $this->backView("标题不能为空");
+			return AdminController::backView("标题不能为空");
 		}
 
 		$content['sn'] = $this->genNewsSN($title);
@@ -335,6 +346,17 @@ class AdminUserInfo {
 		$data = json_decode(Input::get('data'));
 		foreach ($data as $id)
 		{
+			if(Auth::user()->grade == 4
+				|| Auth::user()->privilege == 1
+				|| (News::find($id)->owner != Auth::user()->name
+					&& Auth::user()->grade != 1 && Auth::user()->privilege != 5))
+			{
+				return view('errors.permitts');
+			}
+		}
+
+		foreach ($data as $id)
+		{
 			News::find($id)->delete();
 		}
 
@@ -343,6 +365,23 @@ class AdminUserInfo {
 
 	public function newsedts(){
 		$newsids = json_decode(Input::get('newsids'));
+		for ($index = count($newsids)-1; $index >= 0; $index--)
+		{
+			$new = News::find($newsids[$index]);
+			$user = User::find(Input::get('optid'.$new->id));
+
+			if(($user!= null && $user->grade == 4)
+				|| ($user != null && $user->privilege == 1)
+				|| Auth::user()->grade == 4
+				|| Auth::user()->privilege == 1
+				|| ($new->owner != Auth::user()->name
+					&& Auth::user()->grade != 1 
+					&& Auth::user()->privilege != 5))
+			{
+				return view('errors.permitts');
+			}
+		}
+
 		for ($index = count($newsids)-1; $index >= 0; $index--)
 		{
 			$new = News::find($newsids[$index]);

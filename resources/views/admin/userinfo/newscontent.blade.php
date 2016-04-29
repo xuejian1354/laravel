@@ -2,7 +2,9 @@
 @if(isset($returnurl))
   <h4>
     @if($tabpos == 1)
-    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $userid }}&opt=edt&newsid={{ $news->id }}&tabpos=1');" style="margin-top: 200px;">编辑</a>
+    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
+    @elseif($user->privilege == 5 && $user->grade == 1)
+    <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
     @endif
     <a href="{{ $returnurl }}" style="margin-top: 200px;">返回</a>
   </h4>

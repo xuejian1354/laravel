@@ -20,6 +20,7 @@
       @endforeach
       </select><br>
     @else
+      <input type="hidden" name="optid" value="{{ $optuser->id }}">
       <input type="hidden" name="newsowner" value="{{ $optuser->name }}">
     @endif
     <label style="margin-top: 10px; margin-right: 10px;">允许访问</label>

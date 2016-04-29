@@ -5,7 +5,7 @@
     <input type="hidden" name="returnurl" value="{{ $returnurl }}">
     @endif
     @for($index=0; $index < count($news); $index++)
-      @if(!isset($hasowner) || $hasowner == false)
+      @if((!isset($hasowner) || $hasowner == false) && count($news) > 1)
       <h3
       @if($index > 0)
         style="margin-top: 30px;"
@@ -30,6 +30,7 @@
       </select><br>
       @else
         <input type="hidden" name="newsowner{{ $news[$index]->id }}" value="{{ $optuser->name }}">
+        <input type="hidden" name="optid{{ $news[$index]->id }}" value="{{ $optuser->id }}">
       @endif
       
       <label style="margin-top: 10px; margin-right: 10px;">允许访问</label>

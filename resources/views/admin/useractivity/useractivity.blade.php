@@ -6,10 +6,14 @@
   <ul class="nav nav-tabs" role="tablist">
   @if(Input::get('tabpos') == 1)
     <li role="presentation" class="nav-li tabrecv"><a href="javascript:loadNewsContent(0);">收到</a></li>
+    @if($user->grade != 4 && $user->privilege != 1)
     <li role="presentation" class="nav-li tabsend active"><a href="javascript:loadNewsContent(1);">发布</a></li>
+    @endif
   @else
     <li role="presentation" class="nav-li tabrecv active"><a href="javascript:loadNewsContent(0);">收到</a></li>
+    @if($user->grade != 4 && $user->privilege != 1)
     <li role="presentation" class="nav-li tabsend"><a href="javascript:loadNewsContent(1);">发布</a></li>
+    @endif
   @endif
   </ul>
 
@@ -45,11 +49,16 @@
         {!! $anew->text !!}
       </div><br>
       <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}');" style="margin-right: 4px;">更多</a>
+      @if($user->privilege == 5 && $user->grade == 1)
+      <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '0');" class="hidden" style="margin-right: 4px;">删除</a>
+      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&tabpos=0');" class="hidden" style="margin-right: 4px;">编辑</a>
+	  @endif
       <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&tabpos=0');">全部</a><hr>
     </div>
     @endif
   @endforeach
   </div>
+  @if($user->grade != 4 && $user->privilege != 1)
   @if(Input::get('tabpos') == 1)
   <div id="divsend" class="divsend">
   @else
@@ -73,13 +82,14 @@
         {!! $anew->text !!}
       </div><br>
       <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}');" style="margin-right: 4px;">更多</a>
-      <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}');" class="hidden" style="margin-right: 4px;">删除</a>
+      <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '1');" class="hidden" style="margin-right: 4px;">删除</a>
       <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&tabpos=1');" class="hidden" style="margin-right: 4px;">编辑</a>
       <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&tabpos=1');">全部</a><hr>
     </div>
     @endif
   @endforeach
   </div>
+  @endif
 </div>
 
 <script type="text/javascript">
@@ -135,7 +145,7 @@ function userActSubCheck(id)
 	}
 }
 
-function newsADelAlert(userid, newsid) {
+function newsADelAlert(userid, newsid, tabpos) {
 
   if(confirm('确定要删除该活动通知?')) {
     var postForm = document.createElement("form");
@@ -151,6 +161,11 @@ function newsADelAlert(userid, newsid) {
     newsidInput.setAttribute("name", "newsid");
     newsidInput.setAttribute("value", newsid);
     postForm.appendChild(newsidInput);
+
+    var tabposInput = document.createElement("input");
+    tabposInput.setAttribute("name", "tabpos");
+    tabposInput.setAttribute("value", tabpos);
+    postForm.appendChild(tabposInput);
 
     var tokenInput = document.createElement("input");
     tokenInput.setAttribute("name", "_token");

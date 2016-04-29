@@ -1130,7 +1130,9 @@ function deviceRemoveAreaAlert(id, devsn, roomsn, token)
   }
 }
 
-function deviceEditAlert(id, token, roomsn = null) {
+function deviceEditAlert(id, token, aroomsn) {
+	var roomsn = arguments[2]?arguments[2]:null;
+
 	var postForm = document.createElement("form");
 	postForm.method="post";
 	postForm.action = "admin/devedit";
@@ -1268,7 +1270,8 @@ function deviceOptAdd(token) {
 	xmlhttp.send(null);
 }
 
-function newsAllowChange(id = 0){
+function newsAllowChange(aid){
+  var id = arguments[0]?arguments[0]:0;
   if(id > 0)
   {
 	  var newsallowspan = $('#newsallowspan'+id); 
@@ -1339,8 +1342,9 @@ function newsAllowChange(id = 0){
   }
 }
 
-function newsAllowSelect(i,  id = 0)
+function newsAllowSelect(i,  aid)
 {
+	var id = arguments[1]?arguments[1]:0;
 	if(id > 0)
 	{
 		var newsallowspan = $('#newsallowspan' + id);

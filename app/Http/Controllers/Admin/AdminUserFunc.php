@@ -77,8 +77,9 @@ class AdminUserFunc {
 
 							return view('admin.userinfo.newscontent')
 										->withTabpos(Input::get('tabpos'))
-										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
-										->withUserid(Input::get('id'))
+										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.Input::get('tabpos'))
+										->withTabpos(Input::get('tabpos'))
+										->withUser(User::find(Input::get('id')))
 										->withNews($anew);
 						}
 						continue;
@@ -89,7 +90,7 @@ class AdminUserFunc {
 						if($newsid != null && $newsid == $anew->id)
 						{
 							return view('admin.userinfo.addnews')
-										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
+										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.Input::get('tabpos'))
 										->withHasowner(true)
 										->withIdgrades(Idgrade::all())
 										->withAcademies(Academy::all())
@@ -159,9 +160,16 @@ class AdminUserFunc {
 									break;
 							}
 
+							$tabpos = Input::get('tabpos');
+							$hasowner = false;
+							if($tabpos == 1)
+							{
+								$hasowner = true;
+							}
+
 							return view('admin.userinfo.newsedts')
-										->withReturnurl('admin?action=useractivity&id='.Input::get('id').'&tabpos='.Input::get('tabpos'))
-										->withHasowner(true)
+										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.$tabpos)
+										->withHasowner($hasowner)
 										->withIdgrades(Idgrade::all())
 										->withAcademies($academies)
 										->withclassgrades($classgrades)
@@ -622,8 +630,26 @@ adddtailreturn:
 	public function newsadel(){
 		$userid = Input::get('userid');
 		$newsid = Input::get('newsid');
+		$tabpos = Input::get('tabpos');
+
+		$user = User::find($userid);
+		if($user->grade == 4
+			|| $user->privilege == 1
+			|| Auth::user()->grade == 4
+			|| Auth::user()->privilege == 1
+			|| (News::find($newsid)->owner != Auth::user()->name
+				&& Auth::user()->grade != 1 && Auth::user()->privilege != 5))
+		{
+			return view('errors.permitts');
+		}
+
+		if($tabpos == null)
+		{
+			$tabpos = 1;
+		}
+
 		News::find($newsid)->delete();
 	
-		return redirect("admin?action=useractivity&id=".$userid."&tabpos=1");
+		return redirect("admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
 	}
 }
