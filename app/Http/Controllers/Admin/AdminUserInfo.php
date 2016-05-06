@@ -3,13 +3,11 @@
 use Input, Auth, DB;
 use App\User;
 use App\Model\DBStatic\Grade;
-use App\Model\DBStatic\Privilege;
 use App\Model\DBStatic\News;
 use App\Model\DBStatic\Idgrade;
 use App\Model\DBStatic\Academy;
 use App\Model\DBStatic\Classgrade;
-use App\Model\Room\Room;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\PageTag;
 
 class AdminUserInfo {
 
@@ -193,6 +191,21 @@ class AdminUserInfo {
 
 			//$news = News::all();
 			$news = DB::select('SELECT * FROM news ORDER BY updated_at DESC');
+			$pagetag = new PageTag(8, 5, count($news), $this->menus->getPage());
+			if($pagetag->isAvaliable())
+			{
+			    if(Input::get('tabpos') == 0)
+			    {
+	       		    $news = News::paginate($pagetag->getRow());
+			    }
+			    else
+			    {
+			        $news = News::paginate($pagetag->getRow(), ['*'], 'page', 1);
+			        $pagetag->setPage(1);
+			    }
+			}
+			$newspagetag = $pagetag;
+
 			foreach ($news as $new)
 			{
 				if(strlen($new->subtitle) > 81)
@@ -213,6 +226,21 @@ class AdminUserInfo {
 			}
 
 			$classgrades = Classgrade::all();
+			$pagetag = new PageTag(8, 5, $classgrades->count(), $this->menus->getPage());
+			if($pagetag->isAvaliable())
+			{
+			    if(Input::get('tabpos') == 2)
+			    {
+			        $classgrades = Classgrade::paginate($pagetag->getRow());
+			    }
+			    else
+			    {
+			        $classgrades = Classgrade::paginate($pagetag->getRow(), ['*'], 'page', 1);
+			        $pagetag->setPage(1);
+			    }
+			}
+			$classgradepagetag = $pagetag;
+
 			foreach ($classgrades as $classgrade)
 			{
 				foreach (Academy::all() as $academy)
@@ -224,9 +252,28 @@ class AdminUserInfo {
 				}
 			}
 
+			$academies = Academy::all();
+			$pagetag = new PageTag(8, 5, $academies->count(), $this->menus->getPage());
+			if($pagetag->isAvaliable())
+			{
+			    if(Input::get('tabpos') == 1)
+			    {
+			        $academies = Academy::paginate($pagetag->getRow());
+			    }
+			    else
+			    {
+			        $academies = Academy::paginate($pagetag->getRow(), ['*'], 'page', 1);
+			        $pagetag->setPage(1);
+			    }
+			}
+			$academypagetag = $pagetag;
+
 			return AdminController::getViewWithMenus('admin.admin')
+			            ->withNewspagetag($newspagetag)
+			            ->withAcademypagetag($academypagetag)
+			            ->withClassgradepagetag($classgradepagetag)
 						->withNews($news)
-						->withAcademies(Academy::all())
+						->withAcademies($academies)
 						->withClassgrades($classgrades)
 						->withGrades(Grade::all());
 		}

@@ -570,7 +570,7 @@ function courseAddAlert(token) {
 	}
 }
 
-function courseEdtAlert(token) {
+function courseEdtAlert(page, token) {
 	var data = new Array();
 	
 	$('.coursecol').each(function(){
@@ -580,8 +580,31 @@ function courseEdtAlert(token) {
 			data.push(getCourseData(this));
 		}
 	});
+
+	if(confirm('确定要修改课程信息?')) {
+	    var postForm = document.createElement("form");
+	    postForm.method="post";
+	    postForm.action = '/admin/courseedt';
 	
-	dataPost('/admin/courseedt', JSON.stringify(data), token, '确定要修改课程信息?');
+	    var pageInput = document.createElement("input");
+	    pageInput.setAttribute("name", "page");
+	    pageInput.setAttribute("value", page);
+	    postForm.appendChild(pageInput);
+
+	    var dataInput = document.createElement("input");
+	    dataInput.setAttribute("name", "data");
+	    dataInput.setAttribute("value", JSON.stringify(data));
+	    postForm.appendChild(dataInput);
+	
+	    var tokenInput = document.createElement("input");
+	    tokenInput.setAttribute("name", "_token");
+	    tokenInput.setAttribute("value", token);
+	    postForm.appendChild(tokenInput);
+	
+	    document.body.appendChild(postForm);
+	    postForm.submit();
+	    document.body.removeChild(postForm);
+	}
 }
 
 function courseDelAlert(token) {

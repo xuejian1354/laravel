@@ -42,6 +42,64 @@
       @include('admin.devstats.devasync')
     </table>
   </div>
+  @if($gwpagetag->isavaliable())
+    <nav class="table-gw">
+      <ul class="pagination">
+        @if($gwpagetag->start == 1)
+        <li class="hidden disabled">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=devstats&tabpos=0&page={{ $gwpagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        @for($index=$gwpagetag->start; $index < $gwpagetag->end; $index++)
+          @if($gwpagetag->getPage() == $index)
+          <li class="active">
+          @else
+          <li>
+          @endif
+            <a href="admin?action=devstats&tabpos=0&page={{ $index }}">{{ $index }}</a>
+          </li>
+        @endfor
+        @if($gwpagetag->end == $gwpagetag->getPageSize() + 1)
+        <li class="hidden disabled">
+        @else
+        <li>
+        @endif
+        <a href="admin?action=devstats&tabpos=0&page={{ $gwpagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+      </ul>
+    </nav>
+  @endif
+  @if($devpagetag->isavaliable())
+    <nav class="table-dev hidden">
+      <ul class="pagination">
+        @if($devpagetag->start == 1)
+        <li class="hidden disabled">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=devstats&tabpos=1&page={{ $devpagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        @for($index=$devpagetag->start; $index < $devpagetag->end; $index++)
+          @if($devpagetag->getPage() == $index)
+          <li class="active">
+          @else
+          <li>
+          @endif
+            <a href="admin?action=devstats&tabpos=1&page={{ $index }}">{{ $index }}</a>
+          </li>
+        @endfor
+        @if($devpagetag->end == $devpagetag->getPageSize() + 1)
+        <li class="hidden disabled">
+        @else
+        <li>
+        @endif
+        <a href="admin?action=devstats&tabpos=1&page={{ $devpagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+      </ul>
+    </nav>
+  @endif
   <div id="devopt">
     @include('admin.devstats.devopt')
   </div>

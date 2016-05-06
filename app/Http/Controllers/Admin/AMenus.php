@@ -8,6 +8,7 @@ class AMenus {
 	protected $amenu = '#';
 	protected $menus;
 	protected $nmenus;
+	protected $page = 0;
 	
 	public function __construct($actions = null)
 	{
@@ -19,6 +20,16 @@ class AMenus {
 		else
 		{
 			$actions = explode('/', $actions);
+		}
+		
+		$gp = Input::get('page');
+		if($gp != null)
+		{
+		    $this->page = $gp;
+		}
+		else
+		{
+		    $this->page = 1;
 		}
 
 		$this->menus = Consolemenu::all();
@@ -78,5 +89,10 @@ class AMenus {
 	public function getNmenus()
 	{
 		return $this->nmenus;
+	}
+	
+	public function getPage()
+	{
+	    return $this->page;
 	}
 }

@@ -11,6 +11,7 @@ use App\Model\DBStatic\Grade;
 use App\Model\DBStatic\Userrecord;
 use App\Model\DBStatic\Useraction;
 use App\Model\DBStatic\Idgrade;
+use App\Http\Controllers\PageTag;
 
 class AdminUserFunc {
 
@@ -39,12 +40,63 @@ class AdminUserFunc {
 
 			if($this->menus->getAmenu()->action == 'useractivity')
 			{
-				$news = DB::select('SELECT * FROM news ORDER BY updated_at DESC');
+			    $news = array();
+				$etnews = array();
 				$enews = array();
 
 				$user->recvcount = 0;
 				$user->noreadcount = 0;
 				$user->sendcount = 0;
+
+				$recvnews = News::where('owner', '!=', $user->name)->orderBy('updated_at', 'desc')->get();
+				/*$pagetag = new PageTag(2, 5, $recvnews->count(), $this->menus->getPage());
+				if($pagetag->isAvaliable())
+				{
+				    if(Input::get('tabpos') == 0)
+				    {
+				        $recvnews = $recvnews->paginate($pagetag->getRow());
+				    }
+				    else
+				    {
+				        $recvnews = $recvnews->paginate($pagetag->getRow(), ['*'], 'page', 1);
+				        $pagetag->setPage(1);
+				    }
+				}
+				$pagetag->setListNum(count($recvnews));
+				$recvnewspagetag = $pagetag;*/
+
+				foreach ($recvnews as $recv)
+				{
+				    array_push($news, $recv);
+				}
+
+				$sendnews = News::where('owner', '=', $user->name)->orderBy('updated_at', 'desc');
+				$user->sendcount = $sendnews->count();
+				$pagetag = new PageTag(3, 5, $sendnews->count(), $this->menus->getPage());
+				if($pagetag->isAvaliable())
+				{
+				    if(Input::get('tabpos') == 1)
+				    {
+				        $sendnews = $sendnews->paginate($pagetag->getRow());
+				    }
+				    else
+				    {
+				        $sendnews = $sendnews->paginate($pagetag->getRow(), ['*'], 'page', 1);
+				        $pagetag->setPage(1);
+				    }
+				}
+				else 
+				{
+				    $sendnews = $sendnews->get();
+				}
+
+				$pagetag->setListNum(count($sendnews));
+				$sendnewspagetag = $pagetag;
+
+				foreach ($sendnews as $send)
+				{
+				    array_push($news, $send);
+				}
 
 				foreach ($news as $anew)
 				{
@@ -77,7 +129,9 @@ class AdminUserFunc {
 
 							return view('admin.userinfo.newscontent')
 										->withTabpos(Input::get('tabpos'))
-										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.Input::get('tabpos'))
+										->withReturnurl('admin?action=useractivity&id='.$id
+										    .'&page='.$this->menus->getPage()
+										    .'&tabpos='.Input::get('tabpos'))
 										->withTabpos(Input::get('tabpos'))
 										->withUser(User::find(Input::get('id')))
 										->withNews($anew);
@@ -90,7 +144,9 @@ class AdminUserFunc {
 						if($newsid != null && $newsid == $anew->id)
 						{
 							return view('admin.userinfo.addnews')
-										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.Input::get('tabpos'))
+										->withReturnurl('admin?action=useractivity&id='.$id
+										    .'&page='.$this->menus->getPage()
+										    .'&tabpos='.Input::get('tabpos'))
 										->withHasowner(true)
 										->withIdgrades(Idgrade::all())
 										->withAcademies(Academy::all())
@@ -168,7 +224,9 @@ class AdminUserFunc {
 							}
 
 							return view('admin.userinfo.newsedts')
-										->withReturnurl('admin?action=useractivity&id='.$id.'&tabpos='.$tabpos)
+										->withReturnurl('admin?action=useractivity&id='.$id
+										    .'&page='.$this->menus->getPage()
+										    .'&tabpos='.$tabpos)
 										->withHasowner($hasowner)
 										->withIdgrades(Idgrade::all())
 										->withAcademies($academies)
@@ -189,7 +247,7 @@ class AdminUserFunc {
 					if($anew->owner == $user->name)
 					{
 						$anew->isrecv = false;
-						$user->sendcount++;
+						//$user->sendcount++;
 
 						array_push($enews, $anew);
 					}
@@ -229,7 +287,8 @@ class AdminUserFunc {
 							}
 							else if($userdetail->grade == 3) //student
 							{
-								$classgrade = DB::table('classgrades')->where('classgrade', $userdetail->type)->get();
+								$classgrade = DB::table('classgrades')
+								    ->where('classgrade', $userdetail->type)->get();
 								if($classgrade != null)
 								{
 									$classgrade = $classgrade[0];
@@ -318,12 +377,42 @@ class AdminUserFunc {
 							}
 
 							$user->recvcount++;
-							array_push($enews, $anew);
+							array_push($etnews, $anew);
 						}
 					}
 				}
 
+				$recvnewspagetag = new PageTag(3, 5, count($etnews), $this->menus->getPage());
+				if($recvnewspagetag->isAvaliable())
+				{
+    				$tindex = 0;
+    				$recvrow = $recvnewspagetag->getRow();
+    				$recvpage = $recvnewspagetag->getPage();
+    				
+    				$recvhindex = $recvrow*($recvpage-1);
+    				$recvtindex = $recvhindex + $recvrow;
+    				$recvcount = count($etnews);
+    				if($recvtindex > $recvcount)
+    				{
+    				    $recvtindex = $recvcount;
+    				}
+    				
+    				for($i=$recvhindex; $i < $recvtindex; $i++)
+    				{
+    				    array_push($enews, $etnews[$i]);
+    				}
+				}
+				else
+				{
+				    foreach ($etnews as $tnew)
+				    {
+				        array_push($enews, $tnew);
+				    }
+				}
+
 				return AdminController::getViewWithMenus('admin.admin')
+				            ->withRecvnewspagetag($recvnewspagetag)
+				            ->withSendnewspagetag($sendnewspagetag)
 							->withNews($enews)
 							->withUser($user);
 			}

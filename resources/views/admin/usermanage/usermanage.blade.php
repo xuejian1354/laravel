@@ -54,9 +54,47 @@
             </td>
           </tr>
         @endforeach
+        @for($i=0; $i < count($pagetags); $i++)
+          @if($pagetags[$i]->getRow() > $pagetags[$i]->getListNum())
+            @for($index=0; $index < $pagetags[$i]->getRow() - $pagetags[$i]->getListNum(); $index++)
+              <tr class="targ targlist{{ $i+1 }} hidden" style="height: 40px;"></tr>
+            @endfor
+          @endif
+        @endfor
       </tbody>
     </table>
   </div>
+  @for($i=0; $i < count($pagetags); $i++)
+  @if($pagetags[$i]->isavaliable())
+  <nav class="targ targlist{{ $i+1 }} hidden">
+    <ul class="pagination">
+      @if($pagetags[$i]->start == 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      @for($index=$pagetags[$i]->start; $index < $pagetags[$i]->end; $index++)
+        @if($pagetags[$i]->getPage() == $index)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $index }}">{{ $index }}</a>
+        </li>
+      @endfor
+      @if($pagetags[$i]->end == $pagetags[$i]->getPageSize() + 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+    </ul>
+  </nav>
+  @endif
+  @endfor
 </div>
 <script type="text/javascript">
   loadUserGrade({{ $grades[isset($_GET['tabpos'])&&$_GET['tabpos']<4?$_GET['tabpos']:'0']->grade }});

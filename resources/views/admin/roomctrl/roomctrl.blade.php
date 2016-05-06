@@ -17,7 +17,8 @@
         </tr>
       </thead>
       <tbody id="roomtbody">
-      @for($index=0; $index < count($rooms); $index++)
+      @for($index=0; $index < $pagetag->getRow(); $index++)
+        @if($index < count($rooms))
         <tr class="roomcol">
           <td><span>{{ $index+1 }}</span></td>
           <td class="roomid hidden"><span>{{ $rooms[$index]->id }}</span></td>
@@ -30,9 +31,41 @@
           <td class="roomadmin"><span>{{ $rooms[$index]->owner }}</span></td>
           <td><button onclick="location='{{ url('/admin?action=roomctrl/opt&roomsn='.$rooms[$index]->sn) }}'" class="btn btn-primary" role="button">进入</button></td>
         </tr>
+        @elseif($pagetag->isavaliable())
+        <tr style="height: 40px;"></tr>
+        @endif
       @endfor
       </tbody>
     </table>
   </div>
+  @if($pagetag->isavaliable())
+  <nav>
+    <ul class="pagination">
+      @if($pagetag->start == 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=roomctrl&page={{ $pagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      @for($index=$pagetag->start; $index < $pagetag->end; $index++)
+        @if($pagetag->getPage() == $index)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=roomctrl&page={{ $index }}">{{ $index }}</a>
+        </li>
+      @endfor
+      @if($pagetag->end == $pagetag->getPageSize() + 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=roomctrl&page={{ $pagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+    </ul>
+  </nav>
+  @endif
 </div>
 @endsection

@@ -8,6 +8,7 @@ use App\User;
 use App\Model\Course\Course;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PageTag;
 
 class AdminCourse {
 
@@ -58,8 +59,16 @@ class AdminCourse {
 
 	public function getCourseView()
 	{
+	    $courses = Course::all();
+	    $pagetag = new PageTag(8, 5, count($courses), $this->menus->getPage());
+	    if($pagetag->isAvaliable())
+	    {
+	        $courses = Course::paginate($pagetag->getRow());
+	    }
+
 		return AdminController::getViewWithMenus('admin.admin')
-				->withCourses(Course::all())
+		        ->withPagetag($pagetag)
+				->withCourses($courses)
 				->withRoomnames($this->roomnames)
 				->withRoomnamestr(json_encode($this->roomnames))
 				->withCycles($this->cyclestr)
@@ -91,7 +100,8 @@ class AdminCourse {
 			}
 		}
 	
-		return redirect("admin?action=courselist");
+		$page = Input::get('page');
+		return redirect("admin?action=courselist&page=".$page);
 	}
 
 	public function coursedel()

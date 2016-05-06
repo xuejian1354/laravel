@@ -9,6 +9,7 @@ use App\Model\DBStatic\Devtype;
 use App\Model\DBStatic\Devcmd;
 use App\Model\Room\Room;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PageTag;
 
 class AdminDevice {
 
@@ -17,12 +18,30 @@ class AdminDevice {
 	protected $gwargs;
 	protected $devargs;
 
+	protected $gwPagetag;
+	protected $devPagetag;
+
 	public function __construct($menus)
 	{
 		$this->menus = $menus;
 
 		$gateways = Gateway::all();
 		$devices = Device::all();
+
+		$pagetag = new PageTag(8, 5, count($gateways), $this->menus->getPage());
+		if($pagetag->isAvaliable())
+		{
+		    $gateways = Gateway::paginate($pagetag->getRow());
+		}
+		$this->gwPagetag = $pagetag;
+
+		$pagetag = new PageTag(8, 5, count($devices), $this->menus->getPage());
+		if($pagetag->isAvaliable())
+		{
+		    $devices = Device::paginate($pagetag->getRow());
+		}
+		$this->devPagetag = $pagetag;
+
 		$devtypes = Devtype::all();
 		$devcmds = Controller::getDevCmds();
 		$this->gwargs = array();
@@ -30,7 +49,7 @@ class AdminDevice {
 
 		foreach ($gateways as $gateway)
 		{
-			if($amenu['caction'] == 'gwedit' && isset($_GET['id']) && $gateway->id != Input::get('id'))
+			if($this->menus->getAmenu()['caction'] == 'gwedit' && isset($_GET['id']) && $gateway->id != Input::get('id'))
 			{}
 			else
 			{
@@ -59,9 +78,9 @@ class AdminDevice {
 				}
 			}
 
-			if(($amenu['caction'] == 'devedit'
+			if(($this->menus->getAmenu()['caction'] == 'devedit'
 					&& isset($_GET['id']) && $device->id != Input::get('id'))
-				|| ($amenu['caction'] == 'async'
+				|| ($this->menus->getAmenu()['caction'] == 'async'
 					&& isset($_GET['area']) && $device->area != Input::get('area')))
 			{}
 			else
@@ -93,6 +112,8 @@ class AdminDevice {
 							->withRoom($room[0])
 							->withDevcmds($devcmds)
 							->withUsers(User::all())
+							->withGwpagetag($this->gwPagetag)
+							->withDevpagetag($this->devPagetag)
 							->withGateways($this->gwargs)
 							->withDevices($this->devargs);
 			}
@@ -102,6 +123,8 @@ class AdminDevice {
 							->withDevcmds(Controller::getDevCmds())
 							->withAreas(Room::all())
 							->withUsers(User::all())
+							->withGwpagetag($this->gwPagetag)
+							->withDevpagetag($this->devPagetag)
 							->withGateways($this->gwargs)
 							->withDevices($this->devargs);
 			}

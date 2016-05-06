@@ -22,9 +22,38 @@
   @else
   <div id="divrecv" class="divrecv">
   @endif
-    <div class="alert" style="margin-top: 20px; background: #f0f0f0;">
-            收到消息：{{ $user->recvcount }} ， 未读：{{ $user->noreadcount }}
-    </div>
+  <div class="alert" style="margin-top: 20px; background: #f0f0f0;">
+          收到消息：{{ $user->recvcount }} ， 未读：{{ $user->noreadcount }}
+  </div>
+  @if($recvnewspagetag->isavaliable())
+  <nav>
+    <ul class="pagination" style="margin: 0;">
+      @if($recvnewspagetag->start == 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      @for($index=$recvnewspagetag->start; $index < $recvnewspagetag->end; $index++)
+        @if($recvnewspagetag->getPage() == $index)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $index }}">{{ $index }}</a>
+        </li>
+      @endfor
+      @if($recvnewspagetag->end == $recvnewspagetag->getPageSize() + 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+    </ul>
+  </nav>
+  @endif
   @foreach($news as $anew)
     @if($anew->isrecv)
     <div id="divnews{{ $anew->id }}">
@@ -51,9 +80,9 @@
       <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}');" style="margin-right: 4px;">更多</a>
       @if($user->privilege == 5 && $user->grade == 1)
       <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '0');" class="hidden" style="margin-right: 4px;">删除</a>
-      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&tabpos=0');" class="hidden" style="margin-right: 4px;">编辑</a>
+      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');" class="hidden" style="margin-right: 4px;">编辑</a>
 	  @endif
-      <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&tabpos=0');">全部</a><hr>
+      <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');">全部</a><hr>
     </div>
     @endif
   @endforeach
@@ -64,10 +93,39 @@
   @else
   <div id="divsend" class="divsend hidden">
   @endif
-    <div class="alert" style="margin-top: 20px; background: #f0f0f0;">
-            发布消息：{{ $user->sendcount }}&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=add&newsid={{ $anew->id }}&tabpos=1');">添加</a>
-    </div>
+  <div class="alert" style="margin-top: 20px; background: #f0f0f0;">
+          发布消息：{{ $user->sendcount }}&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=add&newsid={{ $anew->id }}&tabpos=1');">添加</a>
+  </div>
+  @if($sendnewspagetag->isavaliable())
+  <nav>
+    <ul class="pagination" style="margin: 0;">
+      @if($sendnewspagetag->start == 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      @for($index=$sendnewspagetag->start; $index < $sendnewspagetag->end; $index++)
+        @if($sendnewspagetag->getPage() == $index)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $index }}">{{ $index }}</a>
+        </li>
+      @endfor
+      @if($sendnewspagetag->end == $sendnewspagetag->getPageSize() + 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+    </ul>
+  </nav>
+  @endif
   @foreach($news as $anew)
     @if(!$anew->isrecv)
     <div id="divnews{{ $anew->id }}">
@@ -83,8 +141,8 @@
       </div><br>
       <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}');" style="margin-right: 4px;">更多</a>
       <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '1');" class="hidden" style="margin-right: 4px;">删除</a>
-      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&tabpos=1');" class="hidden" style="margin-right: 4px;">编辑</a>
-      <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&tabpos=1');">全部</a><hr>
+      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');" class="hidden" style="margin-right: 4px;">编辑</a>
+      <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');">全部</a><hr>
     </div>
     @endif
   @endforeach

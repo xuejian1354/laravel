@@ -16,7 +16,8 @@
       </tr>
     </thead>
     <tbody id="classgradetbody">
-    @for($index=0; $index < count($classgrades); $index++)
+    @for($index=0; $index < $classgradepagetag->getRow(); $index++)
+      @if($index < count($classgrades))
       <tr>
         <td>{{ $classgrades[$index]->classgrade }}</td>
         <td>{{ $classgrades[$index]->val }}</td>
@@ -29,11 +30,43 @@
         <td><a href="javascript:loadContent('classgradebody', 'admin?action=userinfo/classgradeedt&id={{ $classgrades[$index]->id }}');">修改</a></td>
         <th><input type="checkbox" class="classgradecheck" eleid="{{ $classgrades[$index]->id }}"></th>
       </tr>
+      @elseif($classgradepagetag->isavaliable())
+      <tr style="height: 39px;"></tr>
+      @endif
     @endfor
     </tbody>
   </table>
   <div class="classgradeedt hidden" style="float: right;">
     <a href="javascript:classgradeDelAlert('{{ csrf_token() }}');" class="btn btn-danger" role="button">删除</a>
   </div>
+  @if($classgradepagetag->isavaliable())
+  <nav>
+    <ul class="pagination">
+      @if($classgradepagetag->start == 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      @for($index=$classgradepagetag->start; $index < $classgradepagetag->end; $index++)
+        @if($classgradepagetag->getPage() == $index)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="admin?action=userinfo&tabpos=2&page={{ $index }}">{{ $index }}</a>
+        </li>
+      @endfor
+      @if($classgradepagetag->end == $classgradepagetag->getPageSize() + 1)
+      <li class="hidden disabled">
+      @else
+      <li>
+      @endif
+        <a href="admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+    </ul>
+  </nav>
+  @endif
 </div>
 </div>

@@ -9,6 +9,7 @@ use App\Model\DBStatic\Roomaddr;
 use App\Http\Controllers\ExcelController;
 use App\User;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PageTag;
 
 class AdminRoom {
 
@@ -83,8 +84,17 @@ class AdminRoom {
 		
 			return $this->backView('未找到教室');
 		}
-		
-		$this->rooms = Room::all();
+
+		$pagetag = new PageTag(8, 5, count(Room::all()), $this->menus->getPage());
+		if($pagetag->isAvaliable())
+		{
+		    $this->rooms = Room::paginate($pagetag->getRow());
+		}
+		else
+		{
+		  $this->rooms = Room::all();
+		}
+
 		foreach ($this->rooms as $room)
 		{
 			foreach (Roomtype::all() as $roomtype)
@@ -95,7 +105,7 @@ class AdminRoom {
 					break;
 				}
 			}
-		
+
 			foreach (Roomaddr::all() as $roomaddr)
 			{
 				if ($roomaddr->roomaddr == $room->addr)
@@ -147,6 +157,7 @@ class AdminRoom {
 		sort($this->ownerstr);
 
 		return AdminController::getViewWithMenus('admin.admin')
+		            ->withPagetag($pagetag)
 					->withRooms($this->rooms)
 					->withRoomtypes($this->roomtypestr)
 					->withRoomtypestr(json_encode($this->roomtypestr))
