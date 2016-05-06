@@ -410,11 +410,16 @@ class AdminUserFunc {
 				    }
 				}
 
-				return AdminController::getViewWithMenus('admin.admin')
+				return AdminController::getViewWithMenus('admin.admin', null, $user)
 				            ->withRecvnewspagetag($recvnewspagetag)
 				            ->withSendnewspagetag($sendnewspagetag)
 							->withNews($enews)
 							->withUser($user);
+			}
+			else if($this->menus->getAmenu()->action == 'usercourse')
+			{
+			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+			                 ->withUser($user);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
@@ -448,14 +453,14 @@ class AdminUserFunc {
 					}
 				}
 
-				return AdminController::getViewWithMenus('admin.admin')
+				return AdminController::getViewWithMenus('admin.admin', null, $user)
 							->withUserdetail($userdetail)
 							->withAcademies(Academy::all())
 							->withClassgrades(Classgrade::all())
 							->withUser($user);
 			}
 
-			return AdminController::getViewWithMenus('admin.admin')
+			return AdminController::getViewWithMenus('admin.admin', null, $user)
 						->withUser($user);
 		}
 		else

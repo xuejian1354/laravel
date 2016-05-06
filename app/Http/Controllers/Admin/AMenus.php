@@ -75,6 +75,22 @@ class AMenus {
 			}
 		}
 	}
+	
+	public function setCMenuWithAction($action, $val)
+	{
+	    foreach ($this->menus as $menu)
+	    {
+	        if($action == $menu->action)
+	        {
+	            $menu->cmenu = $val;
+	            if($menu->action == $this->amenu->action)
+	            {
+	                $this->amenu->cmenu = $val;
+	            }
+	            break;
+	        }
+	    }
+	}
 
 	public function getAmenu()
 	{

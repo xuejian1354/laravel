@@ -364,9 +364,37 @@ class AdminController extends Controller {
 							->withInfo('Reset password success !');
 	}
 
-	public static function getViewWithMenus($view = null, $actions = null, $data = [], $mergeData = [])
+	public static function getViewWithMenus($view = null, $actions = null, $user = null, $data = [], $mergeData = [])
 	{
 		$menus = new AMenus($actions);
+		if($user != null)
+		{
+		    switch($user->grade)
+		    {
+		    case 1:
+		        $menus->setCMenuWithAction('usercourse', '课程安排');
+		        $menus->setCMenuWithAction('userclassgrade', '教室操作');
+		        $menus->setCMenuWithAction('userreport', '作业查询');
+		        $menus->setCMenuWithAction('userexam', '考试查询');
+		        break;
+
+	        case 2:
+	            $menus->setCMenuWithAction('userclassgrade', '教室操作');
+	            $menus->setCMenuWithAction('userscore', '成绩发布');
+	            break;
+
+            case 3:
+                $menus->setCMenuWithAction('userreport', '课程安排');
+                $menus->setCMenuWithAction('userexam', '考试查询');
+                break;
+
+            case 4:
+                $menus->setCMenuWithAction('userreport', 'NULL');
+                $menus->setCMenuWithAction('userexam', '考试查询');
+                $menus->setCMenuWithAction('userrecord', 'NULL');
+                break;
+		    }
+		}
 
 		return view($view, $data, $mergeData)
 					->withGlobalvals(Controller::getGlobalvals())

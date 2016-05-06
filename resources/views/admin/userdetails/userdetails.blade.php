@@ -136,7 +136,11 @@
     </div>
     @else
     <div class="alert alert-info">
+    @if($user->grade == 4)
+      <strong>Whoops ! </strong>没有发现 {{ $user->name }} 的个人资料哟 !<br>请认真填写，方便管理员识别您的身份信息 !
+    @else
       <strong>Whoops ! </strong>没有发现 {{ $user->name }} 的个人资料哟，请在此处添加
+    @endif
     </div>
     @endif
   <form method="POST" action="{{ url('/admin/userdetails/adddetail') }}">
