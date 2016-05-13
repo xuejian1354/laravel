@@ -487,7 +487,37 @@ $(document).ready(function() {
 	    }
 	  }
   });
+
+  $("#coursearrange").change(function() {
+	  courseArrangeChanged();
+  });
+
+  $("#coursechoose").change(function() {
+	  courseChooseChanged();
+  });
 })
+
+function courseArrangeChanged()
+{
+	$('.arropt').each(function(){
+		if($(this).text() == $("#coursearrange").val())
+		{
+			if($(this).attr('isarranged') == 1)
+			{
+				$('#termstime').val($(this).attr('start'));
+				$('#termetime').val($(this).attr('end'));
+			}
+			else
+			{
+				$('#termstime').val('');
+				$('#termetime').val('');
+			}
+		}
+	});
+}
+
+function courseChooseChanged()
+{}
 
 function setSelectXml(target, jstr)
 {

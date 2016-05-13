@@ -16,6 +16,11 @@ class CreateTermsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('val');
+			$table->boolean('coursearrange');
+			$table->boolean('coursechoose');
+			$table->timestamp('arrangestart')->nullable();
+			$table->timestamp('arrangeend')->nullable();
+			$table->timestamp('chooseend')->nullable();
             $table->timestamps();
 		});
 	}

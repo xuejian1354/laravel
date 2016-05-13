@@ -12,6 +12,8 @@ use App\Model\DBStatic\Userrecord;
 use App\Model\DBStatic\Useraction;
 use App\Model\DBStatic\Idgrade;
 use App\Http\Controllers\PageTag;
+use App\Model\DBStatic\Term;
+use App\Model\Course\Course;
 
 class AdminUserFunc {
 
@@ -418,7 +420,50 @@ class AdminUserFunc {
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
+			    if($this->menus->getAmenu()->caction == 'arrange')
+			    {
+			        if($user->grade == 1)
+			        {
+    			        $term = Term::where('val', '=', Input::get('term'))->get()[0];
+    			        if($term->coursearrange == 0)
+    			        {
+        			        $term->coursearrange = true;
+        			        $term->arrangestart = Input::get('start');
+        			        $term->arrangeend = Input::get('end');
+        			        //dd($term);
+        			        $term->save();
+    			        }
+
+    			        $teachers = User::where('grade', '=', 2)->get();
+    			        $arrangetname = $teachers[0]->name;
+
+    			        $view = 'admin.admin';
+    			        if(Input::get('isweektbody') == 'true')
+    			        {
+    			            $view = 'admin.usercourse.weektbody';
+    			            $arrangetname = Input::get('teacher');
+    			        }
+
+    			        return AdminController::getViewWithMenus($view, null, $user)
+                			        ->withTerm($term)
+                			        ->withTeachers($teachers)
+                			        ->withCoursetime(['1,2' => '8:00~9:30',
+                			                            '3,4' => '10:00~11:30',
+                			                            '5,6' => '13:00~14:30',
+                			                            '7,8' => '15:00~16:30',
+                			                            '9,10,11' => '18:00~21:00',
+                			                         ])
+                			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangetname))
+                			        ->withUser($user);
+			        }
+			        else
+			        {
+			            return view('errors.permitts');
+			        }
+			    }
+
 			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+			                 ->withTerms(Term::query()->orderBy('val', 'desc')->get())
 			                 ->withUser($user);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
@@ -745,5 +790,29 @@ adddtailreturn:
 		News::find($newsid)->delete();
 	
 		return redirect("admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
+	}
+	
+	public static function getCourseForWeek($term, $teacher)
+	{
+	    $courseTable = array();
+	    foreach (['一', '二', '三', '四', '五', '六', '日'] as $day)
+	    {
+	        foreach (['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $class)
+	        {
+	            $courseTable['星期'.$day.'第'.$class.'节'] = ''; 
+	        }
+	    }
+
+	    $courses = Course::where('teacher', '=', $teacher)
+	                       ->where('cycle', '=',  '每周')
+	                       ->where('term', '=',  $term)
+	                       ->get();
+	    
+	    foreach ($courses as $course)
+	    {
+	        $courseTable[$course->time] = $course->course.'('.$course->room.')';
+	    }
+	    
+	    return $courseTable;
 	}
 }
