@@ -17,5 +17,6 @@ class GlobalvalTableSeeder extends Seeder
         DB::table('globalvals')->delete();
         Globalval::create(['name' => 'title', 'fieldval' => 'SmartLab']);
         Globalval::create(['name' => 'ctrlFrame', 'fieldval' => null]);
+        Globalval::create(['name' => 'coursetimes', 'fieldval' => '80课时']);
     }
 }

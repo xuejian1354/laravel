@@ -22,7 +22,7 @@
   @endif
   <td class="classsubtitle">第{{ $t1 }}节<br>({{ $coursetime[$t1] }})</td>
   @foreach(['一', '二', '三', '四', '五', '六', '日'] as $y => $t2)
-    <td class="arrangeweekcourse" style="padding: 0;"><button id="{{ $x.'-'.$y }}" class="arrangeweekbtn" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{{ $coursetable['星期'.$t2.'第'.$t1.'节'] }}</button></td>
+    <td class="arrangeweekcourse" style="padding: 0;"><button id="{{ $x.'-'.$y }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" class="arrangeweekbtn" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{{ $coursetable['星期'.$t2.'第'.$t1.'节'] }}</button></td>
   @endforeach
 </tr>
 @endforeach

@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Database\QueryException;
 use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
+use App\Model\DBStatic\Globalval;
 
 class ExcelController extends Controller
 {
@@ -67,6 +68,14 @@ class ExcelController extends Controller
 					{
 						foreach ($sheet as $course)
 						{
+						    if($course->remarks == '')
+						    {
+						        $course->remarks = 
+						                  Globalval::where('name', '=', 'coursetimes')
+						                              ->get()[0]
+						                              ->fieldval;
+						    }
+
 							try {
 								Course::create([
 										'sn' => $this->genCourseSN($course->course,

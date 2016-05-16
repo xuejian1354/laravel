@@ -7,8 +7,8 @@ use App\Model\DBStatic\Term;
 use App\User;
 use App\Model\Course\Course;
 use App\Http\Controllers\ExcelController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\PageTag;
+use App\Model\DBStatic\Globalval;
 
 class AdminCourse {
 
@@ -95,6 +95,7 @@ class AdminCourse {
 				if(isset($dobj->cycle)) $course->cycle = $dobj->cycle;
 				if(isset($dobj->term)) $course->term = $dobj->term;
 				if(isset($dobj->teacher)) $course->teacher = $dobj->teacher;
+				if(isset($dobj->remarks)) $course->remarks = $dobj->remarks;
 	
 				$course->save();
 			}
@@ -133,7 +134,12 @@ class AdminCourse {
 				$course->time,
 				$course->cycle,
 				$course->term);
-	
+		
+		if($course->remarks == '')
+		{
+		    $course->remarks = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
+		}
+
 		try {
 			Course::create([
 					'sn' => $sn,
@@ -144,11 +150,13 @@ class AdminCourse {
 					'cycle' => $course->cycle,
 					'term' => $course->term,
 					'teacher' => $course->teacher,
+					'remarks' => $course->remarks,
 			]);
 		} catch (QueryException $e) {
 			return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该课程是否已经存在");</script>';
 		}
-	
-		return redirect("admin?action=courselist");
+
+		$pagetag = new PageTag(8, 5, count(Course::all()), $this->menus->getPage());
+		return redirect("admin?action=courselist&page=".$pagetag->getPageSize());
 	}
 }

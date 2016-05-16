@@ -13,6 +13,7 @@
           <th>周期</th>
           <th>学期</th>
           <th>教师</th>
+          <th>备注</th>
           <th>更新时间</th>
           <th><input type="checkbox" class="coursecheckall"></th>
         </tr>
@@ -30,6 +31,7 @@
           <td class="coursecycle"><span>{{ $courses[$index]->cycle }}</span></td>
           <td class="courseterm"><span>{{ $courses[$index]->term }}</span></td>
           <td class="courseteacher"><span>{{ $courses[$index]->teacher }}</span></td>
+          <td class="courseremarks"><span>{{ $courses[$index]->remarks }}</span></td>
           <td>{{ $courses[$index]->updated_at }}</td>
           <td class="courseedtcheck"><input type="checkbox" class="coursecheck"></td>
         </tr>

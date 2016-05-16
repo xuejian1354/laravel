@@ -4,7 +4,7 @@
   <a href="admin?action=usermanage&tabpos={{ $user->grade-1 }}" style="float: right; margin-top: 5px;">用户返回</a></h5>
   <h1 class="page-header">{{ $amenu->cmenu }}</h1>
   @if($user->grade == 1)
-  <h3>1.新学期排课</h3>
+  <h3>1.教师排课</h3>
   <span>学期</span>
   <select id="coursearrange">
     @for($index=0; $index < count($terms); $index++)

@@ -14,6 +14,9 @@ use App\Model\DBStatic\Idgrade;
 use App\Http\Controllers\PageTag;
 use App\Model\DBStatic\Term;
 use App\Model\Course\Course;
+use App\Model\Room\Room;
+use Illuminate\Support\Facades\Request;
+use App\Http\Controllers\ExcelController;
 
 class AdminUserFunc {
 
@@ -434,19 +437,24 @@ class AdminUserFunc {
         			        $term->save();
     			        }
 
-    			        $teachers = User::where('grade', '=', 2)->get();
+    			        $teachers = User::where('grade', '=', 2)->orderBy('name', 'asc')->get();
     			        $arrangetname = $teachers[0]->name;
+    			        if(Input::get('teacher'))
+    			        {
+    			            $arrangetname = Input::get('teacher'); 
+    			        }
 
     			        $view = 'admin.admin';
     			        if(Input::get('isweektbody') == 'true')
     			        {
-    			            $view = 'admin.usercourse.weektbody';
-    			            $arrangetname = Input::get('teacher');
+    			            $view = 'admin.usercourse.weektbody';;
     			        }
 
     			        return AdminController::getViewWithMenus($view, null, $user)
                 			        ->withTerm($term)
+                			        ->withRooms(Room::all())
                 			        ->withTeachers($teachers)
+                			        ->withArrangename($arrangetname)
                 			        ->withCoursetime(['1,2' => '8:00~9:30',
                 			                            '3,4' => '10:00~11:30',
                 			                            '5,6' => '13:00~14:30',
@@ -792,6 +800,105 @@ adddtailreturn:
 		return redirect("admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
 	}
 	
+	public function coursearrange()
+	{
+	    $data = Input::get('data');
+	    $type = Input::get('type');
+	    $course = json_decode($data);
+
+	    if($course->remarks == '')
+	    {
+	        $course->remarks = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
+	    }
+	
+	    $cobj = Course::where('term', '=', $course->term)
+	               ->where('time', '=', $course->time)
+	               ->where('room', '=', $course->room)
+	               ->orderBy('id', 'desc');
+	    
+	    if($cobj->count() > 0)
+	    {
+	        $tcourse = $cobj->get()[0];
+
+	        if(Input::get('force') == 1)
+	        {
+    	        $tcourse->course = $course->course;
+    	        $tcourse->cycle = $course->cycle;
+    	        $tcourse->teacher = $course->teacher;
+    	        $tcourse->remarks = $course->remarks;
+    	        $tcourse->save();
+	        }
+	        else
+	        {
+	            $warning = '位于『'.$tcourse->room
+	                           .'』'
+	                           .$tcourse->time
+	                           .'已经存在课程『'
+	                           .$tcourse->course.'』，任课教师：'
+	                           .$tcourse->teacher
+	                           .'。是否强制替换？';
+
+	           return redirect(Input::get('returnurl')
+	                           .'&exist=1&ecourse='
+	                           .$course->course
+	                           .'&etime='
+	                           .$course->time
+	                           .'&eroom='
+	                           .$course->room
+	                           .'&eremarks='
+	                           .$course->remarks
+	                           .'&warning='
+	                           .$warning);
+	        }
+	    }
+	    else
+	    {
+	        $sn = ExcelController::genCourseSN($course->course,
+                    	            $type,
+                    	            $course->room,
+                    	            $course->time,
+                    	            $course->cycle,
+                    	            $course->term);
+
+    	    try {
+    	        Course::create([
+    	            'sn' => $sn,
+    	            'course' => $course->course,
+    	            'coursetype' => 1,
+    	            'room' => $course->room,
+    	            'time' => $course->time,
+    	            'cycle' => $course->cycle,
+    	            'term' => $course->term,
+    	            'teacher' => $course->teacher,
+    	            'remarks' => $course->remarks,
+    	        ]);
+        	    } catch (QueryException $e) {
+        	        return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该课程是否已经存在");</script>';
+        	    }
+	    }
+
+	    return redirect(Input::get('returnurl'));
+	}
+	
+	public function coursearrangedel()
+	{
+	    $data = Input::get('data');
+	    $course = json_decode($data);
+
+	    $dobj = Course::where('term', '=', $course->term)
+            	    ->where('time', '=', $course->time)
+            	    ->where('room', '=', $course->room)
+            	    ->where('teacher', '=', $course->teacher)
+            	    ->get();
+
+	    foreach ($dobj as $d)
+	    {
+	        $d->delete();
+	    }
+
+	    return redirect(Input::get('returnurl'));
+	}
+	
 	public static function getCourseForWeek($term, $teacher)
 	{
 	    $courseTable = array();
@@ -810,7 +917,7 @@ adddtailreturn:
 	    
 	    foreach ($courses as $course)
 	    {
-	        $courseTable[$course->time] = $course->course.'('.$course->room.')';
+	        $courseTable[$course->time] = $course->course.' ('.$course->room.') '.$course->remarks;
 	    }
 	    
 	    return $courseTable;

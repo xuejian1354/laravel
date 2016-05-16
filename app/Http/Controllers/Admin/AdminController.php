@@ -292,6 +292,22 @@ class AdminController extends Controller {
 		
 		return $adminuserfunc->adddetail();
 	}
+	
+	public function coursearrange()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	    
+	    return $adminuserfunc->coursearrange();
+	}
+	
+	public function coursearrangedel()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	     
+	    return $adminuserfunc->coursearrangedel();
+	}
 
 	public function resetpass()
 	{

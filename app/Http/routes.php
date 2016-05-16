@@ -90,6 +90,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/addclassgrade', 'AdminController@addclassgrade');
 	Route::post('/classgradeedt', 'AdminController@classgradeedt');
 	Route::post('/userdetails/adddetail', 'AdminController@adddetail');
+	Route::post('/usercourse/coursearrange', 'AdminController@coursearrange');
+	Route::post('/usercourse/coursearrangedel', 'AdminController@coursearrangedel');
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');

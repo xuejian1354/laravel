@@ -22,21 +22,22 @@
           <th>周期</th>
           <th>学期</th>
           <th>教师</th>
+          <th>备注</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td></td>
-          <td><input id="caddcourse" type="text"></td>
+          <td><input id="caddcourse" type="text" style="width: 100px;"></td>
           <td>
-            <select id="caddtype">
+            <select id="caddtype" style="height: 26px;">
               <option>静态</option>
               <option>动态</option>
             </select>
           </td>
           <td>
-            <select id="caddroom">
+            <select id="caddroom" style="height: 26px;">
             @foreach($roomnames as $roomname)
               <option>{{ $roomname }}</option>
             @endforeach
@@ -44,33 +45,34 @@
           </td>
           <td><input id="caddtime" type="text"></td>
           <td>
-            <select id="caddcycle">
+            <select id="caddcycle" style="height: 26px;">
             @foreach($cycles as $cycle)
               <option>{{ $cycle }}</option>
             @endforeach
             </select>
           </td>
           <td>
-            <select id="caddterm">
+            <select id="caddterm" style="height: 26px;">
             @foreach($terms as $term)
               <option>{{ $term }}</option>
             @endforeach
             </select>
           </td>
           <td>
-            <select id="caddteacher">
+            <select id="caddteacher" style="height: 26px;">
             @foreach($teachers as $teacher)
               <option>{{ $teacher }}</option>
             @endforeach
             </select>
           </td>
+          <td><input id="caddremarks" type="text" style="width: 50px;"></td>
           <td><a href="javascript:courseAddAlert('{{ csrf_token() }}')" class="btn btn-info" role="button">添加</a></td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
-<script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
+<!-- script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
 <script type="text/javascript">
         laydate({
             elem: '#caddtime',
@@ -78,5 +80,5 @@
             istime: true,
             istoday: false,
         });
-</script>
+</script-->
 @endsection
