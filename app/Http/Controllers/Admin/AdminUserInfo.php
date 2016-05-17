@@ -8,6 +8,7 @@ use App\Model\DBStatic\Idgrade;
 use App\Model\DBStatic\Academy;
 use App\Model\DBStatic\Classgrade;
 use App\Http\Controllers\PageTag;
+use App\Model\DBStatic\Userrecord;
 
 class AdminUserInfo {
 
@@ -513,6 +514,11 @@ class AdminUserInfo {
 			}
 
 			$new->save();
+
+			foreach(Userrecord::where('optnum', '=', $new->sn)->get() as $record)
+			{
+			    $record->delete();
+			}
 		}
 
 		$returnurl = Input::get('returnurl');

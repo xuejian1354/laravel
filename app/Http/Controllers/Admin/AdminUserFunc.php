@@ -17,6 +17,7 @@ use App\Model\Course\Course;
 use App\Model\Room\Room;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\ExcelController;
+use App\Model\DBStatic\Globalval;
 
 class AdminUserFunc {
 
@@ -137,7 +138,39 @@ class AdminUserFunc {
 										->withReturnurl('admin?action=useractivity&id='.$id
 										    .'&page='.$this->menus->getPage()
 										    .'&tabpos='.Input::get('tabpos'))
+										->withUser(User::find(Input::get('id')))
+										->withNews($anew);
+						}
+						continue;
+					}
+					else if($opt == 'more')
+					{
+						$newsid = Input::get('newsid');
+						if($newsid != null && $newsid == $anew->id)
+						{
+							$lnews = News::find($newsid);
+							$userrecord = Userrecord::where('usersn', '=', $user->sn)
+                							             ->where('action', '=', '2')
+                							             ->where('optnum', '=', $lnews->sn);
+
+							if($userrecord->count() == 0)
+							{
+								$lname = '查看消息:"'.$lnews->title.'"';
+
+								Userrecord::create([
+										'sn' => AdminUserInfo::genNewsSN($lname),
+										'name' => $lname,
+										'usersn' => $user->sn,
+										'action' => 2,
+										'optnum' => $lnews->sn,
+								]);
+							}
+
+							return view('admin.userinfo.newsrecvlist')
 										->withTabpos(Input::get('tabpos'))
+										->withReturnurl('admin?action=useractivity&id='.$id
+										    .'&page='.$this->menus->getPage()
+										    .'&tabpos='.Input::get('tabpos'))
 										->withUser(User::find(Input::get('id')))
 										->withNews($anew);
 						}
@@ -455,12 +488,7 @@ class AdminUserFunc {
                 			        ->withRooms(Room::all())
                 			        ->withTeachers($teachers)
                 			        ->withArrangename($arrangetname)
-                			        ->withCoursetime(['1,2' => '8:00~9:30',
-                			                            '3,4' => '10:00~11:30',
-                			                            '5,6' => '13:00~14:30',
-                			                            '7,8' => '15:00~16:30',
-                			                            '9,10,11' => '18:00~21:00',
-                			                         ])
+                			        ->withCoursetime($this->getCoursetimeArray())
                 			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangetname))
                 			        ->withUser($user);
 			        }
@@ -468,6 +496,34 @@ class AdminUserFunc {
 			        {
 			            return view('errors.permitts');
 			        }
+			    }
+			    elseif($user->grade == 2)
+			    {
+			        $terms = Term::query()->orderBy('val', 'desc')->get();
+			        $term = $terms[0];
+			        
+			        $gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
+			        if(count($gterm) > 0)
+			        {
+			            $term = $gterm[0];
+			        }
+
+			        if(Input::get('term') != null)
+			        {
+			            $aterm = Term::where('val', '=', Input::get('term'))->get();
+			            if(count($aterm) > 0)
+			            {
+			                $term = $aterm[0];
+			            }
+			        }
+
+			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+                			        ->withCoursetime($this->getCoursetimeArray())
+                			        ->withCoursetable($this->getCourseForWeek($term->val, $user->name))
+                			        ->withTerm($term)
+                			        ->withTerms($terms)
+                			        ->withAdmins(User::where('grade', '=', '1')->get())
+                			        ->withUser($user);
 			    }
 
 			    return AdminController::getViewWithMenus('admin.admin', null, $user)
@@ -521,7 +577,17 @@ class AdminUserFunc {
 			return view('errors.permitts');
 		}
 	}
-	
+
+	function getCoursetimeArray()
+	{
+	    return ['1,2' => Globalval::where('name', '=', '1-2-classtime')->get()[0]->fieldval,
+        	    '3,4' => Globalval::where('name', '=', '3-4-classtime')->get()[0]->fieldval,
+        	    '5,6' => Globalval::where('name', '=', '5-6-classtime')->get()[0]->fieldval,
+        	    '7,8' => Globalval::where('name', '=', '7-8-classtime')->get()[0]->fieldval,
+        	    '9,10,11' => Globalval::where('name', '=', '9-11-classtime')->get()[0]->fieldval,
+        	    ];
+	}
+
 	public function adddetail() {
 		$info = null;
 		$userdetail = null;

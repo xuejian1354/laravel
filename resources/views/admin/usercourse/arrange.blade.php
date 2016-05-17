@@ -88,49 +88,6 @@
 </div>
 @if($user->grade == 1)
 <script type="text/javascript">
-function arrangeWeekEdt()
-{
-	if($('#weekedt').text() == '编辑')
-	{
-		$('#weekedt').text('取消');
-		$('.arrangeweekcourse').addClass('arrangeweekcourseedt');
-	}
-	else
-	{
-		$('#weekedt').text('编辑');
-		$('.arrangeweekcourse').removeClass('arrangeweekcourseedt');
-	}
-}
-
-function loadWeekEdt(id)
-{
-	var tbtn = $('#'+id);
-	if($('#weekedt').text() == '取消')
-	{
-		//alert($('#'+id).text());
-		$('#usercourseOptHeader').text(tbtn.attr('tval'));
-		tbtn.attr( 'data-target', '#usercourseOptModal');
-		tbtn.attr( 'data-toggle', 'modal');
-
-		var result = tbtn.text().split(' ');
-		$('#ucoursename').val(result[0]);
-
-		$('#ucourseroom option').each(function(){
-			if('('+$(this).text()+')' == result[1])
-			{
-				$(this).attr("selected", "selected");
-			}
-		});
-
-		$('#ucourseremarks').val(result[2]);
-	}
-	else
-	{
-		tbtn.removeAttr('data-target');
-		tbtn.removeAttr('data-toggle');
-	}
-}
-
 function courseArrangeAlert(token, force) {
 
 	var tobj = new Object(); 
@@ -220,6 +177,7 @@ $('#arrangeteacher').change(function(){
 @if(Input::get('edit') == 1)
   arrangeWeekEdt();
 @endif
+
 @if(Input::get('exist') == 1)
   if(confirm("{{ Input::get('warning') }}")) {
 	setTimeout("courseArrangeAlert('{{ csrf_token() }}', '1')", 200);
