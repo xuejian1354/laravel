@@ -35,6 +35,24 @@ abstract class Controller extends BaseController
 
     	return $globalvals;
     }
+    
+    public static function updateGlobalval($name, $val)
+    {
+        $gloval = Globalval::where('name', '=', $name)->get();
+        if($gloval->count() > 0)
+        {
+            $gloval = $gloval[0];
+            $gloval->fieldval = $val;
+            $gloval->save();
+        }
+        else
+        {
+            Globalval::create([
+                'name' => $name,
+                'fieldval' => $val,
+            ]);
+        }
+    }
 
     public static function getDevCmds()
     {

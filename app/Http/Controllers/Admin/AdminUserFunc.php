@@ -18,6 +18,7 @@ use App\Model\Room\Room;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\ExcelController;
 use App\Model\DBStatic\Globalval;
+use App\Model\Course\Termcourse;
 
 class AdminUserFunc {
 
@@ -312,7 +313,7 @@ class AdminUserFunc {
 								break;
 							}
 
-							if($userdetail->grade == 1)	//administrator
+							if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
 							{
 								$ischoose = true;
 							}
@@ -345,7 +346,7 @@ class AdminUserFunc {
 								break;
 							}
 
-							if($userdetail->grade == 1)	//administrator
+							if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
 							{
 								$ischoose = true;
 							}
@@ -371,7 +372,7 @@ class AdminUserFunc {
 							break;
 						
 						case 5:
-							$guest = DB::table('users')->where('name', $anew->visitor)->get();
+							$guest = User::where('name', '=', $anew->visitor)->get();
 							if($guest != null)
 							{
 								$guest = $guest[0];
@@ -384,7 +385,7 @@ class AdminUserFunc {
 
 							if($userdetail != null)
 							{
-								if($userdetail->grade == 1)	//administrator
+								if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
 								{
 									$ischoose = true;
 								}
@@ -456,11 +457,28 @@ class AdminUserFunc {
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
-			    if($this->menus->getAmenu()->caction == 'arrange')
+			    $terms = Term::query()->orderBy('val', 'desc')->get();
+			    $term = $terms[0];
+			     
+			    $gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
+			    if(count($gterm) > 0)
 			    {
-			        if($user->grade == 1)
+			        $term = $gterm[0];
+			    }
+			    
+			    if(Input::get('term') != null)
+			    {
+			        $aterm = Term::where('val', '=', Input::get('term'))->get();
+			        if(count($aterm) > 0)
 			        {
-    			        $term = Term::where('val', '=', Input::get('term'))->get()[0];
+			            $term = $aterm[0];
+			        }
+			    }
+
+			    if($user->grade == 1)
+			    {
+    			    if($this->menus->getAmenu()->caction == 'arrange')
+    			    {
     			        if($term->coursearrange == 0)
     			        {
         			        $term->coursearrange = true;
@@ -491,32 +509,38 @@ class AdminUserFunc {
                 			        ->withCoursetime($this->getCoursetimeArray())
                 			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangetname))
                 			        ->withUser($user);
-			        }
-			        else
-			        {
-			            return view('errors.permitts');
-			        }
+    			    }
+    			    elseif($this->menus->getAmenu()->caction == 'choose')
+    			    {
+    			        $classgrades = Classgrade::query()->OrderBy('val', 'asc')->get();
+    			        foreach ($classgrades as $classgrade)
+    			        {
+    			            $termcourse = Termcourse::where('term', '=', $term->val)
+        			                         ->where('classgrade', '=', $classgrade->classgrade)
+        			                         ->get();
+    			            
+    			            if(count($termcourse) > 0)
+    			            {
+    			                $classgrade->termcourse = $termcourse[0]->courses;
+    			            }
+    			        }
+    			        
+    			        $glovals = Controller::getGlobalvals();
+    			        $coursechoose = [
+    			             'choose' => isset($glovals[$term->val.'-coursechoose'])?$glovals[$term->val.'-coursechoose']:null,
+    			             'dateline' => isset($glovals[$term->val.'-coursechoosedateline'])?$glovals[$term->val.'-coursechoosedateline']:null,
+    			        ];
+
+    			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+    			                    ->withClassgrades($classgrades)
+    			                    ->withCourses(Course::query()->OrderBy('course', 'asc')->GroupBy('course')->distinct()->get())
+    			                    ->withCoursechoose($coursechoose)
+    			                    ->withTerm($term)
+                			        ->withUser($user);
+    			    }
 			    }
 			    elseif($user->grade == 2)
 			    {
-			        $terms = Term::query()->orderBy('val', 'desc')->get();
-			        $term = $terms[0];
-			        
-			        $gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
-			        if(count($gterm) > 0)
-			        {
-			            $term = $gterm[0];
-			        }
-
-			        if(Input::get('term') != null)
-			        {
-			            $aterm = Term::where('val', '=', Input::get('term'))->get();
-			            if(count($aterm) > 0)
-			            {
-			                $term = $aterm[0];
-			            }
-			        }
-
 			        return AdminController::getViewWithMenus('admin.admin', null, $user)
                 			        ->withCoursetime($this->getCoursetimeArray())
                 			        ->withCoursetable($this->getCourseForWeek($term->val, $user->name))
@@ -525,8 +549,17 @@ class AdminUserFunc {
                 			        ->withAdmins(User::where('grade', '=', '1')->get())
                 			        ->withUser($user);
 			    }
+			    elseif($user->grade == 3)
+			    {
+			        
+			    }
+			    else
+			    {
+			        return view('errors.permitts');
+			    }
 
 			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+			                 ->withTerm($term)
 			                 ->withTerms(Term::query()->orderBy('val', 'desc')->get())
 			                 ->withUser($user);
 			}
@@ -945,7 +978,7 @@ adddtailreturn:
 
 	    return redirect(Input::get('returnurl'));
 	}
-	
+
 	public function coursearrangedel()
 	{
 	    $data = Input::get('data');
@@ -964,7 +997,68 @@ adddtailreturn:
 
 	    return redirect(Input::get('returnurl'));
 	}
-	
+
+	public function coursechoosetsave()
+	{
+	    $tobj = json_decode(Input::get('data'));
+	    foreach($tobj->courses as $course)
+	    {
+	        $termcourse = Termcourse::where('term', '=', $tobj->term)
+	                           ->where('classgrade', '=', $course[0]);
+	        
+	        if($termcourse->count() > 0)
+	        {
+	            $termcourse = $termcourse->get()[0];;
+	            $termcourse->courses = $course[1];
+	            $termcourse->save();
+	        }
+	        else
+	        {
+    	        Termcourse::create([
+    	            'term' => $tobj->term,
+    	            'classgrade' => $course[0],
+    	            'courses' => $course[1],
+    	        ]);
+	        }
+	    }
+
+	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
+	}
+
+	public function coursechoosestart()
+	{
+	    $tobj = json_decode(Input::get('data'));
+	    Controller::updateGlobalval($tobj->term.'-coursechoose', $tobj->choose);
+
+	    if($tobj->choose == '1')
+	    {
+    	    Controller::updateGlobalval($tobj->term.'-coursechoosedateline', $tobj->dateline);
+    
+    	    foreach($tobj->courses as $course)
+    	    {
+    	        $termcourse = Termcourse::where('term', '=', $tobj->term)
+    	                           ->where('classgrade', '=', $course[0]);
+    	        
+    	        if($termcourse->count() > 0)
+    	        {
+    	            $termcourse = $termcourse->get()[0];;
+    	            $termcourse->courses = $course[1];
+    	            $termcourse->save();
+    	        }
+    	        else
+    	        {
+        	        Termcourse::create([
+        	            'term' => $tobj->term,
+        	            'classgrade' => $course[0],
+        	            'courses' => $course[1],
+        	        ]);
+    	        }
+    	    }
+	    }
+
+	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
+	}
+
 	public static function getCourseForWeek($term, $teacher)
 	{
 	    $courseTable = array();

@@ -83,7 +83,7 @@ class AdminController extends Controller {
 			if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 			{
 				return AdminController::getViewWithMenus('admin.admin')
-						->withUsers(User::all());
+						->withUsers(User::query()->OrderBy('email', 'asc')->get());
 			}
 			else
 			{
@@ -307,6 +307,22 @@ class AdminController extends Controller {
 	    $adminuserfunc = new AdminUserFunc($menus);
 	     
 	    return $adminuserfunc->coursearrangedel();
+	}
+
+	public function coursechoosetsave()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	    
+	    return $adminuserfunc->coursechoosetsave();
+	}
+
+	public function coursechoosestart()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	    
+	    return $adminuserfunc->coursechoosestart();
 	}
 
 	public function resetpass()

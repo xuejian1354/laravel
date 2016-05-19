@@ -786,7 +786,7 @@ function getCourseData(tr)
 
 function dataPost(target, data, token, alert) {
 
-  if(confirm(alert)) {
+  if(alert == null || confirm(alert)) {
     var postForm = document.createElement("form");
     postForm.method="post";
     postForm.action = target;

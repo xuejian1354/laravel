@@ -7,26 +7,36 @@
   @if($user->grade == 1)
   <h3>1.教师排课</h3>
   <span>学期</span>
-  <select id="coursearrange">
+  <select id="coursearrange" style="height: 26px;">
     @for($index=0; $index < count($terms); $index++)
-    <option class="arropt" isarranged="{{ $terms[$index]->coursearrange }}" start="{{ date('Y-m-d', strtotime($terms[$index]->arrangestart)) }}" end="{{ date('Y-m-d', strtotime($terms[$index]->arrangeend)) }}">{{ $terms[$index]->val }}</option>
+    <option class="arropt"
+    @if($term->val == $terms[$index]->val)
+      selected="selected"
+    @endif 
+    isarranged="{{ $terms[$index]->coursearrange }}" start="{{ date('Y-m-d', strtotime($terms[$index]->arrangestart)) }}" end="{{ date('Y-m-d', strtotime($terms[$index]->arrangeend)) }}">
+      {{ $terms[$index]->val }}
+    </option>
     @endfor
   </select><br>
   @if($terms[0]->coursearrange)
-  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangestart)) }}"> 到：<input id="termetime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangeend)) }}"></div>
+  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangestart)) }}" style="margin-right: 10px;"> 到：<input id="termetime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangeend)) }}"></div>
   @else
-  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text"> 到：<input id="termetime" type="text"></div>
+  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" style="margin-right: 10px;"> 到：<input id="termetime" type="text"></div>
   @endif
   <a id="coursearrangehref" href="javascript:courseArrangeRequest();" class="btn btn-primary" style="margin-bottom: 10px;">进入排课</a>
   <br><br>
   <h3>2.学生选课</h3>
   <span>学期</span>
-  <select id="coursechoose">
-    @foreach($terms as $term)
-    <option ischoosen="{{ $term->coursechoose }}">{{ $term->val }}</option>
+  <select id="coursechoose" style="height: 26px; margin-right: 10px;">
+    @foreach($terms as $aterm)
+    <option
+    @if($term->val == $aterm->val)
+      selected="selected"
+    @endif  
+    ischoosen="{{ $aterm->coursechoose }}">{{ $aterm->val }}</option>
     @endforeach
   </select>
-  <a href="admin?action=usercourse/choose&id={{ $user->id }}" class="btn btn-primary">学生选课</a>
+  <a href="javascript:courseChooseRequest();" class="btn btn-primary">进入选课</a>
   @elseif($user->grade == 2)
   <div class="alert alert-info" style="margin-top: 5px;">
     学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
@@ -103,6 +113,11 @@ function courseArrangeRequest() {
             		  + $('#termstime').val()
             		  + "&end="
             		  + $('#termetime').val());
+}
+
+function courseChooseRequest() {
+  location.replace("admin?action=usercourse/choose&id={{ $user->id }}&term="
+            		  + $('#coursechoose').val());
 }
 
 laydate({elem: '#termstime', format: 'YYYY-MM-DD'});
