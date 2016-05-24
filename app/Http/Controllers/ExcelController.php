@@ -6,7 +6,6 @@ use Input, Excel, DB;
 use App\Http\Controllers\Controller;
 use App\Model\Course\Course;
 use App\Model\Room\Room;
-use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Database\QueryException;
 use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
@@ -68,9 +67,17 @@ class ExcelController extends Controller
 					{
 						foreach ($sheet as $course)
 						{
-						    if($course->remarks == '')
+						    if($course->studnums == '')
 						    {
-						        $course->remarks = 
+						        $course->studnums =
+            						        Globalval::where('name', '=', 'studentnums')
+            						        ->get()[0]
+            						        ->fieldval;
+						    }
+
+						    if($course->coursenums == '')
+						    {
+						        $course->coursenums = 
 						                  Globalval::where('name', '=', 'coursetimes')
 						                              ->get()[0]
 						                              ->fieldval;
@@ -91,7 +98,8 @@ class ExcelController extends Controller
 										'cycle' => $course->cycle,
 										'term' => $course->term,
 										'teacher' => $course->teacher,
-										'remarks' => $course->remarks,
+										'studnums' => $course->studnums,
+										'coursenums' => $course->coursenums,
 								]);
 							} catch (QueryException $e) {
 							}

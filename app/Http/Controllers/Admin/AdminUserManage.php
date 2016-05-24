@@ -59,7 +59,7 @@ class AdminUserManage {
     		            break;
     		        }
     		    }
-    		
+
     		    if($menus->getAmenu()['caction'] == 'edit' && isset($_GET['id']) && $user->id != Input::get('id'))
     		    {}
     		    else

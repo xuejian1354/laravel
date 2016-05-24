@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\ExcelController;
 use App\Model\DBStatic\Globalval;
 use App\Model\Course\Termcourse;
+use PhpParser\Node\Expr\Cast;
 
 class AdminUserFunc {
 
@@ -457,15 +458,16 @@ class AdminUserFunc {
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
+			    //term
 			    $terms = Term::query()->orderBy('val', 'desc')->get();
 			    $term = $terms[0];
-			     
+
 			    $gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
 			    if(count($gterm) > 0)
 			    {
 			        $term = $gterm[0];
 			    }
-			    
+
 			    if(Input::get('term') != null)
 			    {
 			        $aterm = Term::where('val', '=', Input::get('term'))->get();
@@ -474,6 +476,13 @@ class AdminUserFunc {
 			            $term = $aterm[0];
 			        }
 			    }
+
+			    //coursechoose
+			    $glovals = Controller::getGlobalvals();
+			    $coursechoose = [
+			        'choose' => isset($glovals[$term->val.'-coursechoose'])?$glovals[$term->val.'-coursechoose']:null,
+			        'dateline' => isset($glovals[$term->val.'-coursechoosedateline'])?$glovals[$term->val.'-coursechoosedateline']:null,
+			    ];
 
 			    if($user->grade == 1)
 			    {
@@ -524,12 +533,6 @@ class AdminUserFunc {
     			                $classgrade->termcourse = $termcourse[0]->courses;
     			            }
     			        }
-    			        
-    			        $glovals = Controller::getGlobalvals();
-    			        $coursechoose = [
-    			             'choose' => isset($glovals[$term->val.'-coursechoose'])?$glovals[$term->val.'-coursechoose']:null,
-    			             'dateline' => isset($glovals[$term->val.'-coursechoosedateline'])?$glovals[$term->val.'-coursechoosedateline']:null,
-    			        ];
 
     			        return AdminController::getViewWithMenus('admin.admin', null, $user)
     			                    ->withClassgrades($classgrades)
@@ -546,12 +549,20 @@ class AdminUserFunc {
                 			        ->withCoursetable($this->getCourseForWeek($term->val, $user->name))
                 			        ->withTerm($term)
                 			        ->withTerms($terms)
+                			        ->withCoursechoose($coursechoose)
                 			        ->withAdmins(User::where('grade', '=', '1')->get())
                 			        ->withUser($user);
 			    }
 			    elseif($user->grade == 3)
 			    {
-			        
+			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+                			        ->withCoursetime($this->getCoursetimeArray())
+                			        ->withCoursetable($this->getCourseForWeekByStudent($term->val, $user->name))
+                			        ->withTerm($term)
+                			        ->withTerms($terms)
+                			        ->withCoursechoose($coursechoose)
+                			        ->withSelcourses($this->getSelectCoursesByStudent($user, $term))
+                			        ->withUser($user);
 			    }
 			    else
 			    {
@@ -905,26 +916,92 @@ adddtailreturn:
 	    $type = Input::get('type');
 	    $course = json_decode($data);
 
-	    if($course->remarks == '')
+	    if($course->studnums == '' || $course->studnums == 0)
 	    {
-	        $course->remarks = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
+	        $course->studnums = Globalval::where('name', '=', 'studentnums')->get()[0]->fieldval;
 	    }
-	
-	    $cobj = Course::where('term', '=', $course->term)
-	               ->where('time', '=', $course->time)
-	               ->where('room', '=', $course->room)
-	               ->orderBy('id', 'desc');
+
+	    if($course->coursenums == '' || $course->coursenums == 0)
+	    {
+	        $course->coursenums = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
+	    }
+
+	    $force = Input::get('force');
+	    if($force != 1)
+	    {
+    	    $aobj = Course::where('term', '=', $course->term)
+            	                ->where('cycle', '=', '每周')
+                        	    ->where('time', 'like', '%'.$course->time.'%')
+                        	    ->where('teacher', '=', $course->teacher)
+                        	    ->orderBy('id', 'desc')
+            	                ->get();
+    	    
+    	    foreach ($aobj as $aindex => $a)
+    	    {
+    	        $force = 1;
+
+    	        if($aindex > 0)
+    	        {
+    	            $a->delete();
+    	        }
+    	    }
+	    }
 	    
+	    $bobj = Course::where('term', '=', $course->term)
+                           ->where('teacher', '=', $course->teacher);
+
+	    if($bobj->count() > 0)
+	    {
+	        $isend = false;
+	        $btimebobj = $bobj->where('cycle', '=', '每周')
+                    	        ->where('time', 'like', '%'.$course->time.'%');
+	        if($btimebobj->count() > 0)
+	        {
+	            $tcourse = $bobj->get()[0];
+	            $tcourse->course = $course->course;
+	            $tcourse->divideclass = $course->divideclass;
+	            $tcourse->room = $course->room;
+	            $tcourse->studnums = $course->studnums;
+	            $tcourse->coursenums = $course->coursenums;
+	            $tcourse->save();
+	            $isend = true;
+	        }
+
+	        $bnameobj = Course::where('term', '=', $course->term)
+                               ->where('teacher', '=', $course->teacher)
+                               ->where('course', '=', $course->course)
+        	                   ->where('divideclass', '=', $course->divideclass);
+
+	        foreach($bnameobj->get() as $tcourse)
+	        {
+    	        $tcourse->studnums = $course->studnums;
+    	        $tcourse->coursenums = $course->coursenums;
+    	        $tcourse->save();
+	        }
+
+	        if($isend)
+	        {
+	            goto coursearrangeend;
+	        }
+	    }
+
+	    $cobj = Course::where('term', '=', $course->term)
+        	               ->where('time', 'like', '%'.$course->time.'%')
+        	               ->where('room', '=', $course->room)
+        	               ->orderBy('id', 'desc');
+
 	    if($cobj->count() > 0)
 	    {
 	        $tcourse = $cobj->get()[0];
 
-	        if(Input::get('force') == 1)
+	        if($force == 1)
 	        {
     	        $tcourse->course = $course->course;
+    	        $tcourse->divideclass = $course->divideclass;
     	        $tcourse->cycle = $course->cycle;
     	        $tcourse->teacher = $course->teacher;
-    	        $tcourse->remarks = $course->remarks;
+    	        $tcourse->studnums = $course->studnums;
+    	        $tcourse->coursenums = $course->coursenums;
     	        $tcourse->save();
 	        }
 	        else
@@ -944,8 +1021,12 @@ adddtailreturn:
 	                           .$course->time
 	                           .'&eroom='
 	                           .$course->room
-	                           .'&eremarks='
-	                           .$course->remarks
+	                           .'&edivideclass='
+	                           .$course->divideclass
+	                           .'&estudnums='
+	                           .$course->studnums
+	                           .'&ecoursenums='
+	                           .$course->coursenums
 	                           .'&warning='
 	                           .$warning);
 	        }
@@ -965,17 +1046,20 @@ adddtailreturn:
     	            'course' => $course->course,
     	            'coursetype' => 1,
     	            'room' => $course->room,
+    	            'divideclass' => $course->divideclass,
     	            'time' => $course->time,
     	            'cycle' => $course->cycle,
     	            'term' => $course->term,
     	            'teacher' => $course->teacher,
-    	            'remarks' => $course->remarks,
+    	            'studnums' => $course->studnums,
+    	            'coursenums' => $course->coursenums,
     	        ]);
         	    } catch (QueryException $e) {
         	        return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该课程是否已经存在");</script>';
         	    }
 	    }
 
+	    coursearrangeend:
 	    return redirect(Input::get('returnurl'));
 	}
 
@@ -985,14 +1069,16 @@ adddtailreturn:
 	    $course = json_decode($data);
 
 	    $dobj = Course::where('term', '=', $course->term)
-            	    ->where('time', '=', $course->time)
-            	    ->where('room', '=', $course->room)
             	    ->where('teacher', '=', $course->teacher)
             	    ->get();
 
 	    foreach ($dobj as $d)
 	    {
-	        $d->delete();
+	        if(strpos($d->time, $course->time)
+	            || $d->course.$d->divideclass == $course->dname)
+	        {
+	           $d->delete();
+	        }
 	    }
 
 	    return redirect(Input::get('returnurl'));
@@ -1059,27 +1145,258 @@ adddtailreturn:
 	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
+	public function coursechoosestudsave()
+	{
+	    $tobj = json_decode(Input::get('data'));
+
+	    $courseids = $tobj->ids;
+
+	    //Is conflict for time ?
+	    if(count($courseids) >= 2)
+	    {
+    	    for ($x=0; $x < count($courseids)-1; $x++)
+    	    {
+    	        for ($y=$x+1; $y < count($courseids); $y++)
+    	        {
+    	            $xc = Course::find($courseids[$x]);
+    	            $yc = Course::find($courseids[$y]);
+
+    	            $xtimes = explode(' ', $xc->time);
+    	            foreach ($xtimes as $xtime)
+    	            {
+    	                if(strpos($yc->time, $xtime) !== false)
+    	                {
+    	                    $warning = '<b>课程时间存在冲突</b>『'.$xc->course.'』和『'.$yc->course.'』在'.$xtime;
+    	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+    	                }
+    	            }
+    	            
+    	            $ytimes = explode(' ', $yc->time);
+    	            foreach ($ytimes as $ytime)
+    	            {
+    	                if(strpos($xc->time, $ytime) !== false)
+    	                {
+    	                    $warning = '<b>课程时间存在冲突</b>『'.$yc->course.'』和『'.$xc->course.'』在'.$ytime;
+    	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+    	                }
+    	            }
+    	        }
+    	    }
+	    }
+
+	    //Up for choose max nums
+	    foreach ($courseids as $courseid)
+	    {
+	        $course = Course::find($courseid);
+	        if(count(explode(',', $course->students)) >= $course->studnums + 10
+	            && strpos($course->students, $tobj->username) === false)
+	        {
+	            $warning = '『<b>'.$course->course.'</b>』超出最大选课人数';
+	            return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+	        }
+	    }
+
+	    //remove exist course
+	    $defids = $tobj->defids;
+	    foreach($defids as $defid)
+	    {
+	        $course = Course::find($defid);
+	        if(strpos($course->students, $tobj->username) !== false)
+	        {
+	            $studstrs = '';
+	            $studarray = explode(',', $course->students);
+	            foreach ($studarray as $studval)
+	            {
+	                if(trim($studval) != $tobj->username)
+	                {
+	                    if($studstrs == '')
+	                    {
+	                        $studstrs = trim($studval);
+	                    }
+	                    else
+	                    {
+	                        $studstrs .= ', '.trim($studval);
+	                    }
+	                }
+	            }
+	            $course->students = $studstrs;
+	            $course->save();
+	        }
+	    }
+
+	    //add new course
+	    foreach ($courseids as $courseid)
+	    {
+	        $course = Course::find($courseid);
+	        if(strpos($course->students, $tobj->username) === false)
+	        {
+	            if($course->students == null || trim($course->students) == '')
+	            {
+	                $course->students = $tobj->username;
+	            }
+	            else
+	            {
+	                $course->students .= ', '.$tobj->username;
+	            }
+	    
+	            $course->save();
+	        }
+	    }
+
+	    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
+	}
+
 	public static function getCourseForWeek($term, $teacher)
+	{
+	    $courseTable = array();
+
+	    foreach (['一', '二', '三', '四', '五', '六', '日'] as $day)
+	    {
+	        foreach (['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $class)
+	        {
+	            $coursetime = '星期'.$day.'第'.$class.'节';
+
+	            $course = Course::where('teacher', '=', $teacher)
+	                        ->where('term', '=',  $term)
+            	            ->where('time', 'like',  '%'.$coursetime.'%')
+            	            ->get();
+
+	            $courseTable[$coursetime] = new \stdClass();
+	            if($course->count() > 0)
+	            {
+	                $course = $course[0];
+                    if($course->divideclass != null && trim($course->divideclass) != '')
+        	        {
+        	            $course->course .= '-'.$course->divideclass;
+        	        }
+
+        	        $courseTable[$coursetime]->course = $course->course;
+        	        $courseTable[$coursetime]->room = $course->room;
+        	        $courseTable[$coursetime]->studentnums = $course->studnums;
+        	        $courseTable[$coursetime]->coursenums = $course->coursenums;
+        	        $courseTable[$coursetime]->table = $course->course.' ('.$course->room.') '.$course->coursenums.'课时';
+        	                
+	            }
+	            else
+	            {
+	                $courseTable[$coursetime]->course = '';
+	                $courseTable[$coursetime]->room = '';
+    	            $courseTable[$coursetime]->studentnums = 0;
+    	            $courseTable[$coursetime]->coursenums = 0;
+    	            $courseTable[$coursetime]->table = '';
+	            }
+	        }
+	    }
+
+	    return $courseTable;
+	}
+
+	public static function getCourseForWeekByStudent($term, $student)
 	{
 	    $courseTable = array();
 	    foreach (['一', '二', '三', '四', '五', '六', '日'] as $day)
 	    {
 	        foreach (['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $class)
 	        {
-	            $courseTable['星期'.$day.'第'.$class.'节'] = ''; 
+	           $coursetime = '星期'.$day.'第'.$class.'节';
+
+	            $course = Course::where('term', '=',  $term)
+            	            ->where('students', 'like',  '%'.$student.'%')
+            	            ->where('time', 'like',  '%'.$coursetime.'%')
+            	            ->get();
+
+	            $courseTable[$coursetime] = new \stdClass();
+	            if($course->count() > 0)
+	            {
+	                $course = $course[0];
+                    if($course->divideclass != null && trim($course->divideclass) != '')
+        	        {
+        	            $course->course .= '-'.$course->divideclass;
+        	        }
+
+        	        $courseTable[$coursetime]->course = $course->course;
+        	        $courseTable[$coursetime]->room = $course->room;
+        	        $courseTable[$coursetime]->studentnums = $course->studnums;
+        	        $courseTable[$coursetime]->coursenums = $course->coursenums;
+        	        $courseTable[$coursetime]->table = $course->teacher.' '.$course->course.' ('.$course->room.') '.$course->coursenums.'课时';
+	            }
+	            else
+	            {
+	                $courseTable[$coursetime]->course = '';
+	                $courseTable[$coursetime]->room = '';
+    	            $courseTable[$coursetime]->studentnums = 0;
+    	            $courseTable[$coursetime]->coursenums = 0;
+    	            $courseTable[$coursetime]->table = '';
+	            }
 	        }
 	    }
 
-	    $courses = Course::where('teacher', '=', $teacher)
-	                       ->where('cycle', '=',  '每周')
-	                       ->where('term', '=',  $term)
-	                       ->get();
-	    
-	    foreach ($courses as $course)
-	    {
-	        $courseTable[$course->time] = $course->course.' ('.$course->room.') '.$course->remarks;
-	    }
-	    
 	    return $courseTable;
+	}
+	
+	public function getSelectCoursesByStudent($user, $term)
+	{
+	    $selcourses = array();
+        $userdetail = Userdetail::where('sn', '=', $user->sn)->get();
+        if($userdetail->count() > 0)
+        {
+            $userdetail = $userdetail[0];
+            $termcourses = Termcourse::where('classgrade', '=', $userdetail->type)
+                                         ->where('term', '=', $term->val)
+                                         ->get();
+
+            $classcourses = array();
+            foreach ($termcourses as $termcourse)
+            {
+                $classcourses = explode(',', $termcourse->courses);
+            }
+
+            foreach ($classcourses as $classcourse)
+            { 
+                $recouses = Course::where('course', '=', trim($classcourse))
+    			                     ->where('term', '=', $term->val)
+    			                     ->get();
+
+                $tercourses = array();
+                foreach ($recouses as $recouse)
+                {
+                    $key = $recouse->teacher;
+                    if($recouse->divideclass != null && $recouse->divideclass != '')
+                    {
+                        $key .= '&nbsp;&nbsp;&nbsp;'.$recouse->divideclass;
+                    }
+
+                    $recouse->choosernums = 0;
+                    $recouse->ischoose = 0;
+                    if($recouse->choosernums == 0 && $recouse->students != null && trim($recouse->students) != '')
+                    {
+                        $choosers = explode(',', $recouse->students);
+                        $recouse->choosernums = count($choosers);
+                        foreach ($choosers as $chooser)
+                        {
+                            if($user->name == trim($chooser))
+                            {
+                                $recouse->ischoose = 1;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(!isset($tercourses[$key]))
+                    {
+                        $tercourses[$key] = new \stdClass();
+                        $tercourses[$key]->ischoose = $recouse->ischoose; 
+                        $tercourses[$key]->ids = array();
+                        $tercourses[$key]->vals = array();
+                    }
+                    array_push($tercourses[$key]->ids, $recouse->id);
+                    array_push($tercourses[$key]->vals, $recouse);
+                }
+
+                $selcourses[$classcourse] = $tercourses;
+            }
+        }
+
+        return $selcourses;
 	}
 }

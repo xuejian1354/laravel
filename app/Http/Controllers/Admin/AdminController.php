@@ -325,6 +325,14 @@ class AdminController extends Controller {
 	    return $adminuserfunc->coursechoosestart();
 	}
 
+	public function coursechoosestudsave()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	     
+	    return $adminuserfunc->coursechoosestudsave();
+	}
+
 	public function resetpass()
 	{
 		$email = Input::get('email');

@@ -59,18 +59,6 @@
 </div>
 <script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
 <script type="text/javascript">
-function getCurDate()
-{
-	var curDate = new Date();
-	var mm = curDate.getMonth()+1;
-	if(mm < 10)
-	{
-		mm = '0' + mm;
-	}
-
-	return curDate.getFullYear()+'-'+mm+'-'+curDate.getDate();
-}
-
 function getCoursesObj()
 {
 	var tobj = new Object(); 

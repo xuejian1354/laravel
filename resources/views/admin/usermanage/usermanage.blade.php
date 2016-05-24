@@ -41,7 +41,7 @@
               <a href="{{ url('/admin?action=userfunc&id='.$arg->id) }}" class="btn btn-sm btn-primary">操作</a>
             </td>
             <td>
-              <a href="{{ url('/admin?action=usermanage/edit&id='.$arg->id) }}"
+              <a href="{{ url('/admin?action=usermanage/edit&tabpos='.Input::get('tabpos').'&page='.Input::get('page').'&id='.$arg->id) }}"
                 @if(Auth::user()->privilege < 5)
                   class="hidden"
                 @endif

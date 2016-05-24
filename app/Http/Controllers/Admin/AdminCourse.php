@@ -95,7 +95,8 @@ class AdminCourse {
 				if(isset($dobj->cycle)) $course->cycle = $dobj->cycle;
 				if(isset($dobj->term)) $course->term = $dobj->term;
 				if(isset($dobj->teacher)) $course->teacher = $dobj->teacher;
-				if(isset($dobj->remarks)) $course->remarks = $dobj->remarks;
+				if(isset($dobj->studnums)) $course->studnums = $dobj->studnums;
+				if(isset($dobj->coursenums)) $course->coursenums = $dobj->coursenums;
 	
 				$course->save();
 			}
@@ -134,10 +135,15 @@ class AdminCourse {
 				$course->time,
 				$course->cycle,
 				$course->term);
-		
-		if($course->remarks == '')
+
+		if($course->studnums == '')
 		{
-		    $course->remarks = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
+		    $course->studnums = Globalval::where('name', '=', 'studentnums')->get()[0]->fieldval;
+		}
+
+		if($course->coursenums == '')
+		{
+		    $course->coursenums = Globalval::where('name', '=', 'coursetimes')->get()[0]->fieldval;
 		}
 
 		try {
@@ -150,7 +156,8 @@ class AdminCourse {
 					'cycle' => $course->cycle,
 					'term' => $course->term,
 					'teacher' => $course->teacher,
-					'remarks' => $course->remarks,
+					'studnums' => $course->studnums,
+					'coursenums' => $course->coursenums,
 			]);
 		} catch (QueryException $e) {
 			return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该课程是否已经存在");</script>';

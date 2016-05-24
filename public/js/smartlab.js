@@ -201,10 +201,11 @@ $(document).ready(function() {
 	  var coursecycle = coursetab.children('td.coursecycle');
 	  var courseterm = coursetab.children('td.courseterm');
 	  var courseteacher = coursetab.children('td.courseteacher');
-	  var courseremarks = coursetab.children('td.courseremarks');
+	  var coursestudnums = coursetab.children('td.coursestudnums');
+	  var coursenums = coursetab.children('td.coursenums');
 
 	  var x;
-	  var courseedts = new Array(course, courseroom, coursetime, coursecycle, courseterm, courseteacher, courseremarks);
+	  var courseedts = new Array(course, courseroom, coursetime, coursecycle, courseterm, courseteacher, coursestudnums, coursenums);
 
 	  if($(this).prop('checked'))
 	  {
@@ -260,9 +261,9 @@ $(document).ready(function() {
 	    	  }
 	      }
 	      
-	      if(x == 6)
+	      if(x == 6 || x == 7)
           {
-            courseedts[x].html('<input type="text" value="' + courseedts[x].children('span').text() + '" style="width: 50px;"></input>');
+            courseedts[x].html('<input type="text" value="' + courseedts[x].children('span').text() + '" style="width: 30px;"></input>');
           }
 
           if(courseedts[x].children('span').width() > 0)
@@ -572,7 +573,8 @@ function courseAddAlert(token) {
 	tobj.cycle = $('#caddcycle').val();
 	tobj.term = $('#caddterm').val();
 	tobj.teacher = $('#caddteacher').val();
-	tobj.remarks = $('#caddremarks').val();
+	tobj.studnums = $('#caddstudnums').val();
+	tobj.coursenums = $('#caddcoursenums').val();
 	
 	if($.trim(tobj.course).length > 0)
 	{
@@ -779,7 +781,8 @@ function getCourseData(tr)
 	tobj.cycle = $(tr).children('td.coursecycle').children('select').val();
 	tobj.term = $(tr).children('td.courseterm').children('select').val();
 	tobj.teacher = $(tr).children('td.courseteacher').children('select').val();
-	tobj.remarks = $(tr).children('td.courseremarks').children('input').val();
+	tobj.studnums = $(tr).children('td.coursestudnums').children('input').val();
+	tobj.coursenums = $(tr).children('td.coursenums').children('input').val();
 	
 	return tobj;
 }
@@ -1483,4 +1486,16 @@ function otherTeachersChange() {
 		ospan.text(res);
 		oinput.val(res);
 	}
+}
+
+function getCurDate()
+{
+	var curDate = new Date();
+	var mm = curDate.getMonth()+1;
+	if(mm < 10)
+	{
+		mm = '0' + mm;
+	}
+
+	return curDate.getFullYear()+'-'+mm+'-'+curDate.getDate();
 }

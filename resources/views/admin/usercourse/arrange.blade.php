@@ -41,37 +41,60 @@
           @endif
         </div>
         <div id="usercourseOptBody" class="modal-body container-fluid">
-          <div class="col-sm-4 col-md-4">
-            <span>课程：
-              @if(Input::get('exist') == 1)
-                <input id="ucoursename" type="text" value="{{ Input::get('ecourse') }}" style="width: 70%;">
-              @else
-                <input id="ucoursename" type="text" style="width: 70%;">
-              @endif
-            </span>
-          </div>
-          <div class="col-sm-4 col-md-4">
-            <span>教室：
-              <select id="ucourseroom" style="width: 70%; height: 26px;">
-                @foreach($rooms as $room)
-                  @if(Input::get('exist') == 1 && Input::get('eroom') == $room->name)
-                    <option selected="selected">{{ $room->name }}</option>
+          <table>
+            <thead>
+              <tr>
+                <th>课程</th>
+                <td><b>分班</b> (*可不填) </td>
+                <th>教室</th>
+                <th>人数</th>
+                <th>课时</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  @if(Input::get('exist') == 1)
+                  <input id="ucoursename" type="text" value="{{ Input::get('ecourse') }}" style="width: 90%;">
                   @else
-                    <option>{{ $room->name }}</option>
+                  <input id="ucoursename" type="text" style="width: 90%;">
                   @endif
-                @endforeach
-              </select>
-            </span>
-          </div>
-          <div class="col-sm-4 col-md-4">
-            <span>课时：
-              @if(Input::get('exist') == 1)
-                <input id="ucourseremarks" type="text" value="{{ Input::get('eremarks') }}" style="width: 70%;">
-              @else
-                <input id="ucourseremarks" type="text" style="width: 70%;">
-              @endif
-            </span>
-          </div>
+                </td>
+                <td>
+                  @if(Input::get('exist') == 1)
+                  <input id="ucourseclass" type="text" value="{{ Input::get('edivideclass') }}" style="width: 90%;">
+                  @else
+                  <input id="ucourseclass" type="text" style="width: 90%;">
+                  @endif
+                </td>
+                <td>
+                  <select id="ucourseroom" style="height: 26px; margin-right: 10px;">
+                  @foreach($rooms as $room)
+                    @if(Input::get('exist') == 1 && Input::get('eroom') == $room->name)
+                    <option selected="selected">{{ $room->name }}</option>
+                    @else
+                    <option>{{ $room->name }}</option>
+                    @endif
+                  @endforeach
+                  </select>
+                </td>
+                <td>
+                  @if(Input::get('exist') == 1)
+                  <input id="ucoursestudnums" type="text" value="{{ Input::get('estudnums') }}" style="width: 90%;">
+                  @else
+                  <input id="ucoursestudnums" type="text" style="width: 90%;">
+                  @endif
+                </td>
+                <td>
+                  @if(Input::get('exist') == 1)
+                  <input id="ucoursenums" type="text" value="{{ Input::get('ecoursenums') }}" style="width: 90%;">
+                  @else
+                  <input id="ucoursenums" type="text" style="width: 90%;">
+                  @endif
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="modal-footer">
           <button onclick="javascript:courseArrangeAlert('{{ csrf_token() }}', '0')" type="button" class="btn btn-primary">确定</button>
@@ -93,12 +116,14 @@ function courseArrangeAlert(token, force) {
 	var tobj = new Object(); 
 	tobj.course = $('#ucoursename').val();
 	tobj.room = $('#ucourseroom').val();
+	tobj.divideclass = $('#ucourseclass').val();
 	tobj.time = $('#usercourseOptHeader').text();
 	tobj.cycle = '每周';
 	tobj.term = '{{ $term->val }}';
 	tobj.teacher = $('#arrangeteacher').val();
-	tobj.remarks = $('#ucourseremarks').val();
-	
+	tobj.studnums = $('#ucoursestudnums').val();
+	tobj.coursenums = $('#ucoursenums').val();
+
 	if($.trim(tobj.course).length > 0)
 	{
 	    var postForm = document.createElement("form");
@@ -138,7 +163,7 @@ function courseArrangeAlert(token, force) {
 function courseArrangeDelAlert(token) {
 
 	var tobj = new Object(); 
-	tobj.room = $('#ucourseroom').val();
+	tobj.dname = $('#ucoursename').val()+$('#ucourseclass').val();
 	tobj.time = $('#usercourseOptHeader').text();
 	tobj.term = '{{ $term->val }}';
 	tobj.teacher = $('#arrangeteacher').val();

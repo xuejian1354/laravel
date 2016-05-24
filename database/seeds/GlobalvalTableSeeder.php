@@ -18,7 +18,8 @@ class GlobalvalTableSeeder extends Seeder
         Globalval::create(['name' => 'title', 'fieldval' => 'SmartLab']);
         Globalval::create(['name' => 'ctrlFrame', 'fieldval' => null]);
         Globalval::create(['name' => 'curterm', 'fieldval' => '2016上']);
-        Globalval::create(['name' => 'coursetimes', 'fieldval' => '80课时']);
+        Globalval::create(['name' => 'studentnums', 'fieldval' => '40']);
+        Globalval::create(['name' => 'coursetimes', 'fieldval' => '80']);
         Globalval::create(['name' => '1-2-classtime', 'fieldval' => '8:00~9:30']);
         Globalval::create(['name' => '3-4-classtime', 'fieldval' => '10:00~11:30']);
         Globalval::create(['name' => '5-6-classtime', 'fieldval' => '13:00~14:30']);

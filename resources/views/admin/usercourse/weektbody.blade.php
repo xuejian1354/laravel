@@ -1,8 +1,10 @@
 <a id='weekedt' href="javascript:arrangeWeekEdt();" style="float: right;">
-@if($user->grade != 2)
-    编辑
+@if($user->grade == 2)
+  <span>变更</span>
+@elseif($user->grade == 3)
+  <span>选课</span>
 @else
-    变更
+  <span>编辑</span>
 @endif
 </a>
 <table class="table table-striped table-bordered">
@@ -20,16 +22,16 @@
 @foreach(['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $x => $t1)
 <tr>
   @if($t1 == '1,2')
-  <td rowspan="2" class="classlisttitle"  style="width: 20px;">上午</td>
+  <td rowspan="2" class="classlisttitle"  style="width: 20px; padding: 5px;">上午</td>
   @elseif($t1 == '5,6')
-  <td rowspan="2" class="classlisttitle">下午</td>
+  <td rowspan="2" class="classlisttitle" style="padding: 5px;">下午</td>
   @elseif($t1 == '9,10,11')
-  <td rowspan="2" class="classlisttitle">晚上</td>
+  <td rowspan="2" class="classlisttitle" style="padding: 5px;">晚上</td>
   @endif
-  <td class="classsubtitle">第{{ $t1 }}节<br>({{ $coursetime[$t1] }})</td>
+  <td class="classsubtitle" style="padding: 5px;">第{{ $t1 }}节<br>({{ $coursetime[$t1] }})</td>
   @foreach(['一', '二', '三', '四', '五', '六', '日'] as $y => $t2)
-    <td class="arrangeweekcourse" style="padding: 0;">
-      <button id="{{ $x.'-'.$y }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{{ $coursetable['星期'.$t2.'第'.$t1.'节'] }}</button>
+    <td class="arrangeweekcourse" style="padding: 5px;">
+      <button id="{{ $x.'-'.$y }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" snums="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->studentnums }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{{ $coursetable['星期'.$t2.'第'.$t1.'节']->table }}</button>
     </td>
   @endforeach
 </tr>
@@ -41,10 +43,15 @@ function arrangeWeekEdt()
 {
 	if($('#weekedt').text() == '取消')
 	{
-@if($user->grade != 2)
-		$('#weekedt').text('编辑');
-@else
+@if($user->grade == 2)
 		$('#weekedt').text('变更');
+@elseif($user->grade == 3)
+	$('#weekedt').text('选课');
+	$('#classchoose').addClass('hidden');
+	$('#warningchoose').addClass('hidden');
+	$('#classcourse').removeClass('hidden');
+@else
+		$('#weekedt').text('编辑');
 @endif
 		$('.arrangeweekcourse').removeClass('arrangeweekcourseedt');
 		$('.arrangeweekbtn').attr('disabled', 'disabled');
@@ -53,15 +60,38 @@ function arrangeWeekEdt()
 	{
 		$('#weekedt').text('取消');
 		$('.arrangeweekcourse').addClass('arrangeweekcourseedt');
-@if($user->grade != 2)
-		$('.arrangeweekbtn').removeAttr('disabled');
+@if($user->grade == 2)
+    	$('.arrangeweekbtn').each(function(){
+    		if($(this).text() != '')
+    		{
+    			$(this).removeAttr('disabled');
+    		}
+    	});
+@elseif($user->grade == 3)
+        if('{{$coursechoose["choose"]}}' == '1'
+        			&& getCurDate().localeCompare('{{$coursechoose["dateline"]}}') <= 0)
+        {
+        	if({{ count($selcourses) }} > 0)
+        	{
+            	$('#classchoose').removeClass('hidden');
+            	$('#classcourse').addClass('hidden');
+        		$('.arrangeweekbtn').removeAttr('disabled');
+        	}
+        	else
+    		{
+    			$('#weekedt').text('选课');
+        		$('.arrangeweekcourse').removeClass('arrangeweekcourseedt');
+                alert('暂无排课，无法进行选课');
+    		}
+        }
+        else
+        {
+        	$('#weekedt').text('选课');
+    		$('.arrangeweekcourse').removeClass('arrangeweekcourseedt');
+            alert('非选课时段，无法进行选课');
+        }
 @else
-		$('.arrangeweekbtn').each(function(){
-			if($(this).text() != '')
-			{
-				$(this).removeAttr('disabled');
-			}
-		});
+		$('.arrangeweekbtn').removeAttr('disabled');
 @endif
 	}
 }
@@ -78,7 +108,18 @@ function loadWeekEdt(id)
 		tbtn.attr( 'data-toggle', 'modal');
 
 		var result = tbtn.text().split(' ');
-		$('#ucoursename').val(result[0]);
+
+		var spos = result[0].lastIndexOf('-');
+		if(spos > 0)
+		{
+			$('#ucoursename').val(result[0].substr(0, spos));
+			$('#ucourseclass').val(result[0].substr(spos+1));
+		}
+		else
+		{
+			$('#ucoursename').val(result[0]);
+			$('#ucourseclass').val('');
+		}
 
 		$('#ucourseroom option').each(function(){
 			if('('+$(this).text()+')' == result[1])
@@ -87,19 +128,34 @@ function loadWeekEdt(id)
 			}
 		});
 
-		$('#ucourseremarks').val(result[2]);
+		$('#ucoursestudnums').val(tbtn.attr('snums'));
+
+		var coursetimes = 0;
+		if(result[2] != null)
+		{
+			coursetimes = result[2].replace(/[^0-9]/ig, '');
+		}
+		$('#ucoursenums').val(coursetimes);
 
 @elseif($user->grade == 2)
-		if(confirm('课程变更通知\n\n是否通知管理员请求更换课程安排？\n'))
+		if('{{$coursechoose["choose"]}}' == '1'
+			&& getCurDate().localeCompare('{{ $coursechoose["dateline"] }}') <= 0)
 		{
-			$('#teacherChangeTitle').val($('#username').text()+' 请求变更『'+tbtn.attr('tval')+'』课程安排');
-			tbtn.attr( 'data-target', '#teachercourseModal');
-			tbtn.attr( 'data-toggle', 'modal');
+    		if(confirm('课程变更通知\n\n是否通知管理员请求更换课程安排？\n'))
+    		{
+    			$('#teacherChangeTitle').val($('#username').text()+' 请求变更『'+tbtn.attr('tval')+'』课程安排');
+    			tbtn.attr( 'data-target', '#teachercourseModal');
+    			tbtn.attr( 'data-toggle', 'modal');
+    		}
+    		else
+    		{
+    			tbtn.removeAttr('data-target');
+    			tbtn.removeAttr('data-toggle');
+    		}
 		}
 		else
 		{
-			tbtn.removeAttr('data-target');
-			tbtn.removeAttr('data-toggle');
+			alert('不在选课时间内，无法响应变更请求');
 		}
 @endif
 	}
