@@ -21,7 +21,7 @@
   @else
   <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" style="margin-right: 10px;"> 到：<input id="termetime" type="text"></div>
   @endif
-  <a id="coursearrangehref" href="javascript:courseArrangeRequest();" class="btn btn-primary" style="margin-bottom: 10px;">进入排课</a>
+  <a id="coursearrangehref" href="javascript:courseArrangeRequest();" class="btn btn-primary" style="margin-bottom: 10px;">排课</a>
   <br><br>
   <h3>2.学生选课</h3>
   <span>学期</span>
@@ -34,10 +34,14 @@
     ischoosen="{{ $aterm->coursechoose }}">{{ $aterm->val }}</option>
     @endforeach
   </select>
-  <a href="javascript:courseChooseRequest();" class="btn btn-primary">进入选课</a>
+  <a href="javascript:courseChooseRequest();" class="btn btn-info">选课</a>
+  <a href="javascript:courseChangeRequest();" class="btn btn-success" style="margin-left: 5px;">调课</a>
   @elseif($user->grade == 2)
   <div class="alert alert-info" style="margin-top: 5px;">
-    学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
+    <span>学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})</span>
+    @if($coursechoose['choose'] == 1)
+    <br><br><span><b>选课时间</b>，截止日期：{{$coursechoose['dateline']}}</span>
+    @endif
   </div>
   <span>学期</span>
   <select id="coursequery">
@@ -59,6 +63,7 @@
   <div id="weektbody">
     @include('admin.usercourse.weektbody')
   </div>
+  <div id="coursestudsinfo" class="hidden"></div>
   <div class="modal fade" role="dialog" id="teachercourseModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -98,7 +103,10 @@
   </div>
   @elseif($user->grade == 3)
   <div class="alert alert-info" style="margin-top: 5px;">
-    学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
+    <span>学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})</span>
+    @if($coursechoose['choose'] == 1)
+    <br><br><span><b>课程可选</b>，截止日期：{{$coursechoose['dateline']}}</span>
+    @endif
   </div>
   @if(Input::get('choose') == 1)
   <div id="classcourse" class="hidden">
@@ -206,6 +214,11 @@ function courseChooseRequest() {
             		  + $('#coursechoose').val());
 }
 
+function courseChangeRequest() {
+  location.replace("admin?action=usercourse/change&id={{ $user->id }}&term="
+            		  + $('#coursechoose').val());
+}
+
 courseArrangeChanged();
 
 laydate({elem: '#termstime', format: 'YYYY-MM-DD'});
@@ -217,6 +230,14 @@ laydate({elem: '#termetime', format: 'YYYY-MM-DD'});
 $("#coursequery").change(function() {
 	location.replace("admin?action=usercourse&id={{ $user->id }}&term="+$("#coursequery").val());
 });
+@if($user->grade == 2)
+$('.arrangeweekbtn').each(function(){
+	if($(this).text() != '')
+	{
+		$(this).removeAttr('disabled');
+	}
+});
+@endif
 @if($user->grade == 3)
 $('.studchoose').change(function(){
 	$(this).attr('ids', $(this).find('option:selected').attr('ids'));

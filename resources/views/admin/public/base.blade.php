@@ -8,11 +8,13 @@
   <link rel="shortcut icon" type="image/x-icon" href="{{ asset('/img/favicon.icon') }}">
   <link rel="icon" type="image/x-icon" href="{{ asset('/img/favicon.icon') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap-submenu.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/smartlab.css') }}">
   <!-- Scripts -->
   <script type="text/javascript" src="{{ asset('/js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/socket.io.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('/js/bootstrap-submenu.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/smartlab.js') }}"></script>
 </head>
 <body>

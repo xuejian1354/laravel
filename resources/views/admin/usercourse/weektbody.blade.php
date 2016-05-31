@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <a id='weekedt' href="javascript:arrangeWeekEdt();" style="float: right;">
 @if($user->grade == 2)
   <span>变更</span>
@@ -7,7 +8,7 @@
   <span>编辑</span>
 @endif
 </a>
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered" style="min-width: 739px;">
 <tbody>
 <tr>
   <td colspan="2"></td>
@@ -31,13 +32,14 @@
   <td class="classsubtitle" style="padding: 5px;">第{{ $t1 }}节<br>({{ $coursetime[$t1] }})</td>
   @foreach(['一', '二', '三', '四', '五', '六', '日'] as $y => $t2)
     <td class="arrangeweekcourse" style="padding: 5px;">
-      <button id="{{ $x.'-'.$y }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" snums="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->studentnums }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{{ $coursetable['星期'.$t2.'第'.$t1.'节']->table }}</button>
+      <button id="{{ $x.'-'.$y }}" sn="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->sn }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" snums="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->studentnums }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{!! $coursetable['星期'.$t2.'第'.$t1.'节']->table !!}</button>
     </td>
   @endforeach
 </tr>
 @endforeach
 </tbody>
 </table>
+</div>
 <script type="text/javascript">
 function arrangeWeekEdt()
 {
@@ -50,11 +52,12 @@ function arrangeWeekEdt()
 	$('#classchoose').addClass('hidden');
 	$('#warningchoose').addClass('hidden');
 	$('#classcourse').removeClass('hidden');
+	$('.arrangeweekbtn').attr('disabled', 'disabled');
 @else
-		$('#weekedt').text('编辑');
+	$('#weekedt').text('编辑');
+	$('.arrangeweekbtn').attr('disabled', 'disabled');
 @endif
 		$('.arrangeweekcourse').removeClass('arrangeweekcourseedt');
-		$('.arrangeweekbtn').attr('disabled', 'disabled');
 	}
 	else
 	{
@@ -164,6 +167,11 @@ function loadWeekEdt(id)
 @if($user->grade == 1 || $user->grade == 2)
 		tbtn.removeAttr('data-target');
 		tbtn.removeAttr('data-toggle');
+@endif
+@if($user->grade == 2)
+		$('#coursestudsinfo').removeClass('hidden');
+		//$('#coursestudsinfo').text($('#'+id).text());
+		loadContent('coursestudsinfo', 'admin?action=usercourse/coursestudsinfo&coursesn=' + tbtn.attr('sn'));
 @endif
 	}
 }

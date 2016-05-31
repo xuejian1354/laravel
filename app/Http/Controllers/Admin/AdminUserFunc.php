@@ -541,12 +541,25 @@ class AdminUserFunc {
     			                    ->withTerm($term)
                 			        ->withUser($user);
     			    }
+    			    elseif($this->menus->getAmenu()->caction == 'change')
+    			    {
+    			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+    			                    ->withCourses($this->getCoursesByTerm($term))
+                			        ->withCoursechoose($coursechoose)
+                			        ->withTerm($term)
+                			        ->withUser($user);
+    			    }
 			    }
 			    elseif($user->grade == 2)
 			    {
+			        if($this->menus->getAmenu()->caction == 'coursestudsinfo')
+			        {
+			            return $this->coursestudsinfo(Input::get('coursesn'));
+			        }
+
 			        return AdminController::getViewWithMenus('admin.admin', null, $user)
                 			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeek($term->val, $user->name))
+                			        ->withCoursetable($this->getCourseForWeekByTeacher($term->val, $user->name))
                 			        ->withTerm($term)
                 			        ->withTerms($terms)
                 			        ->withCoursechoose($coursechoose)
@@ -1142,6 +1155,11 @@ adddtailreturn:
     	    }
 	    }
 
+	    if(isset($tobj->returnurl))
+	    {
+	        return redirect($tobj->returnurl);
+	    }
+
 	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
@@ -1167,6 +1185,10 @@ adddtailreturn:
     	                if(strpos($yc->time, $xtime) !== false)
     	                {
     	                    $warning = '<b>课程时间存在冲突</b>『'.$xc->course.'』和『'.$yc->course.'』在'.$xtime;
+    	                    if(isset($tobj->returnurl))
+    	                    {
+    	                        return redirect($tobj->returnurl.'&warning='.$warning);
+    	                    }
     	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
@@ -1177,6 +1199,10 @@ adddtailreturn:
     	                if(strpos($xc->time, $ytime) !== false)
     	                {
     	                    $warning = '<b>课程时间存在冲突</b>『'.$yc->course.'』和『'.$xc->course.'』在'.$ytime;
+    	                    if(isset($tobj->returnurl))
+    	                    {
+    	                        return redirect($tobj->returnurl.'&warning='.$warning);
+    	                    }
     	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
@@ -1192,6 +1218,10 @@ adddtailreturn:
 	            && strpos($course->students, $tobj->username) === false)
 	        {
 	            $warning = '『<b>'.$course->course.'</b>』超出最大选课人数';
+	            if(isset($tobj->returnurl))
+	            {
+	                return redirect($tobj->returnurl.'&warning='.$warning);
+	            }
 	            return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
 	        }
 	    }
@@ -1238,12 +1268,53 @@ adddtailreturn:
 	            {
 	                $course->students .= ', '.$tobj->username;
 	            }
-	    
+
 	            $course->save();
 	        }
 	    }
 
+	    if(isset($tobj->returnurl))
+	    {
+	        return redirect($tobj->returnurl);
+	    }
+
 	    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
+	}
+
+	public function coursestudsinfo($coursesn)
+	{
+	    $studinfos = array();
+	    $cr = Course::where('sn', '=', $coursesn);
+	    if($cr->count() > 0)
+	    {
+	        $students = explode(',', $cr->get()[0]->students);
+	        foreach ($students as $student)
+	        {
+	            $usersn = '';
+	            $st = User::where('name', '=', trim($student));
+	            if($st->count() > 0)
+	            {
+	                $usersn = $st->get()[0]->sn;
+	            }
+
+	            $ud = Userdetail::where('sn', '=', $usersn);
+	            if($ud->count() > 0)
+	            {
+	                $userdetail = $ud->get()[0];
+	                $userdetail->class = '';
+
+	                $classgrade = Classgrade::where('classgrade', '=', $userdetail->type);
+	                if($classgrade->count() > 0)
+	                {
+	                    $userdetail->class = $classgrade->get()[0]->val;
+	                }
+
+	                array_push($studinfos, $userdetail);
+	            }
+	        }
+	    }
+
+	    return view('admin.usercourse.coursestudsinfo')->withStudinfos($studinfos);
 	}
 
 	public static function getCourseForWeek($term, $teacher)
@@ -1270,6 +1341,7 @@ adddtailreturn:
         	            $course->course .= '-'.$course->divideclass;
         	        }
 
+        	        $courseTable[$coursetime]->sn = $course->sn;
         	        $courseTable[$coursetime]->course = $course->course;
         	        $courseTable[$coursetime]->room = $course->room;
         	        $courseTable[$coursetime]->studentnums = $course->studnums;
@@ -1279,11 +1351,68 @@ adddtailreturn:
 	            }
 	            else
 	            {
+	                $courseTable[$coursetime]->sn = '';
 	                $courseTable[$coursetime]->course = '';
 	                $courseTable[$coursetime]->room = '';
     	            $courseTable[$coursetime]->studentnums = 0;
     	            $courseTable[$coursetime]->coursenums = 0;
     	            $courseTable[$coursetime]->table = '';
+	            }
+	        }
+	    }
+
+	    return $courseTable;
+	}
+
+	public static function getCourseForWeekByTeacher($term, $teacher)
+	{
+	    $courseTable = array();
+	
+	    foreach (['一', '二', '三', '四', '五', '六', '日'] as $day)
+	    {
+	        foreach (['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $class)
+	        {
+	            $coursetime = '星期'.$day.'第'.$class.'节';
+	
+	            $course = Course::where('teacher', '=', $teacher)
+                    	            ->where('term', '=',  $term)
+                    	            ->where('time', 'like',  '%'.$coursetime.'%')
+                    	            ->get();
+	
+	            $courseTable[$coursetime] = new \stdClass();
+	            if($course->count() > 0)
+	            {
+	                $course = $course[0];
+	                if($course->divideclass != null && trim($course->divideclass) != '')
+	                {
+	                    $course->course .= '-'.$course->divideclass;
+	                }
+	
+	                $course->choosernums = 0;
+	                if($course->students != null && trim($course->students) != '')
+	                {
+	                    $choosers = explode(',', $course->students);
+	                    $course->choosernums = count($choosers);
+	                }
+
+	                $courseTable[$coursetime]->sn = $course->sn;
+	                $courseTable[$coursetime]->course = $course->course;
+	                $courseTable[$coursetime]->room = $course->room;
+	                $courseTable[$coursetime]->studentnums = $course->studnums;
+	                $courseTable[$coursetime]->coursenums = $course->coursenums;
+	                $courseTable[$coursetime]->table = $course->course
+	                                                       .' ('.$course->room.')<br>'
+	                                                       .$course->coursenums.'课时 '
+	                                                       .$course->choosernums.'/'.$course->studnums.'人';
+	            }
+	            else
+	            {
+	                $courseTable[$coursetime]->sn = '';
+	                $courseTable[$coursetime]->course = '';
+	                $courseTable[$coursetime]->room = '';
+	                $courseTable[$coursetime]->studentnums = 0;
+	                $courseTable[$coursetime]->coursenums = 0;
+	                $courseTable[$coursetime]->table = '';
 	            }
 	        }
 	    }
@@ -1314,6 +1443,7 @@ adddtailreturn:
         	            $course->course .= '-'.$course->divideclass;
         	        }
 
+        	        $courseTable[$coursetime]->sn = $course->sn;
         	        $courseTable[$coursetime]->course = $course->course;
         	        $courseTable[$coursetime]->room = $course->room;
         	        $courseTable[$coursetime]->studentnums = $course->studnums;
@@ -1322,6 +1452,7 @@ adddtailreturn:
 	            }
 	            else
 	            {
+	                $courseTable[$coursetime]->sn = '';
 	                $courseTable[$coursetime]->course = '';
 	                $courseTable[$coursetime]->room = '';
     	            $courseTable[$coursetime]->studentnums = 0;
@@ -1333,22 +1464,111 @@ adddtailreturn:
 
 	    return $courseTable;
 	}
-	
-	public function getSelectCoursesByStudent($user, $term)
+
+	public function getCoursesByTerm($term)
+	{
+	    $index = 0;
+	    $termcourses = array();
+	    $courses = Course::where('term', '=', $term->val)->get();
+	    foreach ($courses as $course)
+	    {
+	        $courseflag = $course->teacher.$course->course.$course->divideclass;
+	        if(isset($termcourses[$courseflag]) === false)
+	        {
+	            $course->index = $index++;
+	            $course->rooms = array($course->room);
+	            $course->times = array($course->time);
+
+	            $students = array();
+	            foreach(explode(',', $course->students) as $student)
+	            {
+	                if(trim($student) == '')
+	                {
+	                    continue;
+	                }
+
+	                $ts = new \stdClass();
+	                $ts->name = trim($student);
+	                $ts->id = User::where('name', '=', $ts->name)->get()[0]->id;
+	                $ts->selcourses = $this->getSelectCoursesByStudent(User::where('name', '=', $ts->name)->get()[0], $term, $course->course);
+	                array_push($students, $ts);
+	            }
+	            $course->students = $students;
+
+	            $termcourses[$courseflag] = $course;
+	        }
+	        else
+	        {
+                $rooms = $termcourses[$courseflag]->rooms;
+                $times = $termcourses[$courseflag]->times;
+                
+                array_push($rooms, $course->room);
+                array_push($times, $course->time);
+                
+                $termcourses[$courseflag]->rooms = $rooms;
+                $termcourses[$courseflag]->times = $times;
+	        }
+	    }
+
+	    foreach ($termcourses as $termcourse)
+	    {
+	        $addrtimes = array();
+	        $rooms = $termcourse->rooms;
+	        $times = $termcourse->times;
+
+	        for ($index = 0; $index < count($rooms); $index++)
+	        {
+	            $addrtime = $rooms[$index].' ('.$times[$index].')';
+	            array_push($addrtimes, $addrtime);
+	        }
+
+	        $termcourse->addrtimes = $addrtimes;
+	    }
+
+	    //dd($termcourses);
+	    return $termcourses;
+	}
+
+	public function getSelectCoursesByStudent($user, $term, $course = null)
 	{
 	    $selcourses = array();
         $userdetail = Userdetail::where('sn', '=', $user->sn)->get();
         if($userdetail->count() > 0)
         {
             $userdetail = $userdetail[0];
+            $becourses = array();
+            $classcourses = array();
+
             $termcourses = Termcourse::where('classgrade', '=', $userdetail->type)
                                          ->where('term', '=', $term->val)
                                          ->get();
 
-            $classcourses = array();
             foreach ($termcourses as $termcourse)
             {
                 $classcourses = explode(',', $termcourse->courses);
+            }
+
+            if($course != null)
+            {
+                $beforecourses = array();
+                foreach ($classcourses as $classcourse)
+                {
+                    array_push($beforecourses, trim($classcourse));
+                }
+
+                $classcourses = array();
+                array_push($classcourses, $course);
+
+                $asret = array_search($course, $beforecourses);
+                if($asret !== false)
+                {
+                    array_splice($beforecourses, $asret, 1);
+                }
+
+                $becourses = Course::whereIn('course', $beforecourses)
+                                      ->where('students', 'like', '%'.$user->name.'%')
+                                      ->where('term', '=', $term->val)
+    			                      ->get();
             }
 
             foreach ($classcourses as $classcourse)
@@ -1358,6 +1578,7 @@ adddtailreturn:
     			                     ->get();
 
                 $tercourses = array();
+                $tindex = 0;
                 foreach ($recouses as $recouse)
                 {
                     $key = $recouse->teacher;
@@ -1385,12 +1606,27 @@ adddtailreturn:
                     if(!isset($tercourses[$key]))
                     {
                         $tercourses[$key] = new \stdClass();
-                        $tercourses[$key]->ischoose = $recouse->ischoose; 
+                        $tercourses[$key]->index = $tindex++;
+                        $tercourses[$key]->ischoose = $recouse->ischoose;
+                        $tercourses[$key]->isconflict = false;
                         $tercourses[$key]->ids = array();
                         $tercourses[$key]->vals = array();
                     }
                     array_push($tercourses[$key]->ids, $recouse->id);
                     array_push($tercourses[$key]->vals, $recouse);
+
+                    if($course != null)
+                    {
+                        foreach ($becourses as $becourse)
+                        {
+                            if($recouse->time == $becourse->time)
+                            {
+                                //dd($recouse);
+                                $tercourses[$key]->isconflict = true;
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 $selcourses[$classcourse] = $tercourses;
