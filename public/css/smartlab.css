@@ -295,3 +295,7 @@ h6, .h6 {
 .arrangeweekcourseedt:hover {
 	background: #ddd;
 }
+
+select {
+	height: 26px;
+}

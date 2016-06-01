@@ -1,5 +1,6 @@
 @section('opt')
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+  <a href="admin?action=roomctrl" style="float: right;">返回</a></h5>
   <h1 class="page-header">{{ $amenu->cmenu }}</h1>
   <br>
   <h3 class="sub-header">{{ $room->name.' ('.$room->sn.')' }}</h3>

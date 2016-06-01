@@ -39,7 +39,7 @@ class AdminRoom {
 					$devtypes = Devtype::all();
 					$devcmds = Controller::getDevCmds();
 					$devargs = array();
-		
+
 					foreach ($devices as $device)
 					{
 						foreach ($devcmds as $devcmd)
@@ -52,7 +52,7 @@ class AdminRoom {
 						}
 						$device['iscmdfound'] = 0;
 						devcmdfoundend:;
-		
+
 						foreach($devtypes as $devtype)
 						{
 							if ($device->dev_type == $devtype->devtype)
@@ -60,13 +60,13 @@ class AdminRoom {
 								$device['devtypename'] = $devtype->val;
 							}
 						}
-		
+
 						if($device->area == $room[0]->name)
 						{
 							array_push($devargs, $device);
 						}
 					}
-		
+
 					if(count($devargs) > 0)
 					{
 						return AdminController::getViewWithMenus('admin.admin')
@@ -81,7 +81,7 @@ class AdminRoom {
 					}
 				}
 			}
-		
+
 			return $this->backView('未找到教室');
 		}
 
@@ -114,7 +114,7 @@ class AdminRoom {
 					break;
 				}
 			}
-		
+
 			if($room->status == '1')
 			{
 				$room->statusstr = '正使用(1)';
@@ -124,21 +124,21 @@ class AdminRoom {
 				$room->statusstr = '未使用(0)';
 			}
 		}
-		
+
 		$this->roomtypestr = array();
 		foreach(Roomtype::all() as $roomtype)
 		{
 			array_push($this->roomtypestr, $roomtype->val.'('.$roomtype->roomtype.')');
 		}
 		//sort($roomtypestr);
-		
+
 		$this->roomaddrstr = array();
 		foreach(Roomaddr::all() as $roomaddr)
 		{
 			array_push($this->roomaddrstr, $roomaddr->val.'('.$roomaddr->roomaddr.')');
 		}
 		//sort($roomaddrstr);
-		
+
 		$this->userstr = array();
 		$this->ownerstr = array();
 		foreach(User::all() as $user)
@@ -147,7 +147,7 @@ class AdminRoom {
 			{
 				array_push($this->userstr, $user->name);
 			}
-		
+
 			if($user->privilege >= 5)
 			{
 				array_push($this->ownerstr, $user->name);
@@ -173,10 +173,10 @@ class AdminRoom {
 	{
 		$roomtypes = Roomtype::all();
 		$roomaddrs = Roomaddr::all();
-	
+
 		$data = Input::get('data');
 		$dobjs = json_decode($data);
-	
+
 		foreach ($dobjs as $dobj)
 		{
 			$room = Room::find((int)$dobj->id);
@@ -192,7 +192,7 @@ class AdminRoom {
 						$room->roomtype = $roomtype->roomtype;
 					}
 				}
-	
+
 				foreach($roomaddrs as $roomaddr)
 				{
 					$roomaddrstr = $roomaddr->val.'('.$roomaddr->roomaddr.')';
@@ -201,7 +201,7 @@ class AdminRoom {
 						$room->addr = $roomaddr->roomaddr;
 					}
 				}
-	
+
 				if($dobj->statustr == '正使用(1)')
 				{
 					$room->status = '1';
@@ -210,14 +210,14 @@ class AdminRoom {
 				{
 					$room->status = '0';
 				}
-	
+
 				$room->user = $dobj->user;
 				$room->owner = $dobj->owner;
-	
+
 				$room->save();
 			}
 		}
-	
+
 		return redirect("admin?action=roomstats");
 	}
 
@@ -234,7 +234,7 @@ class AdminRoom {
 				$room->delete();
 			}
 		}
-	
+
 		return redirect("admin?action=roomstats");
 	}
 
@@ -242,14 +242,14 @@ class AdminRoom {
 	{
 		$data = Input::get('data');
 		$room = json_decode($data);
-	
+
 		$roomtype;
 		$roomaddr;
 		preg_match('/\d+/', $room->roomtype, $roomtype);
 		preg_match('/\d+/', $room->addr, $roomaddr);
 		$roomtype = $roomtype[0];
 		$roomaddr = isset($roomaddr[0])?$roomaddr[0]:'';
-	
+
 		try {
 			Room::create([
 					'sn' => ExcelController::genRoomSN($room->name, $roomtype, $roomaddr),
@@ -263,7 +263,7 @@ class AdminRoom {
 		} catch (QueryException $e) {
 			return '<script type="text/javascript">history.back(-1);alert("添加错误，请检查该教室是否已经存在");</script>';
 		}
-	
+
 		return redirect("admin?action=roomstats");
 	}
 }

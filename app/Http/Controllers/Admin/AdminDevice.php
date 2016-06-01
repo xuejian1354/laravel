@@ -1,12 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Input, Auth;
+use Input, Auth, DB;
 use App\User;
 use App\Model\Hardware\Gateway;
 use App\Model\Hardware\Device;
-use App\Model\DBStatic\Privilege;
 use App\Model\DBStatic\Devtype;
-use App\Model\DBStatic\Devcmd;
 use App\Model\Room\Room;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PageTag;

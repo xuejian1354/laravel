@@ -20,6 +20,10 @@ use App\Http\Controllers\ExcelController;
 use App\Model\DBStatic\Globalval;
 use App\Model\Course\Termcourse;
 use PhpParser\Node\Expr\Cast;
+use App\Model\DBStatic\Roomtype;
+use App\Model\DBStatic\Roomaddr;
+use App\Model\Hardware\Device;
+use App\Model\DBStatic\Devtype;
 
 class AdminUserFunc {
 
@@ -586,6 +590,199 @@ class AdminUserFunc {
 			                 ->withTerm($term)
 			                 ->withTerms(Term::query()->orderBy('val', 'desc')->get())
 			                 ->withUser($user);
+			}
+			else if($this->menus->getAmenu()->action == 'userclassgrade')
+			{
+			    if($user->grade > 3 && $user->privilege <= 3)
+			    {
+			        return view('errors.permitts');
+			    }
+
+			    $roomtypes = Roomtype::all();
+			    foreach($roomtypes as $roomtype)
+			    {
+			        $roomtype->str = $roomtype->val.'('.$roomtype->roomtype.')';
+			    }
+
+			    $roomaddrs =  Roomaddr::all();
+			    foreach($roomaddrs as $roomaddr)
+			    {
+			        $roomaddr->str = $roomaddr->val.'('.$roomaddr->roomaddr.')';
+			    }
+
+			    if($this->menus->getAmenu()['caction'] == 'opt')
+			    {
+			        if(isset($_GET['roomsn']) && $user->privilege > 3)
+			        {
+			            $room = DB::table('rooms')->where('sn', Input::get('roomsn'))->get();
+			            if(count($room) > 0)
+			            {
+			                $devices = Device::all();
+			                $devtypes = Devtype::all();
+			                $devcmds = Controller::getDevCmds();
+			                $devargs = array();
+			    
+			                foreach ($devices as $device)
+			                {
+			                    foreach ($devcmds as $devcmd)
+			                    {
+			                        if($device->dev_type == $devcmd->dev_type)
+			                        {
+			                            $device['iscmdfound'] = 1;
+			                            goto devcmdfoundend;
+			                        }
+			                    }
+			                    $device['iscmdfound'] = 0;
+			                    devcmdfoundend:;
+			    
+			                    foreach($devtypes as $devtype)
+			                    {
+			                        if ($device->dev_type == $devtype->devtype)
+			                        {
+			                            $device['devtypename'] = $devtype->val;
+			                        }
+			                    }
+			    
+			                    if($device->area == $room[0]->name)
+			                    {
+			                        array_push($devargs, $device);
+			                    }
+			                }
+
+			                if(count($devargs) > 0)
+			                {
+			                    return view('admin.userclassgrade.opt')
+            			                    ->withDevcmds($devcmds)
+            			                    ->withDevices($devargs);
+			                }
+			            }
+			        }
+
+			        return '<div class="alert alert-danger"><b>未发现设备</b></div>';
+			    }
+			    else if($this->menus->getAmenu()['caction'] == 'queryroom')
+			    {
+			        $tobj = json_decode(Input::get('data'));
+			        $rooms = null;
+			        if($tobj->method == 1 && isset($tobj->roomnamesn))
+			        {
+			            $rooms = Room::whereRaw('name=? OR sn=?', [$tobj->roomnamesn, $tobj->roomnamesn]);
+			        }
+			        else if($tobj->method == 2)
+			        {
+			            if(isset($tobj->roomtype))
+			            {
+			                $rooms = Room::where('roomtype', '=', $tobj->roomtype);
+			            }
+
+			            if(isset($tobj->roomaddr))
+			            {
+			                if($rooms != null)
+			                {
+			                    $rooms = $rooms->where('addr', '=', $tobj->roomaddr);
+			                }
+			                else
+			                {
+			                     $rooms = Room::where('addr', '=', $tobj->roomaddr);
+			                }
+			            }
+			        }
+
+			        $courses = null;
+			        if(isset($tobj->time))
+			        {
+			            $courses = Course::where('time', 'like', '%'.$tobj->time.'%');
+			        }
+
+			        if($rooms != null)
+			        {
+			            if(count($rooms->get()) > 0)
+			            {
+    			            $roomnames = array();
+    			            $rooms = $rooms->get();
+    			            foreach ($rooms as $room)
+    			            {
+    			                array_push($roomnames, $room->name);
+    			            }
+    
+    			            if($courses != null)
+    			            {
+    			                 $courses = $courses->whereIn('room', $roomnames);
+    			            }
+    			            else
+    			            {
+    			                $courses = Course::whereIn('room', $roomnames);
+    			            }
+			            }
+			            else
+			            {
+			                $courses = null;
+			                return '<div class="alert alert-danger"><b>未发现教室</b></div>';
+			            }
+			        }
+			        else
+			        {
+			            $rooms = Room::all();
+			        }
+
+			        $qsrooms = array();
+			        if($courses != null && count($courses->get()) > 0)
+			        {
+			            $courses = $courses->get();
+			            foreach ($courses as $course)
+			            {
+			                $qsroom = new \stdClass();
+			                $qsroom->name = $course->room;
+			                $qsroom->isuse = true;
+			                $qsroom->time = $course->time;
+			                $qsroom->course = $course->course;
+			                $qsroom->owner = $course->teacher;
+			                array_push($qsrooms, $qsroom);
+			            }
+			        }
+
+			        if(isset($tobj->time))
+			        {
+			            $dsrooms = array();
+			            foreach ($qsrooms as $qsroom)
+			            {
+			                 if($qsroom->time == $tobj->time)
+			                 {
+			                     array_push($dsrooms, $qsroom);
+			                 }
+			            }
+
+    			        foreach ($rooms as $room)
+    			        {
+    			            foreach ($dsrooms as $dsroom)
+    			            {
+    			                if($dsroom->name == $room->name)
+    			                {
+    			                  goto dend;  
+    			                }
+    			            }
+
+    			            $qsroom = new \stdClass();
+    			            $qsroom->name = $room->name;
+    			            $qsroom->isuse = false;
+    			            $qsroom->time = $tobj->time;
+    			            $qsroom->course = null;
+    			            $qsroom->owner = null;;
+    			            array_push($qsrooms, $qsroom);
+    			            dend:;
+    			        }
+			        }
+
+			        //dd($qsrooms);
+			        return view('admin.userclassgrade.qsroom')->withQsrooms($qsrooms);
+			    }
+
+			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+			                                ->withWeektimes($this->getWeekTimeTable())
+			                                ->withRoomtypes($roomtypes)
+			                                ->withRoomaddrs($roomaddrs)
+			                                ->withRooms(Room::all())
+                            			    ->withUser($user);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
@@ -1418,6 +1615,21 @@ adddtailreturn:
 	    }
 
 	    return $courseTable;
+	}
+
+	public static function getWeekTimeTable()
+	{
+	    $weekTimeTables = array();
+	    foreach (['一', '二', '三', '四', '五', '六', '日'] as $day)
+	    {
+	        foreach (['1,2', '3,4', '5,6', '7,8', '9,10,11'] as $class)
+	        {
+	            $coursetime = '星期'.$day.'第'.$class.'节';
+	            array_push($weekTimeTables, $coursetime);
+	        }
+	    }
+
+	    return $weekTimeTables;
 	}
 
 	public static function getCourseForWeekByStudent($term, $student)

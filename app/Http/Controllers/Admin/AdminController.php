@@ -429,8 +429,11 @@ class AdminController extends Controller {
                 break;
 
             case 4:
+                $menus->setCMenuWithAction('usercourse', 'NULL');
+                $menus->setCMenuWithAction('userclassgrade', 'NULL');
                 $menus->setCMenuWithAction('userreport', 'NULL');
-                $menus->setCMenuWithAction('userexam', '考试查询');
+                $menus->setCMenuWithAction('userexam', 'NULL');
+                $menus->setCMenuWithAction('userscore', 'NULL');
                 $menus->setCMenuWithAction('userrecord', 'NULL');
                 break;
 		    }
