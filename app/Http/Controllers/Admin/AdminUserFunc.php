@@ -24,6 +24,7 @@ use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
 use App\Model\Hardware\Device;
 use App\Model\DBStatic\Devtype;
+use App\Model\Course\Exam;
 
 class AdminUserFunc {
 
@@ -48,6 +49,25 @@ class AdminUserFunc {
 			if($user == null)
 			{
 				$user = Auth::user();
+			}
+
+			//term
+			$terms = Term::query()->orderBy('val', 'desc')->get();
+			$term = $terms[0];
+			
+			$gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
+			if(count($gterm) > 0)
+			{
+			    $term = $gterm[0];
+			}
+			
+			if(Input::get('term') != null)
+			{
+			    $aterm = Term::where('val', '=', Input::get('term'))->get();
+			    if(count($aterm) > 0)
+			    {
+			        $term = $aterm[0];
+			    }
 			}
 
 			if($this->menus->getAmenu()->action == 'useractivity')
@@ -462,25 +482,6 @@ class AdminUserFunc {
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
-			    //term
-			    $terms = Term::query()->orderBy('val', 'desc')->get();
-			    $term = $terms[0];
-
-			    $gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
-			    if(count($gterm) > 0)
-			    {
-			        $term = $gterm[0];
-			    }
-
-			    if(Input::get('term') != null)
-			    {
-			        $aterm = Term::where('val', '=', Input::get('term'))->get();
-			        if(count($aterm) > 0)
-			        {
-			            $term = $aterm[0];
-			        }
-			    }
-
 			    //coursechoose
 			    $glovals = Controller::getGlobalvals();
 			    $coursechoose = [
@@ -502,10 +503,15 @@ class AdminUserFunc {
     			        }
 
     			        $teachers = User::where('grade', '=', 2)->orderBy('name', 'asc')->get();
-    			        $arrangetname = $teachers[0]->name;
+    			        $arrangename = null;
+    			        if(count($teachers) > 0)
+    			        {
+    			            $arrangename = $teachers[0]->name;
+    			        }
+
     			        if(Input::get('teacher'))
     			        {
-    			            $arrangetname = Input::get('teacher'); 
+    			            $arrangename = Input::get('teacher'); 
     			        }
 
     			        $view = 'admin.admin';
@@ -518,9 +524,9 @@ class AdminUserFunc {
                 			        ->withTerm($term)
                 			        ->withRooms(Room::all())
                 			        ->withTeachers($teachers)
-                			        ->withArrangename($arrangetname)
+                			        ->withArrangename($arrangename)
                 			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangetname))
+                			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangename))
                 			        ->withUser($user);
     			    }
     			    elseif($this->menus->getAmenu()->caction == 'choose')
@@ -783,6 +789,61 @@ class AdminUserFunc {
 			                                ->withRoomaddrs($roomaddrs)
 			                                ->withRooms(Room::all())
                             			    ->withUser($user);
+			}
+			else if($this->menus->getAmenu()->action == 'userexam')
+			{
+			    if($user->grade == 2)
+			    {
+    			    $courses = array();
+    			    $coursesns = array();
+    			    $tcourses = Course::where('teacher', '=', $user->name)
+                        			    ->where('term', '=',  $term->val)
+                        			    ->get();
+    
+    			    foreach ($tcourses as $tcourse)
+    			    {
+    			        foreach ($courses as $course)
+    			        {
+    			            if($tcourse->course.$tcourse->divideclass 
+    			                 == $course->course.$course->divideclass)
+    			            {
+    			                goto nextcourse;
+    			            }
+    			        }
+    
+    			        $tcourse->coursename = $tcourse->course;
+    			        if($tcourse->divideclass != '')
+    			        {
+    			            $tcourse->coursename .= '-'.$tcourse->divideclass;
+    			        }
+    			        array_push($courses, $tcourse);
+    			        array_push($coursesns, $tcourse->sn);
+    			        nextcourse:;
+    			    }
+    
+    			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
+    			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+                    			     ->withCourses($courses)
+                    			     ->withExams($exams)
+        			                 ->withUser($user);
+			    }
+			    else if($user->grade == 3)
+			    {
+			        $coursesns = array();
+			        $tcourses = Course::where('students', 'like', '%'.$user->name.'%')
+                    			        ->where('term', '=',  $term->val)
+                    			        ->get();
+
+			        foreach ($tcourses as $tcourse)
+			        {
+			            array_push($coursesns, $tcourse->sn);
+			        }
+
+			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+                			        ->withExams($exams)
+                			        ->withUser($user);
+			    }
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
@@ -1476,6 +1537,65 @@ adddtailreturn:
 	    }
 
 	    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
+	}
+
+	public function userexamadd()
+	{
+	    $tobj = json_decode(Input::get('data'));
+
+	    Exam::create([
+	        'sn' => AdminUserInfo::genNewsSN($tobj->coursesn),
+	        'name' => $tobj->name,
+	        'coursesn' => $tobj->coursesn,
+	        'time' => $tobj->time,
+	        'addr' => $tobj->addr,
+	        'status' => 1,
+	        'owner' => $tobj->owner,
+	    ]);
+
+	    if(isset($tobj->returnurl))
+	    {
+	        return redirect($tobj->returnurl);
+	    }
+
+	    return redirect('admin?action=userexam');
+	}
+
+	public function userexamedt()
+	{
+	    $tobj = json_decode(Input::get('data'));
+
+	    foreach ($tobj->exams as $exam)
+	    {
+	        Exam::where('sn', '=', $exam->sn)
+	               ->update([
+	                   'name' => $exam->name,
+	                   'time' => $exam->time,
+	                   'addr' => $exam->addr,
+	                   'owner' => $exam->owner,
+	               ]);
+	    }
+
+	    if(isset($tobj->returnurl))
+	    {
+	        return redirect($tobj->returnurl);
+	    }
+
+	    return redirect('admin?action=userexam');
+	}
+
+	public function userexamdel()
+	{
+	    $tobj = json_decode(Input::get('data'));
+
+	    Exam::whereIn('sn', $tobj->examsns)->delete();
+
+	    if(isset($tobj->returnurl))
+	    {
+	        return redirect($tobj->returnurl);
+	    }
+
+	    return redirect('admin?action=userexam');
 	}
 
 	public function coursestudsinfo($coursesn)

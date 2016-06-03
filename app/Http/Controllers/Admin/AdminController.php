@@ -333,6 +333,30 @@ class AdminController extends Controller {
 	    return $adminuserfunc->coursechoosestudsave();
 	}
 
+	public function userexamadd()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	
+	    return $adminuserfunc->userexamadd();
+	}
+
+    public function userexamedt()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	
+	    return $adminuserfunc->userexamedt();
+	}
+
+	public function userexamdel()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	
+	    return $adminuserfunc->userexamdel();
+	}
+
 	public function resetpass()
 	{
 		$email = Input::get('email');
@@ -414,8 +438,9 @@ class AdminController extends Controller {
 		    case 1:
 		        $menus->setCMenuWithAction('usercourse', '课程安排');
 		        $menus->setCMenuWithAction('userclassgrade', '教室操作');
-		        $menus->setCMenuWithAction('userreport', '作业查询');
-		        $menus->setCMenuWithAction('userexam', '考试查询');
+		        $menus->setCMenuWithAction('userreport', 'NULL');
+		        $menus->setCMenuWithAction('userexam', 'NULL');
+		        $menus->setCMenuWithAction('userscore', 'NULL');
 		        break;
 
 	        case 2:
