@@ -3,30 +3,8 @@
 use Input,Auth,DB;
 use Carbon\Carbon;
 use App\User;
-use App\Model\Hardware\Gateway;
-use App\Model\Hardware\Device;
-use App\Model\DBStatic\Grade;
 use App\Model\DBStatic\Consolemenu;
-use App\Model\DBStatic\Globalval;
-use App\Model\DBStatic\Privilege;
-use App\Model\DBStatic\Devtype;
-use App\Model\DBStatic\Devcmd;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
-use App\Model\Room\Room;
-use App\Model\Course\Course;
-use App\Model\DBStatic\Roomtype;
-use App\Model\DBStatic\Roomaddr;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Session;
-use App\Model\DBStatic\Cycle;
-use App\Model\DBStatic\Term;
-use App\Http\Controllers\ExcelController;
-use Illuminate\Database\QueryException;
-use App\Model\DBStatic\News;
-use App\Model\DBStatic\Idgrade;
-use App\Model\DBStatic\Academy;
-use App\Model\DBStatic\Classgrade;
 
 class AdminController extends Controller {
 
@@ -357,6 +335,14 @@ class AdminController extends Controller {
 	    return $adminuserfunc->userexamdel();
 	}
 
+	public function userscoreedt()
+	{
+	    $menus = new AMenus();
+	    $adminuserfunc = new AdminUserFunc($menus);
+	
+	    return $adminuserfunc->userscoreedt();
+	}
+
 	public function resetpass()
 	{
 		$email = Input::get('email');
@@ -449,7 +435,6 @@ class AdminController extends Controller {
 	            break;
 
             case 3:
-                $menus->setCMenuWithAction('userreport', '课程安排');
                 $menus->setCMenuWithAction('userexam', '考试查询');
                 break;
 

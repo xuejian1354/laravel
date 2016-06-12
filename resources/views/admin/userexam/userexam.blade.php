@@ -4,6 +4,18 @@
   <a href="admin?action=usermanage&tabpos={{ $user->grade-1 }}" style="float: right; margin-top: 5px;">用户返回</a></h5>
   <h1 class="page-header">{{ $amenu->cmenu }}</h1>
   @if($user->grade == 2 || $user->grade == 3)
+  <div style="margin-bottom: 10px;">
+    <span>学期</span>
+    <select id="termchoose" style="margin: 10 0px;">
+      @foreach($terms as $aterm)
+      <option
+      @if($term->val == $aterm->val)
+        selected="selected"
+      @endif  
+      ischoosen="{{ $aterm->coursechoose }}">{{ $aterm->val }}</option>
+      @endforeach
+    </select>
+  </div>
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -86,8 +98,8 @@
   @endif
 </div>
 
-@if($user->grade == 2)
 <script type="text/javascript">
+@if($user->grade == 2)
 function syncSelectVal()
 {
 	var opt = $('#examcourse option:selected');
@@ -211,6 +223,11 @@ $(".examcheck").bind("examEdtEvent", function() {
 	}
   }
 });
-</script>
 @endif
+
+$('#termchoose').change(function(){
+	var reurl = 'admin?action=userexam&id={{ $user->id }}&term='+$(this).val();
+	location.replace(reurl);
+});
+</script>
 @endsection

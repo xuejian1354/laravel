@@ -98,6 +98,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 	Route::post('/userexam/add', 'AdminController@userexamadd');
 	Route::post('/userexam/edt', 'AdminController@userexamedt');
 	Route::post('/userexam/del', 'AdminController@userexamdel');
+	Route::post('/userscore/edt', 'AdminController@userscoreedt');
 });
 
 Route::post('/devicedata', 'DeviceController@datapush');

@@ -25,6 +25,7 @@ use App\Model\DBStatic\Roomaddr;
 use App\Model\Hardware\Device;
 use App\Model\DBStatic\Devtype;
 use App\Model\Course\Exam;
+use App\Model\Course\Score;
 
 class AdminUserFunc {
 
@@ -564,7 +565,8 @@ class AdminUserFunc {
 			    {
 			        if($this->menus->getAmenu()->caction == 'coursestudsinfo')
 			        {
-			            return $this->coursestudsinfo(Input::get('coursesn'));
+			            return view('admin.usercourse.coursestudsinfo')
+			                     ->withStudinfos($this->coursestudsinfo(Input::get('coursesn')));
 			        }
 
 			        return AdminController::getViewWithMenus('admin.admin', null, $user)
@@ -824,6 +826,8 @@ class AdminUserFunc {
     			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
     			    return AdminController::getViewWithMenus('admin.admin', null, $user)
                     			     ->withCourses($courses)
+                    			     ->withTerms($terms)
+                    			     ->withTerm($term)
                     			     ->withExams($exams)
         			                 ->withUser($user);
 			    }
@@ -842,8 +846,95 @@ class AdminUserFunc {
 			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
 			        return AdminController::getViewWithMenus('admin.admin', null, $user)
                 			        ->withExams($exams)
+                    			    ->withTerms($terms)
+                    			    ->withTerm($term)
                 			        ->withUser($user);
 			    }
+			}
+			else if($this->menus->getAmenu()->action == 'userscore')
+			{
+			    if($user->grade == 2)
+			    {
+			        if($this->menus->getAmenu()['caction'] == 'opt')
+			        {
+			            return view('admin.userscore.coursestudsinfo')
+			                     ->withStudinfos($this->coursestudsinfo(Input::get('coursesn'), Input::get('examsn')));
+			        }
+
+    			    $coursenames = array();
+    			    $coursesns = array();
+    			    $tcourses = Course::where('teacher', '=', $user->name)
+                        			    ->where('term', '=',  $term->val)
+                        			    ->get();
+    
+    			    foreach ($tcourses as $tcourse)
+    			    {
+    			        $tcourse->coursename = $tcourse->course;
+    			        if($tcourse->divideclass != '')
+    			        {
+    			            $tcourse->coursename .= '-'.$tcourse->divideclass;
+    			        }
+
+    			        if(in_array($tcourse->coursename, $coursenames) === false)
+    			        {
+        			        array_push($coursenames, $tcourse->coursename);
+        			        array_push($coursesns, $tcourse->sn);
+    			        }
+    			    }
+
+    			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
+    			    foreach($exams as $exam)
+    			    {
+    			        $exam->score = Score::where('examsn', '=', $exam->sn)->get();
+    			    }
+
+    			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+                                			     ->withExams($exams)
+                    			                 ->withTerms($terms)
+                    			                 ->withTerm($term)
+                    			                 ->withUser($user);
+			    }
+			    else if($user->grade == 3)
+			    {
+    			    $coursesns = array();
+			        $tcourses = Course::where('students', 'like', '%'.$user->name.'%')
+                    			        ->where('term', '=',  $term->val)
+                    			        ->get();
+
+			        foreach ($tcourses as $tcourse)
+			        {
+			            array_push($coursesns, $tcourse->sn);
+			        }
+
+			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+			        foreach($exams as $exam)
+			        {
+			            $exam->score = Score::where('examsn', '=', $exam->sn)
+			                                     ->where('usersn', '=', $user->sn)
+			                                     ->get();
+			            if(count($exam->score) > 0)
+			            {
+			                $exam->score = $exam->score[0]->score;
+			            }
+			            else
+			            {
+			                $exam->score = '未知';
+			            }
+			        }
+
+			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+                            			        ->withExams($exams)
+                                			    ->withTerms($terms)
+                                			    ->withTerm($term)
+                            			        ->withUser($user);
+			    }
+			}
+			else if($this->menus->getAmenu()->action == 'userreport')
+			{
+			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+                            			    ->withTerms($terms)
+                            			    ->withTerm($term)
+                            			    ->withUser($user);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
@@ -1597,8 +1688,34 @@ adddtailreturn:
 
 	    return redirect('admin?action=userexam');
 	}
+	
+	public function userscoreedt()
+	{
+	    $tobj = json_decode(Input::get('data'));
 
-	public function coursestudsinfo($coursesn)
+	    foreach($tobj->scores as $score)
+	    {
+	        $dscore = Score::where('examsn', '=', $tobj->examsn)
+	                           ->where('usersn', '=', $score->usersn);
+	        if($dscore->count() > 0)
+	        {
+	            $dscore->get()[0]->update(['score' => $score->scoreval]);
+	        }
+	        else
+	        {
+	            Score::create([
+	                'sn' => AdminUserInfo::genNewsSN($score->usersn),
+	                'score' => $score->scoreval,
+	                'usersn' => $score->usersn,
+	                'examsn' => $tobj->examsn,
+	            ]);
+	        }
+	    }
+
+	    return redirect('admin?action=userscore&id='.$tobj->userid.'&examsn='.$tobj->examsn);
+	}
+
+	public function coursestudsinfo($coursesn, $examsn = null)
 	{
 	    $studinfos = array();
 	    $cr = Course::where('sn', '=', $coursesn);
@@ -1614,11 +1731,13 @@ adddtailreturn:
 	                $usersn = $st->get()[0]->sn;
 	            }
 
+	            $us = User::where('sn', '=', $usersn);
 	            $ud = Userdetail::where('sn', '=', $usersn);
-	            if($ud->count() > 0)
+	            if($us->count() > 0 && $ud->count() > 0)
 	            {
 	                $userdetail = $ud->get()[0];
 	                $userdetail->class = '';
+	                $userdetail->user = $us->get()[0]->name;
 
 	                $classgrade = Classgrade::where('classgrade', '=', $userdetail->type);
 	                if($classgrade->count() > 0)
@@ -1626,12 +1745,22 @@ adddtailreturn:
 	                    $userdetail->class = $classgrade->get()[0]->val;
 	                }
 
+	                if($examsn != null)
+	                {
+    	                $score = Score::where('usersn', '=', $userdetail->sn)
+            	                         ->where('examsn', '=', $examsn);
+    	                if($score->count() > 0)
+    	                {
+    	                    $userdetail->score = $score->get()[0]->score;
+    	                }
+	                }
+
 	                array_push($studinfos, $userdetail);
 	            }
 	        }
 	    }
 
-	    return view('admin.usercourse.coursestudsinfo')->withStudinfos($studinfos);
+	    return $studinfos;
 	}
 
 	public static function getCourseForWeek($term, $teacher)

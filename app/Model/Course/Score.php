@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\DBStatic;
+namespace App\Model\Course;
 
 use Illuminate\Database\Eloquent\Model;
 
