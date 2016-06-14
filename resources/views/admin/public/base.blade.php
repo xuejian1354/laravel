@@ -52,7 +52,6 @@
       <a class="nav navbar-nav navbar-right smartlab-nav-item" href="{{ url('/home') }}">前台</a>
     </div>
   </nav>
-
   @yield('board')
 </body>
 </html>

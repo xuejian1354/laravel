@@ -1,6 +1,4 @@
-@section('devstats')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-li nav-li-gw active"><a href="javascript:loadDeviceContent(0);">网关</a></li>
     <li role="presentation" class="nav-li nav-li-dev"><a href="javascript:loadDeviceContent(1);">设备</a></li>
@@ -123,4 +121,3 @@
 	  loadDeviceContent(0);
   }
 </script>
-@endsection

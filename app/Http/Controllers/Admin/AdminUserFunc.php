@@ -31,476 +31,131 @@ class AdminUserFunc {
 
 	protected $menus;
 
-	public function __construct($menus)
+	protected $user = null;
+	protected $term = null;
+	protected $terms = null;
+
+	public function __construct($menus = null)
 	{
-		$this->menus = $menus;
+	    //$menus
+	    if($menus == null)
+	    {
+	        $this->menus = new AMenus();
+	    }
+	    else
+	    {
+		  $this->menus = $menus;
+	    }
+
+	    //$user
+		$this->user = null;
+		$id = Input::get('id');
+		if($id != null)
+		{
+		    $this->user = User::find($id);
+		}
+
+		if($this->user == null)
+		{
+		    $this->user = Auth::user();
+		}
+
+		//terms
+		$this->terms = Term::query()->orderBy('val', 'desc')->get();
+		//term
+		$this->term = $this->terms[0];
+
+		$gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
+		if(count($gterm) > 0)
+		{
+		    $this->term = $gterm[0];
+		}
+
+		if(Input::get('term') != null)
+		{
+		    $aterm = Term::where('val', '=', Input::get('term'))->get();
+		    if(count($aterm) > 0)
+		    {
+		        $this->term = $aterm[0];
+		    }
+		}
 	}
 
 	public function getFuncView()
 	{
 		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
 		{
-			$user = null;
-			$id = Input::get('id');
-			if($id != null)
-			{
-				$user = User::find($id);
-			}
-
-			if($user == null)
-			{
-				$user = Auth::user();
-			}
-
-			//term
-			$terms = Term::query()->orderBy('val', 'desc')->get();
-			$term = $terms[0];
-			
-			$gterm = Term::where('val', '=', Controller::getGlobalvals()['curterm'])->get();
-			if(count($gterm) > 0)
-			{
-			    $term = $gterm[0];
-			}
-			
-			if(Input::get('term') != null)
-			{
-			    $aterm = Term::where('val', '=', Input::get('term'))->get();
-			    if(count($aterm) > 0)
-			    {
-			        $term = $aterm[0];
-			    }
-			}
-
 			if($this->menus->getAmenu()->action == 'useractivity')
 			{
-			    $news = array();
-				$etnews = array();
-				$enews = array();
+			    $actcontent = $this->getUserActivity($this->user, $this->term, $this->terms);
 
-				$user->recvcount = 0;
-				$user->noreadcount = 0;
-				$user->sendcount = 0;
+			    if($actcontent->action == 'newscontent')
+			    {
+                    return view('admin.userinfo.newscontent')
+                            ->withTabpos($actcontent->tabpos)
+                            ->withReturnurl($actcontent->returnurl)
+                            ->withUser($actcontent->user)
+                            ->withNews($actcontent->news);
+			    }
+		        else if($actcontent->action == 'newsrecvlist')
+		        {
+	                return view('admin.userinfo.newsrecvlist')
+        	                ->withTabpos($actcontent->tabpos)
+        	                ->withReturnurl($actcontent->returnurl)
+    	                    ->withUser($actcontent->user)
+    	                    ->withNews($actcontent->news);
+	            }
+		        else if($actcontent->action == 'addnews')
+		        {
+	                return view('admin.userinfo.addnews')
+        	                ->withReturnurl($actcontent->returnurl)
+    	                    ->withHasowner($actcontent->hasowner)
+    	                    ->withIdgrades($actcontent->idgrades)
+    	                    ->withAcademies($actcontent->academies)
+    	                    ->withclassgrades($actcontent->classgrades)
+    	                    ->withoptuser($actcontent->optuser)
+    	                    ->withUsers($actcontent->users);
+		        }
+		        else if($actcontent->action == 'newsedts')
+		        {
+	                return view('admin.userinfo.newsedts')
+        	                ->withReturnurl($actcontent->returnurl)
+    	                    ->withHasowner($actcontent->hasowner)
+    	                    ->withIdgrades($actcontent->idgrades)
+    	                    ->withAcademies($actcontent->academies)
+    	                    ->withclassgrades($actcontent->classgrades)
+    	                    ->withEleids($actcontent->eleids)
+    	                    ->withNews($actcontent->news)
+    	                    ->withoptuser($actcontent->optuser)
+    	                    ->withUsers($actcontent->users);
+	            }
 
-				$recvnews = News::where('owner', '!=', $user->name)->orderBy('updated_at', 'desc')->get();
-				/*$pagetag = new PageTag(2, 5, $recvnews->count(), $this->menus->getPage());
-				if($pagetag->isAvaliable())
-				{
-				    if(Input::get('tabpos') == 0)
-				    {
-				        $recvnews = $recvnews->paginate($pagetag->getRow());
-				    }
-				    else
-				    {
-				        $recvnews = $recvnews->paginate($pagetag->getRow(), ['*'], 'page', 1);
-				        $pagetag->setPage(1);
-				    }
-				}
-				$pagetag->setListNum(count($recvnews));
-				$recvnewspagetag = $pagetag;*/
-
-				foreach ($recvnews as $recv)
-				{
-				    array_push($news, $recv);
-				}
-
-				$sendnews = News::where('owner', '=', $user->name)->orderBy('updated_at', 'desc');
-				$user->sendcount = $sendnews->count();
-				$pagetag = new PageTag(3, 5, $sendnews->count(), $this->menus->getPage());
-				if($pagetag->isAvaliable())
-				{
-				    if(Input::get('tabpos') == 1)
-				    {
-				        $sendnews = $sendnews->paginate($pagetag->getRow());
-				    }
-				    else
-				    {
-				        $sendnews = $sendnews->paginate($pagetag->getRow(), ['*'], 'page', 1);
-				        $pagetag->setPage(1);
-				    }
-				}
-				else 
-				{
-				    $sendnews = $sendnews->get();
-				}
-
-				$pagetag->setListNum(count($sendnews));
-				$sendnewspagetag = $pagetag;
-
-				foreach ($sendnews as $send)
-				{
-				    array_push($news, $send);
-				}
-
-				foreach ($news as $anew)
-				{
-					$this->addAllowTextToNews($anew);
-
-					$opt = Input::get('opt');
-					if($opt == 'all')
-					{
-						$newsid = Input::get('newsid');
-						if($newsid != null && $newsid == $anew->id)
-						{
-							$lnews = News::find($newsid);
-							$userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
-														.$user->sn
-														.'\' AND action=\'2\' AND optnum=\''
-														.$lnews->sn
-														.'\'');
-							if($userrecord == null)
-							{
-								$lname = '查看消息:"'.$lnews->title.'"';
-
-								Userrecord::create([
-										'sn' => AdminUserInfo::genNewsSN($lname),
-										'name' => $lname,
-										'usersn' => $user->sn,
-										'action' => 2,
-										'optnum' => $lnews->sn,
-								]);
-							}
-
-							return view('admin.userinfo.newscontent')
-										->withTabpos(Input::get('tabpos'))
-										->withReturnurl('admin?action=useractivity&id='.$id
-										    .'&page='.$this->menus->getPage()
-										    .'&tabpos='.Input::get('tabpos'))
-										->withUser(User::find(Input::get('id')))
-										->withNews($anew);
-						}
-						continue;
-					}
-					else if($opt == 'more')
-					{
-						$newsid = Input::get('newsid');
-						if($newsid != null && $newsid == $anew->id)
-						{
-							$lnews = News::find($newsid);
-							$userrecord = Userrecord::where('usersn', '=', $user->sn)
-                							             ->where('action', '=', '2')
-                							             ->where('optnum', '=', $lnews->sn);
-
-							if($userrecord->count() == 0)
-							{
-								$lname = '查看消息:"'.$lnews->title.'"';
-
-								Userrecord::create([
-										'sn' => AdminUserInfo::genNewsSN($lname),
-										'name' => $lname,
-										'usersn' => $user->sn,
-										'action' => 2,
-										'optnum' => $lnews->sn,
-								]);
-							}
-
-							return view('admin.userinfo.newsrecvlist')
-										->withTabpos(Input::get('tabpos'))
-										->withReturnurl('admin?action=useractivity&id='.$id
-										    .'&page='.$this->menus->getPage()
-										    .'&tabpos='.Input::get('tabpos'))
-										->withUser(User::find(Input::get('id')))
-										->withNews($anew);
-						}
-						continue;
-					}
-					else if($opt == 'add')
-					{
-						$newsid = Input::get('newsid');
-						if($newsid != null && $newsid == $anew->id)
-						{
-							return view('admin.userinfo.addnews')
-										->withReturnurl('admin?action=useractivity&id='.$id
-										    .'&page='.$this->menus->getPage()
-										    .'&tabpos='.Input::get('tabpos'))
-										->withHasowner(true)
-										->withIdgrades(Idgrade::all())
-										->withAcademies(Academy::all())
-										->withclassgrades(Classgrade::all())
-										->withoptuser(User::find(Input::get('id')))
-										->withUsers(User::all());
-						}
-						continue;
-					}
-					else if($opt == 'edt')
-					{
-						$newsid = Input::get('newsid');
-						if($newsid != null && $newsid == $anew->id)
-						{
-							$academies = Academy::all();
-							$classgrades = Classgrade::all();
-							$users = User::all();
-
-							switch($anew->allowgrade)
-							{
-								case 1:
-									$anew->allowtext = '全校';
-									break;
-						
-								case 2:
-									$anew->allowtext = '院系';
-									foreach ($academies as $academy)
-									{
-										if($academy->academy == $anew->visitor)
-										{
-											$anew->visitortext = $academy->val;
-										}
-									}
-									break;
-						
-								case 3:
-									$anew->allowtext = '专业';
-									foreach ($classgrades as $classgrade)
-									{
-										if($classgrade->classgrade == $anew->visitor)
-										{
-											$anew->visitortext = $classgrade->val;
-										}
-									}
-									break;
-						
-								case 4:
-									$anew->allowtext = '班级';
-									foreach ($classgrades as $classgrade)
-									{
-										if($classgrade->classgrade == $anew->visitor)
-										{
-											$anew->visitortext = $classgrade->val;
-										}
-									}
-									break;
-						
-								case 5:
-									$anew->allowtext = '指定用户';
-									foreach ($users as $user)
-									{
-										if($user->name == $anew->visitor)
-										{
-											$anew->visitortext = $user->name;
-										}
-									}
-									break;
-							}
-
-							$tabpos = Input::get('tabpos');
-							$hasowner = false;
-							if($tabpos == 1)
-							{
-								$hasowner = true;
-							}
-
-							return view('admin.userinfo.newsedts')
-										->withReturnurl('admin?action=useractivity&id='.$id
-										    .'&page='.$this->menus->getPage()
-										    .'&tabpos='.$tabpos)
-										->withHasowner($hasowner)
-										->withIdgrades(Idgrade::all())
-										->withAcademies($academies)
-										->withclassgrades($classgrades)
-										->withEleids('['.$newsid.']')
-										->withNews([$anew])
-										->withoptuser(User::find(Input::get('id')))
-										->withUsers($users);
-						}
-						continue;
-					}
-
-					if(strlen($anew->text) > 600)
-					{
-						$anew->text = mb_substr($anew->text, 0, 200, "utf-8").' ...';
-					}
-
-					if($anew->owner == $user->name)
-					{
-						$anew->isrecv = false;
-						//$user->sendcount++;
-
-						array_push($enews, $anew);
-					}
-					else
-					{
-						$anew->isrecv = true;
-						$ischoose = false;
-
-						$userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
-						if($userdetail != null)
-						{
-							$userdetail = $userdetail[0];
-						}
-
-						switch($anew->allowgrade)
-						{
-						case 1: //school
-							$ischoose = true;
-							break;
-						
-						case 2: //academy
-							if($userdetail == null)
-							{
-								break;
-							}
-
-							if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
-							{
-								$ischoose = true;
-							}
-							else if($userdetail->grade == 2) //teacher
-							{
-								if($anew->visitor == $userdetail->type)
-								{
-									$ischoose = true;
-								}
-							}
-							else if($userdetail->grade == 3) //student
-							{
-								$classgrade = DB::table('classgrades')
-								    ->where('classgrade', $userdetail->type)->get();
-								if($classgrade != null)
-								{
-									$classgrade = $classgrade[0];
-									if($anew->visitor == $classgrade->academy)
-									{
-										$ischoose = true;
-									}
-								}
-							}
-							break;
-
-						case 3:
-						case 4:  //class
-							if($userdetail == null)
-							{
-								break;
-							}
-
-							if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
-							{
-								$ischoose = true;
-							}
-							else if($userdetail->grade == 2) //teacher
-							{
-								$classgrade = DB::table('classgrades')->where('classgrade', $anew->visitor)->get();
-								if($classgrade != null)
-								{
-									$classgrade = $classgrade[0];
-									if($classgrade->academy == $userdetail->type)
-									{
-										$ischoose = true;
-									}
-								}
-							}
-							else if($userdetail->grade == 3) //student
-							{
-								if($anew->visitor == $userdetail->type)
-								{
-									$ischoose = true;
-								}
-							}
-							break;
-						
-						case 5:
-							$guest = User::where('name', '=', $anew->visitor)->get();
-							if($guest != null)
-							{
-								$guest = $guest[0];
-								if($guest->grade == 4)
-								{
-									$ischoose = true;
-									break;
-								}
-							}
-
-							if($userdetail != null)
-							{
-								if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
-								{
-									$ischoose = true;
-								}
-								else if($anew->visitor == $user->name)
-								{
-									$ischoose = true;
-								}
-							}
-							break;
-						}
-						
-						if($ischoose)
-						{
-							//action=2 looking for news
-							$userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
-														.$user->sn
-														.'\' AND action=\'2\' AND optnum=\''
-														.$anew->sn
-														.'\'');
-							if($userrecord != null)
-							{
-								$anew->isread = true;
-							}
-							else
-							{
-								$user->noreadcount++;
-								$anew->isread = false;
-							}
-
-							$user->recvcount++;
-							array_push($etnews, $anew);
-						}
-					}
-				}
-
-				$recvnewspagetag = new PageTag(3, 5, count($etnews), $this->menus->getPage());
-				if($recvnewspagetag->isAvaliable())
-				{
-    				$tindex = 0;
-    				$recvrow = $recvnewspagetag->getRow();
-    				$recvpage = $recvnewspagetag->getPage();
-    				
-    				$recvhindex = $recvrow*($recvpage-1);
-    				$recvtindex = $recvhindex + $recvrow;
-    				$recvcount = count($etnews);
-    				if($recvtindex > $recvcount)
-    				{
-    				    $recvtindex = $recvcount;
-    				}
-    				
-    				for($i=$recvhindex; $i < $recvtindex; $i++)
-    				{
-    				    array_push($enews, $etnews[$i]);
-    				}
-				}
-				else
-				{
-				    foreach ($etnews as $tnew)
-				    {
-				        array_push($enews, $tnew);
-				    }
-				}
-
-				return AdminController::getViewWithMenus('admin.admin', null, $user)
-				            ->withRecvnewspagetag($recvnewspagetag)
-				            ->withSendnewspagetag($sendnewspagetag)
-							->withNews($enews)
-							->withUser($user);
+			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+            			    ->withRecvnewspagetag($actcontent->recvnewspagetag)
+            			    ->withSendnewspagetag($actcontent->sendnewspagetag)
+            			    ->withNews($actcontent->news)
+            			    ->withUser($actcontent->user);
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
 			    //coursechoose
 			    $glovals = Controller::getGlobalvals();
 			    $coursechoose = [
-			        'choose' => isset($glovals[$term->val.'-coursechoose'])?$glovals[$term->val.'-coursechoose']:null,
-			        'dateline' => isset($glovals[$term->val.'-coursechoosedateline'])?$glovals[$term->val.'-coursechoosedateline']:null,
+			        'choose' => isset($glovals[$this->term->val.'-coursechoose'])?$glovals[$this->term->val.'-coursechoose']:null,
+			        'dateline' => isset($glovals[$this->term->val.'-coursechoosedateline'])?$glovals[$this->term->val.'-coursechoosedateline']:null,
 			    ];
 
-			    if($user->grade == 1)
+			    if($this->user->grade == 1)
 			    {
     			    if($this->menus->getAmenu()->caction == 'arrange')
     			    {
-    			        if($term->coursearrange == 0)
+    			        if($this->term->coursearrange == 0)
     			        {
-        			        $term->coursearrange = true;
-        			        $term->arrangestart = Input::get('start');
-        			        $term->arrangeend = Input::get('end');
+        			        $this->term->coursearrange = true;
+        			        $this->term->arrangestart = Input::get('start');
+        			        $this->term->arrangeend = Input::get('end');
         			        //dd($term);
-        			        $term->save();
+        			        $this->term->save();
     			        }
 
     			        $teachers = User::where('grade', '=', 2)->orderBy('name', 'asc')->get();
@@ -521,21 +176,21 @@ class AdminUserFunc {
     			            $view = 'admin.usercourse.weektbody';;
     			        }
 
-    			        return AdminController::getViewWithMenus($view, null, $user)
-                			        ->withTerm($term)
+    			        return AdminController::getViewWithMenus($view, null, $this->user)
+                			        ->withTerm($this->term)
                 			        ->withRooms(Room::all())
                 			        ->withTeachers($teachers)
                 			        ->withArrangename($arrangename)
                 			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeek($term->val, $arrangename))
-                			        ->withUser($user);
+                			        ->withCoursetable($this->getCourseForWeek($this->term->val, $arrangename))
+                			        ->withUser($this->user);
     			    }
     			    elseif($this->menus->getAmenu()->caction == 'choose')
     			    {
     			        $classgrades = Classgrade::query()->OrderBy('val', 'asc')->get();
     			        foreach ($classgrades as $classgrade)
     			        {
-    			            $termcourse = Termcourse::where('term', '=', $term->val)
+    			            $termcourse = Termcourse::where('term', '=', $this->term->val)
         			                         ->where('classgrade', '=', $classgrade->classgrade)
         			                         ->get();
     			            
@@ -545,23 +200,23 @@ class AdminUserFunc {
     			            }
     			        }
 
-    			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+    			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
     			                    ->withClassgrades($classgrades)
     			                    ->withCourses(Course::query()->OrderBy('course', 'asc')->GroupBy('course')->distinct()->get())
     			                    ->withCoursechoose($coursechoose)
-    			                    ->withTerm($term)
-                			        ->withUser($user);
+    			                    ->withTerm($this->term)
+                			        ->withUser($this->user);
     			    }
     			    elseif($this->menus->getAmenu()->caction == 'change')
     			    {
-    			        return AdminController::getViewWithMenus('admin.admin', null, $user)
-    			                    ->withCourses($this->getCoursesByTerm($term))
+    			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
+    			                    ->withCourses($this->getCoursesByTerm($this->term))
                 			        ->withCoursechoose($coursechoose)
-                			        ->withTerm($term)
-                			        ->withUser($user);
+                			        ->withTerm($this->term)
+                			        ->withUser($this->user);
     			    }
 			    }
-			    elseif($user->grade == 2)
+			    elseif($this->user->grade == 2)
 			    {
 			        if($this->menus->getAmenu()->caction == 'coursestudsinfo')
 			        {
@@ -569,39 +224,39 @@ class AdminUserFunc {
 			                     ->withStudinfos($this->coursestudsinfo(Input::get('coursesn')));
 			        }
 
-			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                 			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeekByTeacher($term->val, $user->name))
-                			        ->withTerm($term)
-                			        ->withTerms($terms)
+                			        ->withCoursetable($this->getCourseForWeekByTeacher($this->term->val, $this->user->name))
+                			        ->withTerm($this->term)
+                			        ->withTerms($this->terms)
                 			        ->withCoursechoose($coursechoose)
                 			        ->withAdmins(User::where('grade', '=', '1')->get())
-                			        ->withUser($user);
+                			        ->withUser($this->user);
 			    }
-			    elseif($user->grade == 3)
+			    elseif($this->user->grade == 3)
 			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                 			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeekByStudent($term->val, $user->name))
-                			        ->withTerm($term)
-                			        ->withTerms($terms)
+                			        ->withCoursetable($this->getCourseForWeekByStudent($this->term->val, $this->user->name))
+                			        ->withTerm($this->term)
+                			        ->withTerms($this->terms)
                 			        ->withCoursechoose($coursechoose)
-                			        ->withSelcourses($this->getSelectCoursesByStudent($user, $term))
-                			        ->withUser($user);
+                			        ->withSelcourses($this->getSelectCoursesByStudent($this->user, $this->term))
+                			        ->withUser($this->user);
 			    }
 			    else
 			    {
 			        return view('errors.permitts');
 			    }
 
-			    return AdminController::getViewWithMenus('admin.admin', null, $user)
-			                 ->withTerm($term)
+			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
+			                 ->withTerm($this->term)
 			                 ->withTerms(Term::query()->orderBy('val', 'desc')->get())
-			                 ->withUser($user);
+			                 ->withUser($this->user);
 			}
 			else if($this->menus->getAmenu()->action == 'userclassgrade')
 			{
-			    if($user->grade > 3 && $user->privilege <= 3)
+			    if($this->user->grade > 3 && $this->user->privilege <= 3)
 			    {
 			        return view('errors.permitts');
 			    }
@@ -620,7 +275,7 @@ class AdminUserFunc {
 
 			    if($this->menus->getAmenu()['caction'] == 'opt')
 			    {
-			        if(isset($_GET['roomsn']) && $user->privilege > 3)
+			        if(isset($_GET['roomsn']) && $this->user->privilege > 3)
 			        {
 			            $room = DB::table('rooms')->where('sn', Input::get('roomsn'))->get();
 			            if(count($room) > 0)
@@ -785,21 +440,21 @@ class AdminUserFunc {
 			        return view('admin.userclassgrade.qsroom')->withQsrooms($qsrooms);
 			    }
 
-			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
 			                                ->withWeektimes($this->getWeekTimeTable())
 			                                ->withRoomtypes($roomtypes)
 			                                ->withRoomaddrs($roomaddrs)
 			                                ->withRooms(Room::all())
-                            			    ->withUser($user);
+                            			    ->withUser($this->user);
 			}
 			else if($this->menus->getAmenu()->action == 'userexam')
 			{
-			    if($user->grade == 2)
+			    if($this->user->grade == 2)
 			    {
     			    $courses = array();
     			    $coursesns = array();
-    			    $tcourses = Course::where('teacher', '=', $user->name)
-                        			    ->where('term', '=',  $term->val)
+    			    $tcourses = Course::where('teacher', '=', $this->user->name)
+                        			    ->where('term', '=',  $this->term->val)
                         			    ->get();
     
     			    foreach ($tcourses as $tcourse)
@@ -824,18 +479,18 @@ class AdminUserFunc {
     			    }
     
     			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
-    			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+    			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                     			     ->withCourses($courses)
-                    			     ->withTerms($terms)
-                    			     ->withTerm($term)
+                    			     ->withTerms($this->terms)
+                    			     ->withTerm($this->term)
                     			     ->withExams($exams)
-        			                 ->withUser($user);
+        			                 ->withUser($this->user);
 			    }
-			    else if($user->grade == 3)
+			    else if($this->user->grade == 3)
 			    {
 			        $coursesns = array();
-			        $tcourses = Course::where('students', 'like', '%'.$user->name.'%')
-                    			        ->where('term', '=',  $term->val)
+			        $tcourses = Course::where('students', 'like', '%'.$this->user->name.'%')
+                    			        ->where('term', '=',  $this->term->val)
                     			        ->get();
 
 			        foreach ($tcourses as $tcourse)
@@ -844,16 +499,16 @@ class AdminUserFunc {
 			        }
 
 			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
-			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                 			        ->withExams($exams)
-                    			    ->withTerms($terms)
-                    			    ->withTerm($term)
-                			        ->withUser($user);
+                    			    ->withTerms($this->terms)
+                    			    ->withTerm($this->term)
+                			        ->withUser($this->user);
 			    }
 			}
 			else if($this->menus->getAmenu()->action == 'userscore')
 			{
-			    if($user->grade == 2)
+			    if($this->user->grade == 2)
 			    {
 			        if($this->menus->getAmenu()['caction'] == 'opt')
 			        {
@@ -863,8 +518,8 @@ class AdminUserFunc {
 
     			    $coursenames = array();
     			    $coursesns = array();
-    			    $tcourses = Course::where('teacher', '=', $user->name)
-                        			    ->where('term', '=',  $term->val)
+    			    $tcourses = Course::where('teacher', '=', $this->user->name)
+                        			    ->where('term', '=',  $this->term->val)
                         			    ->get();
     
     			    foreach ($tcourses as $tcourse)
@@ -888,17 +543,17 @@ class AdminUserFunc {
     			        $exam->score = Score::where('examsn', '=', $exam->sn)->get();
     			    }
 
-    			    return AdminController::getViewWithMenus('admin.admin', null, $user)
+    			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                                 			     ->withExams($exams)
-                    			                 ->withTerms($terms)
-                    			                 ->withTerm($term)
-                    			                 ->withUser($user);
+                    			                 ->withTerms($this->terms)
+                    			                 ->withTerm($this->term)
+                    			                 ->withUser($this->user);
 			    }
-			    else if($user->grade == 3)
+			    else if($this->user->grade == 3)
 			    {
     			    $coursesns = array();
-			        $tcourses = Course::where('students', 'like', '%'.$user->name.'%')
-                    			        ->where('term', '=',  $term->val)
+			        $tcourses = Course::where('students', 'like', '%'.$this->user->name.'%')
+                    			        ->where('term', '=',  $this->term->val)
                     			        ->get();
 
 			        foreach ($tcourses as $tcourse)
@@ -910,7 +565,7 @@ class AdminUserFunc {
 			        foreach($exams as $exam)
 			        {
 			            $exam->score = Score::where('examsn', '=', $exam->sn)
-			                                     ->where('usersn', '=', $user->sn)
+			                                     ->where('usersn', '=', $this->user->sn)
 			                                     ->get();
 			            if(count($exam->score) > 0)
 			            {
@@ -922,23 +577,23 @@ class AdminUserFunc {
 			            }
 			        }
 
-			        return AdminController::getViewWithMenus('admin.admin', null, $user)
+			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
                             			        ->withExams($exams)
-                                			    ->withTerms($terms)
-                                			    ->withTerm($term)
-                            			        ->withUser($user);
+                                			    ->withTerms($this->terms)
+                                			    ->withTerm($this->term)
+                            			        ->withUser($this->user);
 			    }
 			}
 			else if($this->menus->getAmenu()->action == 'userreport')
 			{
-			    return AdminController::getViewWithMenus('admin.admin', null, $user)
-                            			    ->withTerms($terms)
-                            			    ->withTerm($term)
-                            			    ->withUser($user);
+			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
+                            			    ->withTerms($this->terms)
+                            			    ->withTerm($this->term)
+                            			    ->withUser($this->user);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
-				$userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
+				$userdetail = DB::table('userdetails')->where('sn', $this->user->sn)->get();
 				if($userdetail != null)
 				{
 					$userdetail = $userdetail[0];
@@ -968,20 +623,446 @@ class AdminUserFunc {
 					}
 				}
 
-				return AdminController::getViewWithMenus('admin.admin', null, $user)
+				return AdminController::getViewWithMenus('admin.admin', null, $this->user)
 							->withUserdetail($userdetail)
 							->withAcademies(Academy::all())
 							->withClassgrades(Classgrade::all())
-							->withUser($user);
+							->withUser($this->user);
 			}
 
-			return AdminController::getViewWithMenus('admin.admin', null, $user)
-						->withUser($user);
+			return AdminController::getViewWithMenus('admin.admin', null, $this->user)
+						->withUser($this->user);
 		}
 		else
 		{
 			return view('errors.permitts');
 		}
+	}
+	
+	function getUserActivity($user = null, $term = null, $terms = null)
+	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+
+	    if($term == null)
+	    {
+	        $term = $this->term;
+	    }
+
+	    if($terms == null)
+	    {
+	        $terms = $this->terms;
+	    }
+
+	    $news = array();
+	    $etnews = array();
+	    $enews = array();
+	    
+	    $user->recvcount = 0;
+	    $user->noreadcount = 0;
+	    $user->sendcount = 0;
+	    
+	    $recvnews = News::where('owner', '!=', $user->name)->orderBy('updated_at', 'desc')->get();
+	    foreach ($recvnews as $recv)
+	    {
+	        array_push($news, $recv);
+	    }
+	    
+	    $sendnews = News::where('owner', '=', $user->name)->orderBy('updated_at', 'desc');
+	    $user->sendcount = $sendnews->count();
+	    $pagetag = new PageTag(3, 5, $sendnews->count(), $this->menus->getPage());
+	    if($pagetag->isAvaliable())
+	    {
+	        if(Input::get('tabpos') == 1)
+	        {
+	            $sendnews = $sendnews->paginate($pagetag->getRow());
+	        }
+	        else
+	        {
+	            $sendnews = $sendnews->paginate($pagetag->getRow(), ['*'], 'page', 1);
+	            $pagetag->setPage(1);
+	        }
+	    }
+	    else
+	    {
+	        $sendnews = $sendnews->get();
+	    }
+	    
+	    $pagetag->setListNum(count($sendnews));
+	    $sendnewspagetag = $pagetag;
+	    
+	    foreach ($sendnews as $send)
+	    {
+	        array_push($news, $send);
+	    }
+	    
+	    foreach ($news as $anew)
+	    {
+	        $this->addAllowTextToNews($anew);
+
+	        $opt = Input::get('opt');
+	        if($opt == 'all')
+	        {
+	            $newsid = Input::get('newsid');
+	            if($newsid != null && $newsid == $anew->id)
+	            {
+	                $lnews = News::find($newsid);
+	                $userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
+                	                    .$user->sn
+                	                    .'\' AND action=\'2\' AND optnum=\''
+                	                    .$lnews->sn
+                	                    .'\'');
+
+	                if($userrecord == null)
+	                {
+	                    $lname = '查看消息:"'.$lnews->title.'"';
+
+	                    Userrecord::create([
+	                        'sn' => AdminUserInfo::genNewsSN($lname),
+	                        'name' => $lname,
+	                        'usersn' => $user->sn,
+	                        'action' => 2,
+	                        'optnum' => $lnews->sn,
+	                    ]);
+	                }
+
+	                $actcontent = new \stdClass();
+	                $actcontent->action = 'newscontent';
+	                $actcontent->tabpos = Input::get('tabpos');
+	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+                        	                    .'&page='.$this->menus->getPage()
+                        	                    .'&tabpos='.Input::get('tabpos');
+	                $actcontent->user = User::find(Input::get('id'));
+	                $actcontent->news = $anew;
+
+	                return $actcontent;
+	            }
+	            continue;
+	        }
+	        else if($opt == 'more')
+	        {
+	            $newsid = Input::get('newsid');
+	            if($newsid != null && $newsid == $anew->id)
+	            {
+	                $lnews = News::find($newsid);
+	                $userrecord = Userrecord::where('usersn', '=', $user->sn)
+	                ->where('action', '=', '2')
+	                ->where('optnum', '=', $lnews->sn);
+	    
+	                if($userrecord->count() == 0)
+	                {
+	                    $lname = '查看消息:"'.$lnews->title.'"';
+	    
+	                    Userrecord::create([
+	                        'sn' => AdminUserInfo::genNewsSN($lname),
+	                        'name' => $lname,
+	                        'usersn' => $user->sn,
+	                        'action' => 2,
+	                        'optnum' => $lnews->sn,
+	                    ]);
+	                }
+
+	                $actcontent = new \stdClass();
+	                $actcontent->action = 'newsrecvlist';
+	                $actcontent->tabpos = Input::get('tabpos');
+	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+                        	                    .'&page='.$this->menus->getPage()
+                        	                    .'&tabpos='.Input::get('tabpos');
+	                $actcontent->user = User::find(Input::get('id'));
+	                $actcontent->news = $anew;
+
+	                return $actcontent;
+	            }
+	            continue;
+	        }
+	        else if($opt == 'add')
+	        {
+	            $newsid = Input::get('newsid');
+	            if($newsid != null && $newsid == $anew->id)
+	            {
+	                $actcontent = new \stdClass();
+	                $actcontent->action = 'addnews';
+	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+                        	                    .'&page='.$this->menus->getPage()
+                        	                    .'&tabpos='.Input::get('tabpos');
+	                $actcontent->hasowner = true;
+	                $actcontent->idgrades = Idgrade::all();
+	                $actcontent->academies = Academy::all(); 
+	                $actcontent->classgrades = Classgrade::all();
+	                $actcontent->optuser = User::find(Input::get('id'));
+	                $actcontent->users = User::all();
+
+	                return $actcontent;
+	            }
+	            continue;
+	        }
+	        else if($opt == 'edt')
+	        {
+	            $newsid = Input::get('newsid');
+	            if($newsid != null && $newsid == $anew->id)
+	            {
+	                $academies = Academy::all();
+	                $classgrades = Classgrade::all();
+	                $users = User::all();
+	    
+	                switch($anew->allowgrade)
+	                {
+	                    case 1:
+	                        $anew->allowtext = '全校';
+	                        break;
+	    
+	                    case 2:
+	                        $anew->allowtext = '院系';
+	                        foreach ($academies as $academy)
+	                        {
+	                            if($academy->academy == $anew->visitor)
+	                            {
+	                                $anew->visitortext = $academy->val;
+	                            }
+	                        }
+	                        break;
+	    
+	                    case 3:
+	                        $anew->allowtext = '专业';
+	                        foreach ($classgrades as $classgrade)
+	                        {
+	                            if($classgrade->classgrade == $anew->visitor)
+	                            {
+	                                $anew->visitortext = $classgrade->val;
+	                            }
+	                        }
+	                        break;
+	    
+	                    case 4:
+	                        $anew->allowtext = '班级';
+	                        foreach ($classgrades as $classgrade)
+	                        {
+	                            if($classgrade->classgrade == $anew->visitor)
+	                            {
+	                                $anew->visitortext = $classgrade->val;
+	                            }
+	                        }
+	                        break;
+	    
+	                    case 5:
+	                        $anew->allowtext = '指定用户';
+	                        foreach ($users as $user)
+	                        {
+	                            if($user->name == $anew->visitor)
+	                            {
+	                                $anew->visitortext = $user->name;
+	                            }
+	                        }
+	                        break;
+	                }
+	    
+	                $tabpos = Input::get('tabpos');
+	                $hasowner = false;
+	                if($tabpos == 1)
+	                {
+	                    $hasowner = true;
+	                }
+
+	                $actcontent = new \stdClass();
+	                $actcontent->action = 'newsedts';
+	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+                        	                    .'&page='.$this->menus->getPage()
+                        	                    .'&tabpos='.$tabpos;
+	                $actcontent->hasowner = $hasowner;
+	                $actcontent->idgrades = Idgrade::all();
+	                $actcontent->academies = $academies;
+	                $actcontent->classgrades = $classgrades;
+	                $actcontent->eleids = '['.$newsid.']';
+	                $actcontent->news = [$anew];
+	                $actcontent->optuser = User::find(Input::get('id'));
+	                $actcontent->users = $users;
+
+	                return $actcontent;
+	            }
+	            continue;
+	        }
+
+	        if(strlen($anew->text) > 600)
+	        {
+	            $anew->text = mb_substr($anew->text, 0, 200, "utf-8").' ...';
+	        }
+
+	        if($anew->owner == $user->name)
+	        {
+	            $anew->isrecv = false;
+	            //$user->sendcount++;
+
+	            array_push($enews, $anew);
+	        }
+	        else
+	        {
+	            $anew->isrecv = true;
+	            $ischoose = false;
+	    
+	            $userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
+	            if($userdetail != null)
+	            {
+	                $userdetail = $userdetail[0];
+	            }
+	    
+	            switch($anew->allowgrade)
+	            {
+	                case 1: //school
+	                    $ischoose = true;
+	                    break;
+	    
+	                case 2: //academy
+	                    if($userdetail == null)
+	                    {
+	                        break;
+	                    }
+	    
+	                    if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
+	                    {
+	                        $ischoose = true;
+	                    }
+	                    else if($userdetail->grade == 2) //teacher
+	                    {
+	                        if($anew->visitor == $userdetail->type)
+	                        {
+	                            $ischoose = true;
+	                        }
+	                    }
+	                    else if($userdetail->grade == 3) //student
+	                    {
+	                        $classgrade = DB::table('classgrades')
+	                        ->where('classgrade', $userdetail->type)->get();
+	                        if($classgrade != null)
+	                        {
+	                            $classgrade = $classgrade[0];
+	                            if($anew->visitor == $classgrade->academy)
+	                            {
+	                                $ischoose = true;
+	                            }
+	                        }
+	                    }
+	                    break;
+	    
+	                case 3:
+	                case 4:  //class
+	                    if($userdetail == null)
+	                    {
+	                        break;
+	                    }
+	    
+	                    if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
+	                    {
+	                        $ischoose = true;
+	                    }
+	                    else if($userdetail->grade == 2) //teacher
+	                    {
+	                        $classgrade = DB::table('classgrades')->where('classgrade', $anew->visitor)->get();
+	                        if($classgrade != null)
+	                        {
+	                            $classgrade = $classgrade[0];
+	                            if($classgrade->academy == $userdetail->type)
+	                            {
+	                                $ischoose = true;
+	                            }
+	                        }
+	                    }
+	                    else if($userdetail->grade == 3) //student
+	                    {
+	                        if($anew->visitor == $userdetail->type)
+	                        {
+	                            $ischoose = true;
+	                        }
+	                    }
+	                    break;
+	    
+	                case 5:
+	                    $guest = User::where('name', '=', $anew->visitor)->get();
+	                    if($guest != null)
+	                    {
+	                        $guest = $guest[0];
+	                        if($guest->grade == 4)
+	                        {
+	                            $ischoose = true;
+	                            break;
+	                        }
+	                    }
+	    
+	                    if($userdetail != null)
+	                    {
+	                        if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
+	                        {
+	                            $ischoose = true;
+	                        }
+	                        else if($anew->visitor == $user->name)
+	                        {
+	                            $ischoose = true;
+	                        }
+	                    }
+	                    break;
+	            }
+	    
+	            if($ischoose)
+	            {
+	                //action=2 looking for news
+	                $userrecord = DB::select('SELECT * FROM userrecords WHERE usersn=\''
+	                    .$user->sn
+	                    .'\' AND action=\'2\' AND optnum=\''
+	                    .$anew->sn
+	                    .'\'');
+	                if($userrecord != null)
+	                {
+	                    $anew->isread = true;
+	                }
+	                else
+	                {
+	                    $user->noreadcount++;
+	                    $anew->isread = false;
+	                }
+	    
+	                $user->recvcount++;
+	                array_push($etnews, $anew);
+	            }
+	        }
+	    }
+	    
+	    $recvnewspagetag = new PageTag(3, 5, count($etnews), $this->menus->getPage());
+	    if($recvnewspagetag->isAvaliable())
+	    {
+	        $tindex = 0;
+	        $recvrow = $recvnewspagetag->getRow();
+	        $recvpage = $recvnewspagetag->getPage();
+	    
+	        $recvhindex = $recvrow*($recvpage-1);
+	        $recvtindex = $recvhindex + $recvrow;
+	        $recvcount = count($etnews);
+	        if($recvtindex > $recvcount)
+	        {
+	            $recvtindex = $recvcount;
+	        }
+	    
+	        for($i=$recvhindex; $i < $recvtindex; $i++)
+	        {
+	            array_push($enews, $etnews[$i]);
+	        }
+	    }
+	    else
+	    {
+	        foreach ($etnews as $tnew)
+	        {
+	            array_push($enews, $tnew);
+	        }
+	    }
+
+	    $actcontent = new \stdClass();
+	    $actcontent->action = 'admin';
+	    $actcontent->user = $user;
+	    $actcontent->recvnewspagetag = $recvnewspagetag;
+	    $actcontent->sendnewspagetag = $sendnewspagetag;
+	    $actcontent->news = $enews;
+
+	    return $actcontent;
 	}
 
 	function getCoursetimeArray()

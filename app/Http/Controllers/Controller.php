@@ -97,7 +97,10 @@ abstract class Controller extends BaseController
 		{
 			return view('errors.permitts');
 		}
+		
+		$amenu = new \stdClass();
+		$amenu->cmenu = '#';
 
-		return view($view, $data, $mergeData);
+		return view($view, $data, $mergeData)->withAmenu($amenu);
 	}
 }

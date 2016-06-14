@@ -1,6 +1,4 @@
-@section('roomctrl')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <div class="table-responsive">
    <table class="table table-striped" style="min-width: 600px;">
       <thead>
@@ -68,4 +66,3 @@
   </nav>
   @endif
 </div>
-@endsection

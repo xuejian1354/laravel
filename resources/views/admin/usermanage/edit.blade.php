@@ -1,6 +1,4 @@
-@section('edit')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <h2 class="sub-header">用户编辑</h2>
   @foreach ($args as $arg)
     <table class="table table-striped">
@@ -80,4 +78,3 @@
     <a href="admin?action=usermanage&tabpos={{ $arg->grade-1 }}" class="btn btn-info" role="button">返回</a>
   </div>
 </div>
-@endsection

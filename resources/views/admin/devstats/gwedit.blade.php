@@ -1,6 +1,4 @@
-@section('gwedit')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <h2 class="sub-header">网关编辑</h2>
   @for($index=0; $index < count($gateways); $index++)
     <table class="table table-striped">
@@ -88,4 +86,3 @@
     <a href="javascript:gatewayEditAlert('{{ $gateways[0]->id }}','{{ csrf_token() }}');" class="btn btn-info" role="button">执行</a>
   </div>
 </div>
-@endsection

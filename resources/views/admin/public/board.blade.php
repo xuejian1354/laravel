@@ -19,7 +19,14 @@
         @endforeach
       </ul>
     </div>
-    @yield($amenu->caction)
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      @if($amenu->mmenu == '功能')
+      <h5 style="float: right;">当前用户: {{ $user->name }}<br>
+      <a href="admin?action=usermanage&tabpos={{ $user->grade-1 }}" style="float: right; margin-top: 5px;">用户返回</a></h5>
+      @endif
+      <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+      @include('admin.'.$amenu->action.'.'.$amenu->caction)
+    </div>
   </div>
 </div>
 @endsection

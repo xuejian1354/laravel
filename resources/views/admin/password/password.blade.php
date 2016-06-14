@@ -1,6 +1,4 @@
-@section('password')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <div class="panel panel-default">
     <div class="panel-heading">密码修改</div>
 		<div class="panel-body">
@@ -64,4 +62,3 @@
 		</div>
 	</div>
 </div>
-@endsection

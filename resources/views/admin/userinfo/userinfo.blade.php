@@ -1,6 +1,4 @@
-@section('userinfo')
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <h1 class="page-header">{{ $amenu->cmenu }}</h1>
+<div>
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-li nav-li1"><a href="javascript:loadUser(1);">公告</a></li>
     <li role="presentation" class="nav-li nav-li2"><a href="javascript:loadUser(2);">院系</a></li>
@@ -23,4 +21,3 @@
 <script type="text/javascript">
   loadUser({{ $grades[isset($_GET['tabpos'])&&$_GET['tabpos']<4?$_GET['tabpos']:'0']->grade }});
 </script>
-@endsection
