@@ -9,17 +9,14 @@ use App\Model\DBStatic\Classgrade;
 use App\Model\DBStatic\Userdetail;
 use App\Model\DBStatic\Grade;
 use App\Model\DBStatic\Userrecord;
-use App\Model\DBStatic\Useraction;
 use App\Model\DBStatic\Idgrade;
 use App\Http\Controllers\PageTag;
 use App\Model\DBStatic\Term;
 use App\Model\Course\Course;
 use App\Model\Room\Room;
-use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\ExcelController;
 use App\Model\DBStatic\Globalval;
 use App\Model\Course\Termcourse;
-use PhpParser\Node\Expr\Cast;
 use App\Model\DBStatic\Roomtype;
 use App\Model\DBStatic\Roomaddr;
 use App\Model\Hardware\Device;
@@ -88,546 +85,150 @@ class AdminUserFunc {
 			if($this->menus->getAmenu()->action == 'useractivity')
 			{
 			    $actcontent = $this->getUserActivity($this->user, $this->term, $this->terms);
-
 			    if($actcontent->action == 'newscontent')
 			    {
                     return view('admin.userinfo.newscontent')
-                            ->withTabpos($actcontent->tabpos)
-                            ->withReturnurl($actcontent->returnurl)
-                            ->withUser($actcontent->user)
-                            ->withNews($actcontent->news);
+                            ->withActcontent($actcontent);
 			    }
 		        else if($actcontent->action == 'newsrecvlist')
 		        {
 	                return view('admin.userinfo.newsrecvlist')
-        	                ->withTabpos($actcontent->tabpos)
-        	                ->withReturnurl($actcontent->returnurl)
-    	                    ->withUser($actcontent->user)
-    	                    ->withNews($actcontent->news);
+    	                    ->withActcontent($actcontent);
 	            }
 		        else if($actcontent->action == 'addnews')
 		        {
 	                return view('admin.userinfo.addnews')
-        	                ->withReturnurl($actcontent->returnurl)
-    	                    ->withHasowner($actcontent->hasowner)
-    	                    ->withIdgrades($actcontent->idgrades)
-    	                    ->withAcademies($actcontent->academies)
-    	                    ->withclassgrades($actcontent->classgrades)
-    	                    ->withoptuser($actcontent->optuser)
-    	                    ->withUsers($actcontent->users);
+    	                    ->withActcontent($actcontent);
 		        }
 		        else if($actcontent->action == 'newsedts')
 		        {
 	                return view('admin.userinfo.newsedts')
-        	                ->withReturnurl($actcontent->returnurl)
-    	                    ->withHasowner($actcontent->hasowner)
-    	                    ->withIdgrades($actcontent->idgrades)
-    	                    ->withAcademies($actcontent->academies)
-    	                    ->withclassgrades($actcontent->classgrades)
-    	                    ->withEleids($actcontent->eleids)
-    	                    ->withNews($actcontent->news)
-    	                    ->withoptuser($actcontent->optuser)
-    	                    ->withUsers($actcontent->users);
+    	                    ->withActcontent($actcontent);
 	            }
 
 			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-            			    ->withRecvnewspagetag($actcontent->recvnewspagetag)
-            			    ->withSendnewspagetag($actcontent->sendnewspagetag)
-            			    ->withNews($actcontent->news)
-            			    ->withUser($actcontent->user);
+            			    ->withActcontent($actcontent);
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
-			    //coursechoose
-			    $glovals = Controller::getGlobalvals();
-			    $coursechoose = [
-			        'choose' => isset($glovals[$this->term->val.'-coursechoose'])?$glovals[$this->term->val.'-coursechoose']:null,
-			        'dateline' => isset($glovals[$this->term->val.'-coursechoosedateline'])?$glovals[$this->term->val.'-coursechoosedateline']:null,
-			    ];
-
-			    if($this->user->grade == 1)
+			    $actcontent = $this->getUserCourse($this->user, $this->term, $this->terms);
+			    if($actcontent->action == 'arrange')
 			    {
-    			    if($this->menus->getAmenu()->caction == 'arrange')
-    			    {
-    			        if($this->term->coursearrange == 0)
-    			        {
-        			        $this->term->coursearrange = true;
-        			        $this->term->arrangestart = Input::get('start');
-        			        $this->term->arrangeend = Input::get('end');
-        			        //dd($term);
-        			        $this->term->save();
-    			        }
-
-    			        $teachers = User::where('grade', '=', 2)->orderBy('name', 'asc')->get();
-    			        $arrangename = null;
-    			        if(count($teachers) > 0)
-    			        {
-    			            $arrangename = $teachers[0]->name;
-    			        }
-
-    			        if(Input::get('teacher'))
-    			        {
-    			            $arrangename = Input::get('teacher'); 
-    			        }
-
-    			        $view = 'admin.admin';
-    			        if(Input::get('isweektbody') == 'true')
-    			        {
-    			            $view = 'admin.usercourse.weektbody';;
-    			        }
-
-    			        return AdminController::getViewWithMenus($view, null, $this->user)
-                			        ->withTerm($this->term)
-                			        ->withRooms(Room::all())
-                			        ->withTeachers($teachers)
-                			        ->withArrangename($arrangename)
-                			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeek($this->term->val, $arrangename))
-                			        ->withUser($this->user);
-    			    }
-    			    elseif($this->menus->getAmenu()->caction == 'choose')
-    			    {
-    			        $classgrades = Classgrade::query()->OrderBy('val', 'asc')->get();
-    			        foreach ($classgrades as $classgrade)
-    			        {
-    			            $termcourse = Termcourse::where('term', '=', $this->term->val)
-        			                         ->where('classgrade', '=', $classgrade->classgrade)
-        			                         ->get();
-    			            
-    			            if(count($termcourse) > 0)
-    			            {
-    			                $classgrade->termcourse = $termcourse[0]->courses;
-    			            }
-    			        }
-
-    			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-    			                    ->withClassgrades($classgrades)
-    			                    ->withCourses(Course::query()->OrderBy('course', 'asc')->GroupBy('course')->distinct()->get())
-    			                    ->withCoursechoose($coursechoose)
-    			                    ->withTerm($this->term)
-                			        ->withUser($this->user);
-    			    }
-    			    elseif($this->menus->getAmenu()->caction == 'change')
-    			    {
-    			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-    			                    ->withCourses($this->getCoursesByTerm($this->term))
-                			        ->withCoursechoose($coursechoose)
-                			        ->withTerm($this->term)
-                			        ->withUser($this->user);
-    			    }
-			    }
-			    elseif($this->user->grade == 2)
-			    {
-			        if($this->menus->getAmenu()->caction == 'coursestudsinfo')
+			        $view = 'admin.admin';
+			        if(Input::get('isweektbody') == 'true')
 			        {
-			            return view('admin.usercourse.coursestudsinfo')
-			                     ->withStudinfos($this->coursestudsinfo(Input::get('coursesn')));
+			            $view = 'admin.usercourse.weektbody';;
 			        }
 
-			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeekByTeacher($this->term->val, $this->user->name))
-                			        ->withTerm($this->term)
-                			        ->withTerms($this->terms)
-                			        ->withCoursechoose($coursechoose)
-                			        ->withAdmins(User::where('grade', '=', '1')->get())
-                			        ->withUser($this->user);
+			        return AdminController::getViewWithMenus($view, null, $actcontent->user)
+            			        ->withActcontent($actcontent);
 			    }
-			    elseif($this->user->grade == 3)
+			    elseif($actcontent->action == 'choose')
 			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                			        ->withCoursetime($this->getCoursetimeArray())
-                			        ->withCoursetable($this->getCourseForWeekByStudent($this->term->val, $this->user->name))
-                			        ->withTerm($this->term)
-                			        ->withTerms($this->terms)
-                			        ->withCoursechoose($coursechoose)
-                			        ->withSelcourses($this->getSelectCoursesByStudent($this->user, $this->term))
-                			        ->withUser($this->user);
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+			                    ->withActcontent($actcontent);
 			    }
-			    else
+			    elseif($actcontent->action == 'change')
 			    {
-			        return view('errors.permitts');
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+			                    ->withActcontent($actcontent);
 			    }
+		        elseif($actcontent->action == 'coursestudsinfo')
+		        {
+		            return view('admin.usercourse.coursestudsinfo')
+		                     ->withActcontent($actcontent);
+		        }
+		        else if($actcontent->action == 'teacher')
+		        {
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                			        ->withActcontent($actcontent);
+		        }
+		        elseif($actcontent->action == 'student')
+		        {
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                			        ->withActcontent($actcontent);
+		        }
+		        elseif($actcontent->action == 'error')
+		        {
+		            return view('errors.permitts');
+		        }
 
-			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-			                 ->withTerm($this->term)
-			                 ->withTerms(Term::query()->orderBy('val', 'desc')->get())
-			                 ->withUser($this->user);
+			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+			                 ->withActcontent($actcontent);
 			}
 			else if($this->menus->getAmenu()->action == 'userclassgrade')
 			{
-			    if($this->user->grade > 3 && $this->user->privilege <= 3)
+			    $actcontent = $this->getUserClassgrade($this->user);
+			    if($actcontent->action == 'error')
 			    {
 			        return view('errors.permitts');
 			    }
-
-			    $roomtypes = Roomtype::all();
-			    foreach($roomtypes as $roomtype)
+			    elseif($actcontent->action == 'opt')
 			    {
-			        $roomtype->str = $roomtype->val.'('.$roomtype->roomtype.')';
+			        return view('admin.userclassgrade.opt')
+        			        ->withActcontent($actcontent);
 			    }
-
-			    $roomaddrs =  Roomaddr::all();
-			    foreach($roomaddrs as $roomaddr)
+			    elseif($actcontent->action == 'optnone')
 			    {
-			        $roomaddr->str = $roomaddr->val.'('.$roomaddr->roomaddr.')';
-			    }
-
-			    if($this->menus->getAmenu()['caction'] == 'opt')
-			    {
-			        if(isset($_GET['roomsn']) && $this->user->privilege > 3)
-			        {
-			            $room = DB::table('rooms')->where('sn', Input::get('roomsn'))->get();
-			            if(count($room) > 0)
-			            {
-			                $devices = Device::all();
-			                $devtypes = Devtype::all();
-			                $devcmds = Controller::getDevCmds();
-			                $devargs = array();
-			    
-			                foreach ($devices as $device)
-			                {
-			                    foreach ($devcmds as $devcmd)
-			                    {
-			                        if($device->dev_type == $devcmd->dev_type)
-			                        {
-			                            $device['iscmdfound'] = 1;
-			                            goto devcmdfoundend;
-			                        }
-			                    }
-			                    $device['iscmdfound'] = 0;
-			                    devcmdfoundend:;
-			    
-			                    foreach($devtypes as $devtype)
-			                    {
-			                        if ($device->dev_type == $devtype->devtype)
-			                        {
-			                            $device['devtypename'] = $devtype->val;
-			                        }
-			                    }
-			    
-			                    if($device->area == $room[0]->name)
-			                    {
-			                        array_push($devargs, $device);
-			                    }
-			                }
-
-			                if(count($devargs) > 0)
-			                {
-			                    return view('admin.userclassgrade.opt')
-            			                    ->withDevcmds($devcmds)
-            			                    ->withDevices($devargs);
-			                }
-			            }
-			        }
-
 			        return '<div class="alert alert-danger"><b>未发现设备</b></div>';
 			    }
-			    else if($this->menus->getAmenu()['caction'] == 'queryroom')
+			    else if($actcontent->action == 'optroomnone')
 			    {
-			        $tobj = json_decode(Input::get('data'));
-			        $rooms = null;
-			        if($tobj->method == 1 && isset($tobj->roomnamesn))
-			        {
-			            $rooms = Room::whereRaw('name=? OR sn=?', [$tobj->roomnamesn, $tobj->roomnamesn]);
-			        }
-			        else if($tobj->method == 2)
-			        {
-			            if(isset($tobj->roomtype))
-			            {
-			                $rooms = Room::where('roomtype', '=', $tobj->roomtype);
-			            }
-
-			            if(isset($tobj->roomaddr))
-			            {
-			                if($rooms != null)
-			                {
-			                    $rooms = $rooms->where('addr', '=', $tobj->roomaddr);
-			                }
-			                else
-			                {
-			                     $rooms = Room::where('addr', '=', $tobj->roomaddr);
-			                }
-			            }
-			        }
-
-			        $courses = null;
-			        if(isset($tobj->time))
-			        {
-			            $courses = Course::where('time', 'like', '%'.$tobj->time.'%');
-			        }
-
-			        if($rooms != null)
-			        {
-			            if(count($rooms->get()) > 0)
-			            {
-    			            $roomnames = array();
-    			            $rooms = $rooms->get();
-    			            foreach ($rooms as $room)
-    			            {
-    			                array_push($roomnames, $room->name);
-    			            }
-    
-    			            if($courses != null)
-    			            {
-    			                 $courses = $courses->whereIn('room', $roomnames);
-    			            }
-    			            else
-    			            {
-    			                $courses = Course::whereIn('room', $roomnames);
-    			            }
-			            }
-			            else
-			            {
-			                $courses = null;
-			                return '<div class="alert alert-danger"><b>未发现教室</b></div>';
-			            }
-			        }
-			        else
-			        {
-			            $rooms = Room::all();
-			        }
-
-			        $qsrooms = array();
-			        if($courses != null && count($courses->get()) > 0)
-			        {
-			            $courses = $courses->get();
-			            foreach ($courses as $course)
-			            {
-			                $qsroom = new \stdClass();
-			                $qsroom->name = $course->room;
-			                $qsroom->isuse = true;
-			                $qsroom->time = $course->time;
-			                $qsroom->course = $course->course;
-			                $qsroom->owner = $course->teacher;
-			                array_push($qsrooms, $qsroom);
-			            }
-			        }
-
-			        if(isset($tobj->time))
-			        {
-			            $dsrooms = array();
-			            foreach ($qsrooms as $qsroom)
-			            {
-			                 if($qsroom->time == $tobj->time)
-			                 {
-			                     array_push($dsrooms, $qsroom);
-			                 }
-			            }
-
-    			        foreach ($rooms as $room)
-    			        {
-    			            foreach ($dsrooms as $dsroom)
-    			            {
-    			                if($dsroom->name == $room->name)
-    			                {
-    			                  goto dend;  
-    			                }
-    			            }
-
-    			            $qsroom = new \stdClass();
-    			            $qsroom->name = $room->name;
-    			            $qsroom->isuse = false;
-    			            $qsroom->time = $tobj->time;
-    			            $qsroom->course = null;
-    			            $qsroom->owner = null;;
-    			            array_push($qsrooms, $qsroom);
-    			            dend:;
-    			        }
-			        }
-
-			        //dd($qsrooms);
-			        return view('admin.userclassgrade.qsroom')->withQsrooms($qsrooms);
+	                return '<div class="alert alert-danger"><b>未发现教室</b></div>';
+			    }
+			    else if($actcontent->action == 'qsroom')
+			    {
+			        return view('admin.userclassgrade.qsroom')
+			                 ->withActcontent($actcontent);
 			    }
 
-			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-			                                ->withWeektimes($this->getWeekTimeTable())
-			                                ->withRoomtypes($roomtypes)
-			                                ->withRoomaddrs($roomaddrs)
-			                                ->withRooms(Room::all())
-                            			    ->withUser($this->user);
+			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+			                                ->withActcontent($actcontent);
 			}
 			else if($this->menus->getAmenu()->action == 'userexam')
 			{
-			    if($this->user->grade == 2)
+			    $actcontent = $this->getUserExam($this->user, $this->term, $this->terms);
+			    if($actcontent->action == 'examteacher')
 			    {
-    			    $courses = array();
-    			    $coursesns = array();
-    			    $tcourses = Course::where('teacher', '=', $this->user->name)
-                        			    ->where('term', '=',  $this->term->val)
-                        			    ->get();
-    
-    			    foreach ($tcourses as $tcourse)
-    			    {
-    			        foreach ($courses as $course)
-    			        {
-    			            if($tcourse->course.$tcourse->divideclass 
-    			                 == $course->course.$course->divideclass)
-    			            {
-    			                goto nextcourse;
-    			            }
-    			        }
-    
-    			        $tcourse->coursename = $tcourse->course;
-    			        if($tcourse->divideclass != '')
-    			        {
-    			            $tcourse->coursename .= '-'.$tcourse->divideclass;
-    			        }
-    			        array_push($courses, $tcourse);
-    			        array_push($coursesns, $tcourse->sn);
-    			        nextcourse:;
-    			    }
-    
-    			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
-    			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                    			     ->withCourses($courses)
-                    			     ->withTerms($this->terms)
-                    			     ->withTerm($this->term)
-                    			     ->withExams($exams)
-        			                 ->withUser($this->user);
+    			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                    			     ->withActcontent($actcontent);
 			    }
-			    else if($this->user->grade == 3)
+			    elseif($actcontent->action == 'examstudent')
 			    {
-			        $coursesns = array();
-			        $tcourses = Course::where('students', 'like', '%'.$this->user->name.'%')
-                    			        ->where('term', '=',  $this->term->val)
-                    			        ->get();
-
-			        foreach ($tcourses as $tcourse)
-			        {
-			            array_push($coursesns, $tcourse->sn);
-			        }
-
-			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
-			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                			        ->withExams($exams)
-                    			    ->withTerms($this->terms)
-                    			    ->withTerm($this->term)
-                			        ->withUser($this->user);
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                			        ->withActcontent($actcontent);
 			    }
 			}
 			else if($this->menus->getAmenu()->action == 'userscore')
 			{
-			    if($this->user->grade == 2)
+			    $actcontent = $this->getUserScore($this->user, $this->term, $this->terms);
+			    if($actcontent->action == 'optteacher')
 			    {
-			        if($this->menus->getAmenu()['caction'] == 'opt')
-			        {
-			            return view('admin.userscore.coursestudsinfo')
-			                     ->withStudinfos($this->coursestudsinfo(Input::get('coursesn'), Input::get('examsn')));
-			        }
-
-    			    $coursenames = array();
-    			    $coursesns = array();
-    			    $tcourses = Course::where('teacher', '=', $this->user->name)
-                        			    ->where('term', '=',  $this->term->val)
-                        			    ->get();
-    
-    			    foreach ($tcourses as $tcourse)
-    			    {
-    			        $tcourse->coursename = $tcourse->course;
-    			        if($tcourse->divideclass != '')
-    			        {
-    			            $tcourse->coursename .= '-'.$tcourse->divideclass;
-    			        }
-
-    			        if(in_array($tcourse->coursename, $coursenames) === false)
-    			        {
-        			        array_push($coursenames, $tcourse->coursename);
-        			        array_push($coursesns, $tcourse->sn);
-    			        }
-    			    }
-
-    			    $exams = Exam::whereIn('coursesn', $coursesns)->get();
-    			    foreach($exams as $exam)
-    			    {
-    			        $exam->score = Score::where('examsn', '=', $exam->sn)->get();
-    			    }
-
-    			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                                			     ->withExams($exams)
-                    			                 ->withTerms($this->terms)
-                    			                 ->withTerm($this->term)
-                    			                 ->withUser($this->user);
+		            return view('admin.userscore.coursestudsinfo')
+		                     ->withActcontent($actcontent);
 			    }
-			    else if($this->user->grade == 3)
+			    else if($actcontent->action == 'scoreteacher')
 			    {
-    			    $coursesns = array();
-			        $tcourses = Course::where('students', 'like', '%'.$this->user->name.'%')
-                    			        ->where('term', '=',  $this->term->val)
-                    			        ->get();
-
-			        foreach ($tcourses as $tcourse)
-			        {
-			            array_push($coursesns, $tcourse->sn);
-			        }
-
-			        $exams = Exam::whereIn('coursesn', $coursesns)->get();
-			        foreach($exams as $exam)
-			        {
-			            $exam->score = Score::where('examsn', '=', $exam->sn)
-			                                     ->where('usersn', '=', $this->user->sn)
-			                                     ->get();
-			            if(count($exam->score) > 0)
-			            {
-			                $exam->score = $exam->score[0]->score;
-			            }
-			            else
-			            {
-			                $exam->score = '未知';
-			            }
-			        }
-
-			        return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                            			        ->withExams($exams)
-                                			    ->withTerms($this->terms)
-                                			    ->withTerm($this->term)
-                            			        ->withUser($this->user);
+    			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                                			     ->withActcontent($actcontent);
+			    }
+			    else if($actcontent->action == 'scorestudent')
+			    {
+			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                            			        ->withActcontent($actcontent);
 			    }
 			}
 			else if($this->menus->getAmenu()->action == 'userreport')
 			{
-			    return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-                            			    ->withTerms($this->terms)
-                            			    ->withTerm($this->term)
-                            			    ->withUser($this->user);
+			    $actcontent = $this->getUserReport($this->user, $this->term, $this->terms);
+			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+                            			    ->withActcontent($actcontent);
 			}
 			else if($this->menus->getAmenu()->action == 'userdetails')
 			{
-				$userdetail = DB::table('userdetails')->where('sn', $this->user->sn)->get();
-				if($userdetail != null)
-				{
-					$userdetail = $userdetail[0];
-					$userdetail->typestr = '未识别';
-
-					if($userdetail->grade == 2)
-					{
-						foreach (Academy::all() as $academy)
-						{
-							if($academy->academy == $userdetail->type)
-							{
-								$userdetail->typestr = $academy->val;
-								break;
-							}
-						}
-					}
-					else
-					{
-						foreach (Classgrade::all() as $classgrade)
-						{
-							if($classgrade->classgrade == $userdetail->type)
-							{
-								$userdetail->typestr = $classgrade->val;
-								break;
-							}
-						}
-					}
-				}
-
-				return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-							->withUserdetail($userdetail)
-							->withAcademies(Academy::all())
-							->withClassgrades(Classgrade::all())
-							->withUser($this->user);
+			    $actcontent = $this->getUserDetails($this->user);
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+							->withActcontent($actcontent);
 			}
 
 			return AdminController::getViewWithMenus('admin.admin', null, $this->user)
@@ -638,7 +239,7 @@ class AdminUserFunc {
 			return view('errors.permitts');
 		}
 	}
-	
+
 	function getUserActivity($user = null, $term = null, $terms = null)
 	{
 	    if($user == null)
@@ -1065,6 +666,544 @@ class AdminUserFunc {
 	    return $actcontent;
 	}
 
+	function getUserCourse($user = null, $term = null, $terms = null)
+	{
+	    //coursechoose
+	    $glovals = Controller::getGlobalvals();
+	    $coursechoose = [
+	        'choose' => isset($glovals[$term->val.'-coursechoose'])?$glovals[$term->val.'-coursechoose']:null,
+	        'dateline' => isset($glovals[$term->val.'-coursechoosedateline'])?$glovals[$term->val.'-coursechoosedateline']:null,
+	    ];
+
+	    if($user->grade == 1)
+	    {
+	        if($this->menus->getAmenu()->caction == 'arrange')
+	        {
+	            if($term->coursearrange == 0)
+	            {
+	                $term->coursearrange = true;
+	                $term->arrangestart = Input::get('start');
+	                $term->arrangeend = Input::get('end');
+	                //dd($term);
+	                $this->term->save();
+	            }
+
+	            $teachers = User::where('grade', '=', 2)->orderBy('name', 'asc')->get();
+	            $arrangename = null;
+	            if(count($teachers) > 0)
+	            {
+	                $arrangename = $teachers[0]->name;
+	            }
+
+	            if(Input::get('teacher'))
+	            {
+	                $arrangename = Input::get('teacher');
+	            }
+
+	            $actcontent = new \stdClass();
+	            $actcontent->action = 'arrange';
+	            $actcontent->user = $user;
+	            $actcontent->term = $term;
+	            $actcontent->rooms = Room::all();
+	            $actcontent->teachers = $teachers;
+	            $actcontent->arrangename = $arrangename;
+	            $actcontent->coursetime = $this->getCoursetimeArray();
+	            $actcontent->coursetable = $this->getCourseForWeek($term->val, $arrangename);
+
+	            return $actcontent;
+	        }
+	        elseif($this->menus->getAmenu()->caction == 'choose')
+	        {
+	            $classgrades = Classgrade::query()->OrderBy('val', 'asc')->get();
+	            foreach ($classgrades as $classgrade)
+	            {
+	                $termcourse = Termcourse::where('term', '=', $term->val)
+                            	                ->where('classgrade', '=', $classgrade->classgrade)
+                            	                ->get();
+
+	                if(count($termcourse) > 0)
+	                {
+	                    $classgrade->termcourse = $termcourse[0]->courses;
+	                }
+	            }
+
+	            $actcontent = new \stdClass();
+	            $actcontent->action = 'choose';
+	            $actcontent->classgrades = $classgrades;
+	            $actcontent->courses = Course::query()->OrderBy('course', 'asc')->GroupBy('course')->distinct()->get();
+	            $actcontent->coursechoose = $coursechoose;
+	            $actcontent->term = $term;
+	            $actcontent->user = $user;
+	            return $actcontent;
+	        }
+	        elseif($this->menus->getAmenu()->caction == 'change')
+	        {
+	            $actcontent = new \stdClass();
+	            $actcontent->action = 'change';
+	            $actcontent->user = $user;
+	            $actcontent->term = $term;
+	            $actcontent->courses = $this->getCoursesByTerm($term);
+	            $actcontent->coursechoose = $coursechoose;
+	            return $actcontent;
+	        }
+	    }
+	    elseif($this->user->grade == 2)
+	    {
+	        if($this->menus->getAmenu()->caction == 'coursestudsinfo')
+	        {
+	            $actcontent = new \stdClass();
+	            $actcontent->action = 'coursestudsinfo';
+	            $actcontent->studinfos = $this->coursestudsinfo(Input::get('coursesn'));
+	            return $actcontent;
+	        }
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'teacher';
+	        $actcontent->coursetime = $this->getCoursetimeArray();
+	        $actcontent->coursetable = $this->getCourseForWeekByTeacher($term->val, $user->name);
+	        $actcontent->term = $term;
+	        $actcontent->terms = $terms;
+	        $actcontent->coursechoose = $coursechoose;
+	        $actcontent->admins = User::where('grade', '=', '1')->get();
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	    elseif($this->user->grade == 3)
+	    {
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'student';
+	        $actcontent->coursetime = $this->getCoursetimeArray();
+	        $actcontent->coursetable = $this->getCourseForWeekByStudent($term->val, $user->name);
+	        $actcontent->term = $term;
+	        $actcontent->terms = $terms;
+	        $actcontent->coursechoose = $coursechoose;
+	        $actcontent->selcourses = $this->getSelectCoursesByStudent($user, $term);
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	    else
+	    {
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'error';
+	        return $actcontent;
+	    }
+
+	    $actcontent = new \stdClass();
+	    $actcontent->action = 'admin';
+	    $actcontent->term = $term;
+	    $actcontent->terms = Term::query()->orderBy('val', 'desc')->get();
+	    $actcontent->user = $user;
+	    return $actcontent;
+	}
+
+	function getUserClassgrade($user = null)
+	{
+	    if($user->grade > 3 && $user->privilege <= 3)
+	    {
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'error';
+	        return $actcontent;
+	    }
+	    
+	    $roomtypes = Roomtype::all();
+	    foreach($roomtypes as $roomtype)
+	    {
+	        $roomtype->str = $roomtype->val.'('.$roomtype->roomtype.')';
+	    }
+	    
+	    $roomaddrs =  Roomaddr::all();
+	    foreach($roomaddrs as $roomaddr)
+	    {
+	        $roomaddr->str = $roomaddr->val.'('.$roomaddr->roomaddr.')';
+	    }
+	    
+	    if($this->menus->getAmenu()['caction'] == 'opt')
+	    {
+	        if(isset($_GET['roomsn']) && $user->privilege > 3)
+	        {
+	            $room = DB::table('rooms')->where('sn', Input::get('roomsn'))->get();
+	            if(count($room) > 0)
+	            {
+	                $devices = Device::all();
+	                $devtypes = Devtype::all();
+	                $devcmds = Controller::getDevCmds();
+	                $devargs = array();
+	                 
+	                foreach ($devices as $device)
+	                {
+	                    foreach ($devcmds as $devcmd)
+	                    {
+	                        if($device->dev_type == $devcmd->dev_type)
+	                        {
+	                            $device['iscmdfound'] = 1;
+	                            goto devcmdfoundend;
+	                        }
+	                    }
+	                    $device['iscmdfound'] = 0;
+	                    devcmdfoundend:;
+	                     
+	                    foreach($devtypes as $devtype)
+	                    {
+	                        if ($device->dev_type == $devtype->devtype)
+	                        {
+	                            $device['devtypename'] = $devtype->val;
+	                        }
+	                    }
+	                     
+	                    if($device->area == $room[0]->name)
+	                    {
+	                        array_push($devargs, $device);
+	                    }
+	                }
+	    
+	                if(count($devargs) > 0)
+	                {
+	                    $actcontent = new \stdClass();
+	                    $actcontent->action = 'opt';
+	                    $actcontent->devcmds = $devcmds;
+	                    $actcontent->devices = $devargs;
+	                    return $actcontent;
+	                }
+	            }
+	        }
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'optnone';
+	        return $actcontent;
+	    }
+	    else if($this->menus->getAmenu()['caction'] == 'queryroom')
+	    {
+	        $tobj = json_decode(Input::get('data'));
+	        $rooms = null;
+	        if($tobj->method == 1 && isset($tobj->roomnamesn))
+	        {
+	            $rooms = Room::whereRaw('name=? OR sn=?', [$tobj->roomnamesn, $tobj->roomnamesn]);
+	        }
+	        else if($tobj->method == 2)
+	        {
+	            if(isset($tobj->roomtype))
+	            {
+	                $rooms = Room::where('roomtype', '=', $tobj->roomtype);
+	            }
+	    
+	            if(isset($tobj->roomaddr))
+	            {
+	                if($rooms != null)
+	                {
+	                    $rooms = $rooms->where('addr', '=', $tobj->roomaddr);
+	                }
+	                else
+	                {
+	                    $rooms = Room::where('addr', '=', $tobj->roomaddr);
+	                }
+	            }
+	        }
+	    
+	        $courses = null;
+	        if(isset($tobj->time))
+	        {
+	            $courses = Course::where('time', 'like', '%'.$tobj->time.'%');
+	        }
+	    
+	        if($rooms != null)
+	        {
+	            if(count($rooms->get()) > 0)
+	            {
+	                $roomnames = array();
+	                $rooms = $rooms->get();
+	                foreach ($rooms as $room)
+	                {
+	                    array_push($roomnames, $room->name);
+	                }
+	    
+	                if($courses != null)
+	                {
+	                    $courses = $courses->whereIn('room', $roomnames);
+	                }
+	                else
+	                {
+	                    $courses = Course::whereIn('room', $roomnames);
+	                }
+	            }
+	            else
+	            {
+	                $courses = null;
+	                $actcontent = new \stdClass();
+        	        $actcontent->action = 'optroomnone';
+        	        return $actcontent;
+	            }
+	        }
+	        else
+	        {
+	            $rooms = Room::all();
+	        }
+	    
+	        $qsrooms = array();
+	        if($courses != null && count($courses->get()) > 0)
+	        {
+	            $courses = $courses->get();
+	            foreach ($courses as $course)
+	            {
+	                $qsroom = new \stdClass();
+	                $qsroom->name = $course->room;
+	                $qsroom->isuse = true;
+	                $qsroom->time = $course->time;
+	                $qsroom->course = $course->course;
+	                $qsroom->owner = $course->teacher;
+	                array_push($qsrooms, $qsroom);
+	            }
+	        }
+	    
+	        if(isset($tobj->time))
+	        {
+	            $dsrooms = array();
+	            foreach ($qsrooms as $qsroom)
+	            {
+	                if($qsroom->time == $tobj->time)
+	                {
+	                    array_push($dsrooms, $qsroom);
+	                }
+	            }
+	    
+	            foreach ($rooms as $room)
+	            {
+	                foreach ($dsrooms as $dsroom)
+	                {
+	                    if($dsroom->name == $room->name)
+	                    {
+	                        goto dend;
+	                    }
+	                }
+	    
+	                $qsroom = new \stdClass();
+	                $qsroom->name = $room->name;
+	                $qsroom->isuse = false;
+	                $qsroom->time = $tobj->time;
+	                $qsroom->course = null;
+	                $qsroom->owner = null;;
+	                array_push($qsrooms, $qsroom);
+	                dend:;
+	            }
+	        }
+	    
+	        //dd($qsrooms);
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'qsroom';
+	        $actcontent->qsrooms = $qsrooms;
+	        return $actcontent;
+	    }
+
+	    $actcontent = new \stdClass();
+	    $actcontent->action = 'admin';
+	    $actcontent->weektimes = $this->getWeekTimeTable();
+	    $actcontent->roomtypes = $roomtypes;
+	    $actcontent->roomaddrs = $roomaddrs;
+        $actcontent->rooms = Room::all();
+        $actcontent->user = $user;
+	    return $actcontent;
+	}
+
+	function getUserExam($user = null, $term = null, $terms = null)
+	{
+	    if($user->grade == 2)
+	    {
+	        $courses = array();
+	        $coursesns = array();
+	        $tcourses = Course::where('teacher', '=', $user->name)
+                    	        ->where('term', '=',  $term->val)
+                    	        ->get();
+
+	        foreach ($tcourses as $tcourse)
+	        {
+	            foreach ($courses as $course)
+	            {
+	                if($tcourse->course.$tcourse->divideclass
+	                    == $course->course.$course->divideclass)
+	                {
+	                    goto nextcourse;
+	                }
+	            }
+
+	            $tcourse->coursename = $tcourse->course;
+	            if($tcourse->divideclass != '')
+	            {
+	                $tcourse->coursename .= '-'.$tcourse->divideclass;
+	            }
+	            array_push($courses, $tcourse);
+	            array_push($coursesns, $tcourse->sn);
+	            nextcourse:;
+	        }
+
+	        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'examteacher';
+	        $actcontent->courses = $courses;
+	        $actcontent->terms = $terms;
+	        $actcontent->term = $term;
+	        $actcontent->exams = $exams;
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	    else if($this->user->grade == 3)
+	    {
+	        $coursesns = array();
+	        $tcourses = Course::where('students', 'like', '%'.$user->name.'%')
+                    	        ->where('term', '=',  $term->val)
+                    	        ->get();
+
+	        foreach ($tcourses as $tcourse)
+	        {
+	            array_push($coursesns, $tcourse->sn);
+	        }
+
+	        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'examstudent';
+	        $actcontent->terms = $terms;
+	        $actcontent->term = $term;
+	        $actcontent->exams = $exams;
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	}
+
+	function getUserScore($user = null, $term = null, $terms = null)
+	{
+	    if($this->user->grade == 2)
+	    {
+	        if($this->menus->getAmenu()['caction'] == 'opt')
+	        {
+	            $actcontent = new \stdClass();
+	            $actcontent->action = 'optteacher';
+	            $actcontent->studinfos = $this->coursestudsinfo(Input::get('coursesn'), Input::get('examsn'));
+	            return $actcontent;
+	        }
+
+	        $coursenames = array();
+	        $coursesns = array();
+	        $tcourses = Course::where('teacher', '=', $user->name)
+                    	        ->where('term', '=',  $term->val)
+                    	        ->get();
+	    
+	        foreach ($tcourses as $tcourse)
+	        {
+	            $tcourse->coursename = $tcourse->course;
+	            if($tcourse->divideclass != '')
+	            {
+	                $tcourse->coursename .= '-'.$tcourse->divideclass;
+	            }
+	    
+	            if(in_array($tcourse->coursename, $coursenames) === false)
+	            {
+	                array_push($coursenames, $tcourse->coursename);
+	                array_push($coursesns, $tcourse->sn);
+	            }
+	        }
+	    
+	        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+	        foreach($exams as $exam)
+	        {
+	            $exam->score = Score::where('examsn', '=', $exam->sn)->get();
+	        }
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'scoreteacher';
+	        $actcontent->exams = $exams;
+	        $actcontent->terms = $terms;
+	        $actcontent->term = $term;
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	    else if($this->user->grade == 3)
+	    {
+	        $coursesns = array();
+	        $tcourses = Course::where('students', 'like', '%'.$this->user->name.'%')
+                    	        ->where('term', '=',  $this->term->val)
+                    	        ->get();
+
+	        foreach ($tcourses as $tcourse)
+	        {
+	            array_push($coursesns, $tcourse->sn);
+	        }
+
+	        $exams = Exam::whereIn('coursesn', $coursesns)->get();
+	        foreach($exams as $exam)
+	        {
+	            $exam->score = Score::where('examsn', '=', $exam->sn)
+                        	            ->where('usersn', '=', $this->user->sn)
+                        	            ->get();
+	            if(count($exam->score) > 0)
+	            {
+	                $exam->score = $exam->score[0]->score;
+	            }
+	            else
+	            {
+	                $exam->score = '未知';
+	            }
+	        }
+
+	        $actcontent = new \stdClass();
+	        $actcontent->action = 'scorestudent';
+	        $actcontent->exams = $exams;
+	        $actcontent->terms = $terms;
+	        $actcontent->term = $term;
+	        $actcontent->user = $user;
+	        return $actcontent;
+	    }
+	}
+
+	function getUserReport($user = null, $term = null, $terms = null)
+	{
+	    $actcontent = new \stdClass();
+	    $actcontent->user = $user;
+	    $actcontent->term = $term;
+	    $actcontent->terms = $terms;
+	    return $actcontent;
+	}
+
+	function getUserDetails($user)
+	{
+	    $userdetail = DB::table('userdetails')->where('sn', $this->user->sn)->get();
+		if($userdetail != null)
+		{
+			$userdetail = $userdetail[0];
+			$userdetail->typestr = '未识别';
+
+			if($userdetail->grade == 2)
+			{
+				foreach (Academy::all() as $academy)
+				{
+					if($academy->academy == $userdetail->type)
+					{
+						$userdetail->typestr = $academy->val;
+						break;
+					}
+				}
+			}
+			else
+			{
+				foreach (Classgrade::all() as $classgrade)
+				{
+					if($classgrade->classgrade == $userdetail->type)
+					{
+						$userdetail->typestr = $classgrade->val;
+						break;
+					}
+				}
+			}
+		}
+
+		$actcontent = new \stdClass();
+		$actcontent->action = 'admin';
+		$actcontent->userdetail = $userdetail;
+		$actcontent->academies = Academy::all();
+		$actcontent->classgrades = Classgrade::all();
+		$actcontent->user = $user;
+		return $actcontent;
+	}
+
 	function getCoursetimeArray()
 	{
 	    return ['1,2' => Globalval::where('name', '=', '1-2-classtime')->get()[0]->fieldval,
@@ -1352,7 +1491,7 @@ adddtailreturn:
 	
 		return redirect("admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
 	}
-	
+
 	public function coursearrange()
 	{
 	    $data = Input::get('data');
@@ -1769,7 +1908,7 @@ adddtailreturn:
 
 	    return redirect('admin?action=userexam');
 	}
-	
+
 	public function userscoreedt()
 	{
 	    $tobj = json_decode(Input::get('data'));

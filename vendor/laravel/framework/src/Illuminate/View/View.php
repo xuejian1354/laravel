@@ -174,6 +174,19 @@ class View implements ArrayAccess, ViewContract
      */
     public function with($key, $value = null)
     {
+        if($key == 'actcontent')
+        {
+            foreach ($value as $actkey => $actvalue)
+            {
+                if (is_array($actkey)) {
+                    $this->data = array_merge($this->data, $actkey);
+                } else {
+                    $this->data[$actkey] = $actvalue;
+                }
+            }
+            return $this;
+        }
+
         if (is_array($key)) {
             $this->data = array_merge($this->data, $key);
         } else {
