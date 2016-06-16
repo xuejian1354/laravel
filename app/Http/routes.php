@@ -20,31 +20,26 @@ Route::get('/', 'WelcomeController@index');
 
 Route::group(['prefix' => 'home', 'namespace' => 'Home'], function()
 {
-	Route::get('/', 'HomeController@news');
+	Route::get('/', 'HomeController@status');
+	Route::get('/status', 'HomeController@status');
 	Route::get('/news', 'HomeController@news');
-	Route::get('/tactive', 'HomeController@tactive');
-	Route::get('/sactive', 'HomeController@sactive');
 });
 
-Route::group(['prefix' => 'academy', 'namespace' => 'Academy'], function()
+Route::group(['prefix' => 'course', 'namespace' => 'Course'], function()
 {
-	Route::get('/', 'AcademyController@info');
-	Route::get('/info', 'AcademyController@info');
-	Route::get('/team', 'AcademyController@team');
+	Route::get('/', 'CourseController@index');
+	Route::get('/query', 'CourseController@query');
+	Route::get('/exam', 'CourseController@exam');
+	Route::get('/choice', 'CourseController@choice');
+	Route::get('/arrange', 'CourseController@arrange');
+	Route::get('/score', 'CourseController@score');
 });
 
-Route::group(['prefix' => 'classgrade', 'namespace' => 'Classgrade'], function()
+Route::group(['prefix' => 'classroom', 'namespace' => 'Classroom'], function()
 {
-	Route::get('/', 'ClassgradeController@info');
-	Route::get('/info', 'ClassgradeController@info');
-	Route::get('/details', 'ClassgradeController@details');
-});
-
-Route::group(['prefix' => 'report', 'namespace' => 'Report'], function()
-{
-	Route::get('/', 'ReportController@check');
-	Route::get('/check', 'ReportController@check');
-	Route::get('/work', 'ReportController@work');
+    Route::get('/', 'ClassroomController@status');
+    Route::get('/status', 'ClassroomController@status');
+    Route::get('/opt', 'ClassroomController@opt');
 });
 
 Route::group(['prefix' => 'service', 'namespace' => 'Service'], function()
@@ -59,6 +54,8 @@ Route::group(['prefix' => 'setting', 'namespace' => 'Setting'], function()
 {
 	Route::get('/', 'SettingController@password');
 	Route::get('/password', 'SettingController@password');
+	Route::get('/details', 'SettingController@details');
+	Route::get('/records', 'SettingController@records');
 	Route::post('/resetpass', 'SettingController@resetpass');
 });
 

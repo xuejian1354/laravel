@@ -431,10 +431,12 @@ class AdminController extends Controller {
 
 	        case 2:
 	            $menus->setCMenuWithAction('userclassgrade', '教室操作');
+	            $menus->setCMenuWithAction('userreport', 'NULL');
 	            $menus->setCMenuWithAction('userscore', '成绩发布');
 	            break;
 
             case 3:
+                $menus->setCMenuWithAction('userreport', 'NULL');
                 $menus->setCMenuWithAction('userexam', '考试查询');
                 break;
 

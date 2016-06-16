@@ -12,7 +12,10 @@ class HomeController extends Controller {
 	public function __construct()
 	{
 		$this->middleware('auth');
-		$this->setGrades([Auth::user()->grade]);
+		if(Auth::guest() === false)
+		{
+		  $this->setGrades([Auth::user()->grade]);
+		}
 	}
 
 	public function setGrades($s = [1])
@@ -33,27 +36,10 @@ class HomeController extends Controller {
 						->withNews($actcontent->news);
 	}
 
-	public function tactive()
+	public function status()
 	{
-		if(Auth::user()->grade > 2)
-		{
-			return view('errors.permitts');
-		}
-
-		return $this->getUserView('home.tactive')
-						->withTitle('tactive')
-						->withGlobalvals(Controller::getGlobalvals());
-	}
-
-	public function sactive()
-	{
-		if(Auth::user()->grade != 1 && Auth::user()->grade != 3)
-		{
-			return view('errors.permitts');
-		}
-
-		return $this->getUserView('home.sactive')
-						->withTitle('sactive')
+		return $this->getUserView('home.status')
+						->withTitle('status')
 						->withGlobalvals(Controller::getGlobalvals());
 	}
 

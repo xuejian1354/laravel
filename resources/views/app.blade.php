@@ -38,50 +38,40 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	  @if (Auth::guest())
         <ul class="nav navbar-nav navbar-right homenav-bar">
-	      <li><a href="{{ url('/auth/login') }}">Login</a></li>
-	      <li><a href="{{ url('/auth/register') }}">Register</a></li>
+	      <li><a href="{{ url('/auth/login') }}">登录</a></li>
+	      <li><a href="{{ url('/auth/register') }}">注册</a></li>
         </ul>
 	  @else
         <ul class="nav navbar-nav homenav-bar">
-	      <li class="dropdown-link"><a href="{{ url('/home') }}">Home</a>
+	      <li class="dropdown-link"><a href="{{ url('/home') }}">首页</a>
 	        <ul class="dropdown-menu">
-	          <li><a href="{{ url('/home/news') }}">News</a></li>
-	          @if(Auth::user()->grade <= 2)
-	            <li><a href="{{ url('/home/tactive') }}">Teacher Activities</a></li>
-	          @endif
-	          @if(Auth::user()->grade == 1 || Auth::user()->grade == 3)
-	            <li><a href="{{ url('/home/sactive') }}">Student Activities</a></li>
-	          @endif
+	          <li><a href="{{ url('/home/status') }}">总览</a></li>
+	          <li><a href="{{ url('/home/news') }}">活动通知</a></li>
 	        </ul>
 	      </li>
-	      @if(Auth::user()->grade <= 2)
-	        <li class="dropdown-link"><a href="{{ url('/academy') }}">Academy</a>
+	      @if(Auth::user()->grade == 1)
+	        <li class="dropdown-link"><a href="{{ url('/course') }}">课程</a>
 	          <ul class="dropdown-menu">
-	            <li><a href="{{ url('/academy/info') }}">Info Manager</a></li>
-	            <li><a href="{{ url('/academy/team') }}">Teacher Teams</a></li>
+	            <li><a href="{{ url('/course/arrange') }}">教师排课</a></li>
+	            <li><a href="{{ url('/course/choice') }}">学生选课</a></li>
+	          </ul>
+	        </li>
+	      @elseif(Auth::user()->grade == 2 || Auth::user()->grade == 3)
+	        <li class="dropdown-link"><a href="{{ url('/course') }}">课程</a>
+	          <ul class="dropdown-menu">
+	            <li><a href="{{ url('/course/query') }}">课程查询</a></li>
+	            <li><a href="{{ url('/course/exam') }}">考试安排</a></li>
+	            <li><a href="{{ url('/course/score') }}">成绩发布</a></li>
 	          </ul>
 	        </li>
 	      @endif
-	      @if(Auth::user()->grade == 1 || Auth::user()->grade == 3)
-	        <li class="dropdown-link"><a href="{{ url('/classgrade') }}">Class</a>
+	      @if(Auth::user()->grade <= 3 || Auth::user()->privilege > 3)
+	        <li class="dropdown-link"><a href="{{ url('/classroom') }}">教室</a>
 	          <ul class="dropdown-menu">
-	            <li><a href="{{ url('/classgrade/info') }}">Class Info</a></li>
-	            <li><a href="{{ url('/classgrade/details') }}">Student Details</a></li>
-	          </ul>
-	        </li>
-	      @endif
-	      @if(Auth::user()->grade <= 3)
-	        <li class="dropdown-link"><a href="{{ url('/report') }}">Report</a>
-	          <ul class="dropdown-menu">
-	            <li><a href="{{ url('/report/check') }}">Check Records</a></li>
-	            <li><a href="{{ url('/report/work') }}">Report Works</a></li>
-	          </ul>
-	        </li>
-	        <li class="dropdown-link"><a href="{{ url('/service') }}">Service</a>
-	          <ul class="dropdown-menu">
-	            <li><a href="{{ url('/service/email') }}">E-Mail</a></li>
-	            <li><a href="{{ url('/service/file') }}">File</a></li>
-	            <li><a href="{{ url('/service/note') }}">Note</a></li>
+	            <li><a href="{{ url('/classroom/status') }}">使用情况</a></li>
+	            @if(Auth::user()->grade == 1 || Auth::user()->privilege > 3)
+	            <li><a href="{{ url('/classroom/opt') }}">教室操作</a></li>
+	            @endif
 	          </ul>
 	        </li>
 	      @endif
@@ -92,11 +82,11 @@
 		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->name }} <span class="caret"></span></a>
 		    <ul class="dropdown-menu" role="menu">
 		      @if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
-		        <li><a href="{{ url('/admin') }}">Console</a></li>
+		        <li><a href="{{ url('/admin') }}">控制台</a></li>
 		      @endif
-		      <li><a href="{{ url('/setting') }}">Setting</a></li>
+		      <li><a href="{{ url('/setting') }}">设置</a></li>
 		      <li class="divider"></li>
-			  <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+			  <li><a href="{{ url('/auth/logout') }}">退出</a></li>
 		    </ul>
 	      </li>
 	    </ul>

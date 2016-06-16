@@ -20,6 +20,20 @@ class SettingController extends Controller {
 						->withGlobalvals(Controller::getGlobalvals());
 	}
 
+	public function details()
+	{
+	    return $this->getUserView('setting.details')
+                	    ->withTitle('details')
+                	    ->withGlobalvals(Controller::getGlobalvals());
+	}
+
+	public function records()
+	{
+	    return $this->getUserView('setting.records')
+                	    ->withTitle('records')
+                	    ->withGlobalvals(Controller::getGlobalvals());
+	}
+
 	public function resetpass()
 	{
 		$oldpass = Input::get('old_pass');

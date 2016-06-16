@@ -4,7 +4,7 @@
 @section('content')
 <div class="container-fluid">
 	<div class="panel panel-default">
-		<div class="panel-heading">Reset Password</div>
+		<div class="panel-heading">密码修改</div>
 		<div class="panel-body">
 			@if (count($errors) > 0)
 				<div class="alert alert-danger">
@@ -29,21 +29,21 @@
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 	
 				<div class="form-group">
-					<label class="col-md-4 control-label">Old Password</label>
+					<label class="col-md-4 control-label">旧密码</label>
 					<div class="col-md-6">
 						<input type="password" class="form-control" name="old_pass">
 					</div>
 				</div>
 	
 				<div class="form-group">
-					<label class="col-md-4 control-label">New Password</label>
+					<label class="col-md-4 control-label">新密码</label>
 					<div class="col-md-6">
 						<input type="password" class="form-control" name="new_pass">
 					</div>
 				</div>
 	
 				<div class="form-group">
-					<label class="col-md-4 control-label">Confirm Password</label>
+					<label class="col-md-4 control-label">密码确认</label>
 					<div class="col-md-6">
 						<input type="password" class="form-control" name="confirm_pass">
 					</div>
@@ -51,9 +51,7 @@
 	
 				<div class="form-group">
 					<div class="col-md-6 col-md-offset-4">
-						<button type="submit" class="btn btn-primary">
-							Reset Password
-						</button>
+						<button type="submit" class="btn btn-primary">重置</button>
 					</div>
 				</div>
 			</form>
