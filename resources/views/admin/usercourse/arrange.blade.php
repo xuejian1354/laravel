@@ -133,7 +133,7 @@ function courseArrangeAlert(token, force) {
 
 	    var returnurlInput = document.createElement("input");
 	    returnurlInput.setAttribute("name", "returnurl");
-	    returnurlInput.setAttribute("value", "admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
+	    returnurlInput.setAttribute("value", "/admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
 	    postForm.appendChild(returnurlInput);
 
 	    var tokenInput = document.createElement("input");
@@ -177,7 +177,7 @@ function courseArrangeDelAlert(token) {
 
 	    var returnurlInput = document.createElement("input");
 	    returnurlInput.setAttribute("name", "returnurl");
-	    returnurlInput.setAttribute("value", "admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
+	    returnurlInput.setAttribute("value", "/admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
 	    postForm.appendChild(returnurlInput);
 
 	    var tokenInput = document.createElement("input");
@@ -192,7 +192,7 @@ function courseArrangeDelAlert(token) {
 }
 
 $('#arrangeteacher').change(function(){
-	loadContent('weektbody', 'admin?action=usercourse/arrange&id={{ $user->id }}&term={{ $term->val }}&teacher=' + $('#arrangeteacher').val() + '&isweektbody=true');
+	loadContent('weektbody', '/admin?action=usercourse/arrange&id={{ $user->id }}&term={{ $term->val }}&teacher=' + $('#arrangeteacher').val() + '&isweektbody=true');
 });
 
 @if(Input::get('edit') == 1)

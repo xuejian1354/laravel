@@ -384,6 +384,10 @@ class AdminUserInfo {
 		$returnurl = Input::get('returnurl');
 		if($returnurl != null)
 		{
+		    if(Input::get('adminflag') == 1)
+		    {
+		        $returnurl .= '&adminmenus=1';
+		    }
 			return redirect($returnurl);
 		}
 
@@ -524,6 +528,10 @@ class AdminUserInfo {
 		$returnurl = Input::get('returnurl');
 		if($returnurl != null)
 		{
+		    if(Input::get('adminflag') == 1)
+		    {
+		        $returnurl .= '&adminmenus=1';
+		    }
 			return redirect($returnurl);
 		}
 

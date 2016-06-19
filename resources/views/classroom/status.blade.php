@@ -1,3 +1,6 @@
 @extends('app')
 @extends('classroom.sidemenu')
-@extends('welcome.school')
+
+@section('content')
+@include('admin.userclassgrade.userclassstatus')
+@endsection

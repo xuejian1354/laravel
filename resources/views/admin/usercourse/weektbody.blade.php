@@ -171,7 +171,7 @@ function loadWeekEdt(id)
 @if($user->grade == 2)
 		$('#coursestudsinfo').removeClass('hidden');
 		//$('#coursestudsinfo').text($('#'+id).text());
-		loadContent('coursestudsinfo', 'admin?action=usercourse/coursestudsinfo&coursesn=' + tbtn.attr('sn'));
+		loadContent('coursestudsinfo', '/admin?action=usercourse/coursestudsinfo&coursesn=' + tbtn.attr('sn'));
 @endif
 	}
 }

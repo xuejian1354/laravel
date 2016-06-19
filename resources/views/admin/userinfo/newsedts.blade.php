@@ -4,6 +4,9 @@
     @if(isset($returnurl))
     <input type="hidden" name="returnurl" value="{{ $returnurl }}">
     @endif
+    @if(isset($adminflag) && $adminflag == 1)
+    <input type="hidden" name="adminflag" value="1">
+    @endif
     @for($index=0; $index < count($news); $index++)
       @if((!isset($hasowner) || $hasowner == false) && count($news) > 1)
       <h3
@@ -120,9 +123,9 @@
       <div style="margin-top: 10px;">
         <button type="submit" class="btn btn-primary">修改</button>
         @if(isset($returnurl))
-        <a href="{{ $returnurl }}" class="btn btn-info">返回</a>
+        <a href="javascript:loadContent('activitycontent', '{{ $returnurl }}&iscontent=1');" class="btn btn-info">返回</a>
         @else
-        <a href="admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
+        <a href="/admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
         @endif
       </div>
   </form>

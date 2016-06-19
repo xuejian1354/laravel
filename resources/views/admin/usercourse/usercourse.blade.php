@@ -68,7 +68,7 @@
           </div>
           <div id="teachercourseBody" class="modal-body container-fluid">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="returnurl" value="admin?action=usercourse&id={{ $user->id }}">
+            <input type="hidden" name="returnurl" value="/admin?action=usercourse&id={{ $user->id }}">
             <label>标题</label>
             <input id="teacherChangeTitle" name="title" type="text" class="form-control" readonly="true">
             <input name="allowgrade" type="hidden" class="form-control" value="指定用户">
@@ -205,12 +205,12 @@ function courseArrangeRequest() {
 }
 
 function courseChooseRequest() {
-  location.replace("admin?action=usercourse/choose&id={{ $user->id }}&term="
+  location.replace("/admin?action=usercourse/choose&id={{ $user->id }}&term="
             		  + $('#coursechoose').val());
 }
 
 function courseChangeRequest() {
-  location.replace("admin?action=usercourse/change&id={{ $user->id }}&term="
+  location.replace("/admin?action=usercourse/change&id={{ $user->id }}&term="
             		  + $('#coursechoose').val());
 }
 
@@ -223,7 +223,7 @@ laydate({elem: '#termetime', format: 'YYYY-MM-DD'});
 @elseif($user->grade == 2 || $user->grade == 3)
 <script type="text/javascript">
 $("#coursequery").change(function() {
-	location.replace("admin?action=usercourse&id={{ $user->id }}&term="+$("#coursequery").val());
+	location.replace("/admin?action=usercourse&id={{ $user->id }}&term="+$("#coursequery").val());
 });
 @if($user->grade == 2)
 $('.arrangeweekbtn').each(function(){

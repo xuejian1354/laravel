@@ -1,4 +1,4 @@
-<div>
+<div id="activitycontent">
   <ul class="nav nav-tabs" role="tablist">
   @if(Input::get('tabpos') == 1)
     <li role="presentation" class="nav-li tabrecv"><a href="javascript:loadNewsContent(0);">收到</a></li>
@@ -29,7 +29,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->start-1 }}');" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$recvnewspagetag->start; $index < $recvnewspagetag->end; $index++)
         @if($recvnewspagetag->getPage() == $index)
@@ -37,7 +37,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $index }}">{{ $index }}</a>
+          <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $index }}');">{{ $index }}</a>
         </li>
       @endfor
       @if($recvnewspagetag->end == $recvnewspagetag->getPageSize() + 1)
@@ -45,7 +45,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=0&id={{ $user->id }}&page={{ $recvnewspagetag->end }}');" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>
@@ -64,7 +64,7 @@
   @endif
   <div class="alert" style="margin-top: 20px; background: #f0f0f0;">
           发布消息：{{ $user->sendcount }}&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=add&newsid={{ $anew->id }}&tabpos=1');">添加</a>
+    <a href="javascript:loadContent('divsend', '/admin?action=useractivity&id={{ $user->id }}&opt=add&newsid={{ $anew->id }}&tabpos=1');">添加</a>
   </div>
   @if($sendnewspagetag->isavaliable())
   <nav>
@@ -74,7 +74,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->start-1 }}');" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$sendnewspagetag->start; $index < $sendnewspagetag->end; $index++)
         @if($sendnewspagetag->getPage() == $index)
@@ -82,7 +82,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $index }}">{{ $index }}</a>
+          <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $index }}');">{{ $index }}</a>
         </li>
       @endfor
       @if($sendnewspagetag->end == $sendnewspagetag->getPageSize() + 1)
@@ -90,7 +90,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="javascript:loadContent('activitycontent', '/admin?action=useractivity&tabpos=1&id={{ $user->id }}&page={{ $sendnewspagetag->end }}');" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>
@@ -110,8 +110,8 @@
       </div><br>
       <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}', '1');" style="margin-right: 4px;">更多</a>
       <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '1');" class="hidden" style="margin-right: 4px;">删除</a>
-      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');" class="hidden" style="margin-right: 4px;">编辑</a>
-      <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');">全部</a><hr>
+      <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divsend', '/admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');" class="hidden" style="margin-right: 4px;">编辑</a>
+      <a href="javascript:loadContent('divsend', '/admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $sendnewspagetag->getPage() }}&tabpos=1');">全部</a><hr>
     </div>
     @endif
   @endforeach
@@ -173,7 +173,7 @@ function userActSubCheck(id, isread)
 
 	if(isread != '1')
 	{
-		loadContent('divnews'+id, 'admin?action=useractivity&id={{ $user->id }}&opt=more&newsid='+id+'&page={{ $recvnewspagetag->getPage() }}&tabpos=0');
+		loadContent('divnews'+id, '/admin?action=useractivity&id={{ $user->id }}&opt=more&newsid='+id+'&page={{ $recvnewspagetag->getPage() }}&tabpos=0');
 	}
 }
 
@@ -198,6 +198,11 @@ function newsADelAlert(userid, newsid, tabpos) {
     tabposInput.setAttribute("name", "tabpos");
     tabposInput.setAttribute("value", tabpos);
     postForm.appendChild(tabposInput);
+
+    var returnurlInput = document.createElement("input");
+    returnurlInput.setAttribute("name", "returnurl");
+    returnurlInput.setAttribute("value", "{!! $returnurl !!}&tabpos="+tabpos);
+    postForm.appendChild(returnurlInput);
 
     var tokenInput = document.createElement("input");
     tokenInput.setAttribute("name", "_token");

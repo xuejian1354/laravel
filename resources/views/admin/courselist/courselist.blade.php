@@ -54,7 +54,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=courselist&page={{ $pagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/admin?action=courselist&page={{ $pagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$pagetag->start; $index < $pagetag->end; $index++)
         @if($pagetag->getPage() == $index)
@@ -62,7 +62,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=courselist&page={{ $index }}">{{ $index }}</a>
+          <a href="/admin?action=courselist&page={{ $index }}">{{ $index }}</a>
         </li>
       @endfor
       @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -70,7 +70,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=courselist&page={{ $pagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="/admin?action=courselist&page={{ $pagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>

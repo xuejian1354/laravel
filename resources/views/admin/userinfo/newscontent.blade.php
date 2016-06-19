@@ -2,14 +2,14 @@
 @if(isset($returnurl))
   <h4>
     @if($tabpos == 1)
-    <a href="javascript:loadContent('divsend', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&page={{ Input::get('page') }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
+    <a href="javascript:loadContent('divsend', '/admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&page={{ Input::get('page') }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
     @elseif($user->privilege == 5 && $user->grade == 1)
-    <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&page={{ Input::get('page') }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
+    <a href="javascript:loadContent('divrecv', '/admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $news->id }}&page={{ Input::get('page') }}&tabpos={{ $tabpos }}');" style="margin-top: 200px;">编辑</a>
     @endif
-    <a href="{{ $returnurl }}" style="margin-top: 200px;">返回</a>
+    <a href="javascript:loadContent('activitycontent', '{{ $returnurl }}');" style="margin-top: 200px;">返回</a>
   </h4>
 @else
-  <h4><a href="admin?action=userinfo&tabpos=0" style="margin-top: 200px;">返回</a></h4>
+  <h4><a href="/admin?action=userinfo&tabpos=0" style="margin-top: 200px;">返回</a></h4>
 @endif
 </div>
 <h1 style="text-align: center; margin-top: 20px;">{{ $news->title }}</h1>

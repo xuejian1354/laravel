@@ -3,6 +3,7 @@
 use DB, Input, Auth;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\AdminUserFunc;
 
 class SettingController extends Controller {
 
@@ -22,8 +23,10 @@ class SettingController extends Controller {
 
 	public function details()
 	{
+	    $actcontent = (new AdminUserFunc())->getUserDetails();
 	    return $this->getUserView('setting.details')
                 	    ->withTitle('details')
+                	    ->withActcontent($actcontent)
                 	    ->withGlobalvals(Controller::getGlobalvals());
 	}
 

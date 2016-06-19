@@ -22,7 +22,7 @@
   <a id="usersubctrl{{ $anew->id }}" href="javascript:userActSubCheck('{{ $anew->id }}', '{{ $anew->isread }}');" style="margin-right: 4px;">更多</a>
   @if($user->privilege == 5 && $user->grade == 1)
   <a id="usersubdel{{ $anew->id }}" href="javascript:newsADelAlert('{{ $user->id }}', '{{ $anew->id }}', '0');" class="hidden" style="margin-right: 4px;">删除</a>
-  <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');" class="hidden" style="margin-right: 4px;">编辑</a>
+  <a id="usersubedt{{ $anew->id }}" href="javascript:loadContent('divrecv', '/admin?action=useractivity&id={{ $user->id }}&opt=edt&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');" class="hidden" style="margin-right: 4px;">编辑</a>
   @endif
-  <a href="javascript:loadContent('divrecv', 'admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');">全部</a><hr>
+  <a href="javascript:loadContent('divrecv', '/admin?action=useractivity&id={{ $user->id }}&opt=all&newsid={{ $anew->id }}&page={{ $recvnewspagetag->getPage() }}&tabpos=0');">全部</a><hr>
 </div>

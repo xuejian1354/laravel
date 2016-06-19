@@ -116,7 +116,7 @@ $('#optsel').change(function(){
 @endif
 
 $('#termchoose').change(function(){
-	var reurl = 'admin?action=userscore&id={{ $user->id }}&term='+$(this).val();
+	var reurl = '/admin?action=userscore&id={{ $user->id }}&term='+$(this).val();
 	location.replace(reurl);
 });
 </script>

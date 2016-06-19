@@ -27,7 +27,7 @@
         <td>{{ $classgrades[$index]->leader }}</td>
         <td>{{ $classgrades[$index]->text }}</td>
         <td>{{ $classgrades[$index]->updated_at }}</td>
-        <td><a href="javascript:loadContent('classgradebody', 'admin?action=userinfo/classgradeedt&id={{ $classgrades[$index]->id }}');">修改</a></td>
+        <td><a href="javascript:loadContent('classgradebody', '/admin?action=userinfo/classgradeedt&id={{ $classgrades[$index]->id }}');">修改</a></td>
         <th><input type="checkbox" class="classgradecheck" eleid="{{ $classgrades[$index]->id }}"></th>
       </tr>
       @elseif($classgradepagetag->isavaliable())
@@ -47,7 +47,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$classgradepagetag->start; $index < $classgradepagetag->end; $index++)
         @if($classgradepagetag->getPage() == $index)
@@ -55,7 +55,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=userinfo&tabpos=2&page={{ $index }}">{{ $index }}</a>
+          <a href="/admin?action=userinfo&tabpos=2&page={{ $index }}">{{ $index }}</a>
         </li>
       @endfor
       @if($classgradepagetag->end == $classgradepagetag->getPageSize() + 1)
@@ -63,7 +63,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=2&page={{ $classgradepagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>

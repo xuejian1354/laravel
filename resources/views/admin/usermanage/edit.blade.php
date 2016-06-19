@@ -75,6 +75,6 @@
   @endforeach
   <div class="nav navbar-nav navbar-right">
     <a href="javascript:userEditAlert('{{ $args[0]->id }}','{{ csrf_token() }}');" class="btn btn-primary" role="button">执行</a>
-    <a href="admin?action=usermanage&tabpos={{ $arg->grade-1 }}" class="btn btn-info" role="button">返回</a>
+    <a href="/admin?action=usermanage&tabpos={{ $arg->grade-1 }}" class="btn btn-info" role="button">返回</a>
   </div>
 </div>

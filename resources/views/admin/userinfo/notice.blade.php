@@ -9,7 +9,7 @@
         <th>发布者</th>
         <th>允许访问</th>
         <th>创建时间</th>
-        <th><a href="javascript:loadContent('noticebody', 'admin?action=userinfo/addnews');">添加</a></th>
+        <th><a href="javascript:loadContent('noticebody', '/admin?action=userinfo/addnews');">添加</a></th>
         <th><input type="checkbox" class="newscheckall"></th>
       </tr>
     </thead>
@@ -23,7 +23,7 @@
         <td>{{ $news[$index]->owner }}</td>
         <td>{{ $news[$index]->allowgradestr }}</td>
         <td>{{ $news[$index]->updated_at }}</td>
-        <td><a href="javascript:loadContent('noticebody', 'admin?action=userinfo/newscontent&id={{ $news[$index]->id }}');">查看</a></td>
+        <td><a href="javascript:loadContent('noticebody', '/admin?action=userinfo/newscontent&id={{ $news[$index]->id }}');">查看</a></td>
         <th><input type="checkbox" class="newscheck" eleid="{{ $news[$index]->id }}"></th>
       </tr>
       @elseif($newspagetag->isavaliable())
@@ -44,7 +44,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=0&page={{ $newspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=0&page={{ $newspagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$newspagetag->start; $index < $newspagetag->end; $index++)
         @if($newspagetag->getPage() == $index)
@@ -52,7 +52,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=userinfo&tabpos=0&page={{ $index }}">{{ $index }}</a>
+          <a href="/admin?action=userinfo&tabpos=0&page={{ $index }}">{{ $index }}</a>
         </li>
       @endfor
       @if($newspagetag->end == $newspagetag->getPageSize() + 1)
@@ -60,7 +60,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=0&page={{ $newspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=0&page={{ $newspagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>

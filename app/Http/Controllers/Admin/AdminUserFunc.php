@@ -47,7 +47,7 @@ class AdminUserFunc {
 	    //$user
 		$this->user = null;
 		$id = Input::get('id');
-		if($id != null)
+		if($id != null && (Auth::user()->privilege == 5 || Auth::user()->grade == 1))
 		{
 		    $this->user = User::find($id);
 		}
@@ -105,9 +105,14 @@ class AdminUserFunc {
 	                return view('admin.userinfo.newsedts')
     	                    ->withActcontent($actcontent);
 	            }
+	            else if($actcontent->action == 'adminmenus')
+	            {
+	                return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+	                           ->withActcontent($actcontent);
+	            }
 
-			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-            			    ->withActcontent($actcontent);
+	            return view('admin.useractivity.useractivity')
+	                       ->withActcontent($actcontent);
 			}
 			else if($this->menus->getAmenu()->action == 'usercourse')
 			{
@@ -264,13 +269,13 @@ class AdminUserFunc {
 	    $user->recvcount = 0;
 	    $user->noreadcount = 0;
 	    $user->sendcount = 0;
-	    
+
 	    $recvnews = News::where('owner', '!=', $user->name)->orderBy('updated_at', 'desc')->get();
 	    foreach ($recvnews as $recv)
 	    {
 	        array_push($news, $recv);
 	    }
-	    
+
 	    $sendnews = News::where('owner', '=', $user->name)->orderBy('updated_at', 'desc');
 	    $user->sendcount = $sendnews->count();
 	    $pagetag = new PageTag(3, 5, $sendnews->count(), $this->menus->getPage());
@@ -293,12 +298,12 @@ class AdminUserFunc {
 	    
 	    $pagetag->setListNum(count($sendnews));
 	    $sendnewspagetag = $pagetag;
-	    
+
 	    foreach ($sendnews as $send)
 	    {
 	        array_push($news, $send);
 	    }
-	    
+
 	    foreach ($news as $anew)
 	    {
 	        $this->addAllowTextToNews($anew);
@@ -332,7 +337,7 @@ class AdminUserFunc {
 	                $actcontent = new \stdClass();
 	                $actcontent->action = 'newscontent';
 	                $actcontent->tabpos = Input::get('tabpos');
-	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+	                $actcontent->returnurl = '/admin?action=useractivity&id='.$user->id
                         	                    .'&page='.$this->menus->getPage()
                         	                    .'&tabpos='.Input::get('tabpos');
 	                $actcontent->user = User::find(Input::get('id'));
@@ -368,7 +373,15 @@ class AdminUserFunc {
 	                $actcontent = new \stdClass();
 	                $actcontent->action = 'newsrecvlist';
 	                $actcontent->tabpos = Input::get('tabpos');
-	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+	                if(Input::get('adminmenus') == 1)
+	                {
+	                    $actcontent->returnurl = '/admin';
+	                }
+	                else
+	                {
+	                    $actcontent->returnurl = '/home/news';
+	                }
+	                $actcontent->returnurl .= '?action=useractivity&id='.$user->id
                         	                    .'&page='.$this->menus->getPage()
                         	                    .'&tabpos='.Input::get('tabpos');
 	                $actcontent->user = User::find(Input::get('id'));
@@ -385,8 +398,18 @@ class AdminUserFunc {
 	            {
 	                $actcontent = new \stdClass();
 	                $actcontent->action = 'addnews';
-	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
-                        	                    .'&page='.$this->menus->getPage()
+	                if(Input::get('adminflag') == 1)
+	                {
+	                    $actcontent->returnurl = '/admin';
+	                    $actcontent->adminflag = 1;
+	                }
+	                else
+	                {
+	                    $actcontent->returnurl = '/home/news';
+	                }
+	                $actcontent->returnurl .= '?action=useractivity&id='
+	                                            .$user->id.'&page='
+	                                            .$this->menus->getPage()
                         	                    .'&tabpos='.Input::get('tabpos');
 	                $actcontent->hasowner = true;
 	                $actcontent->idgrades = Idgrade::all();
@@ -407,7 +430,7 @@ class AdminUserFunc {
 	                $academies = Academy::all();
 	                $classgrades = Classgrade::all();
 	                $users = User::all();
-	    
+
 	                switch($anew->allowgrade)
 	                {
 	                    case 1:
@@ -424,7 +447,7 @@ class AdminUserFunc {
 	                            }
 	                        }
 	                        break;
-	    
+
 	                    case 3:
 	                        $anew->allowtext = '专业';
 	                        foreach ($classgrades as $classgrade)
@@ -435,7 +458,7 @@ class AdminUserFunc {
 	                            }
 	                        }
 	                        break;
-	    
+
 	                    case 4:
 	                        $anew->allowtext = '班级';
 	                        foreach ($classgrades as $classgrade)
@@ -446,19 +469,19 @@ class AdminUserFunc {
 	                            }
 	                        }
 	                        break;
-	    
+
 	                    case 5:
 	                        $anew->allowtext = '指定用户';
-	                        foreach ($users as $user)
+	                        foreach ($users as $tuser)
 	                        {
-	                            if($user->name == $anew->visitor)
+	                            if($tuser->name == $anew->visitor)
 	                            {
-	                                $anew->visitortext = $user->name;
+	                                $anew->visitortext = $tuser->name;
 	                            }
 	                        }
 	                        break;
 	                }
-	    
+
 	                $tabpos = Input::get('tabpos');
 	                $hasowner = false;
 	                if($tabpos == 1)
@@ -468,7 +491,16 @@ class AdminUserFunc {
 
 	                $actcontent = new \stdClass();
 	                $actcontent->action = 'newsedts';
-	                $actcontent->returnurl = 'admin?action=useractivity&id='.$user->id
+	                if(Input::get('adminflag') == 1)
+	                {
+	                    $actcontent->returnurl = '/admin';
+	                    $actcontent->adminflag = 1;
+	                }
+	                else
+	                {
+	                    $actcontent->returnurl = '/home/news';
+	                }
+	                $actcontent->returnurl .= '?action=useractivity&id='.$user->id
                         	                    .'&page='.$this->menus->getPage()
                         	                    .'&tabpos='.$tabpos;
 	                $actcontent->hasowner = $hasowner;
@@ -501,25 +533,25 @@ class AdminUserFunc {
 	        {
 	            $anew->isrecv = true;
 	            $ischoose = false;
-	    
+
 	            $userdetail = DB::table('userdetails')->where('sn', $user->sn)->get();
 	            if($userdetail != null)
 	            {
 	                $userdetail = $userdetail[0];
 	            }
-	    
+
 	            switch($anew->allowgrade)
 	            {
 	                case 1: //school
 	                    $ischoose = true;
 	                    break;
-	    
+
 	                case 2: //academy
 	                    if($userdetail == null)
 	                    {
 	                        break;
 	                    }
-	    
+
 	                    if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
 	                    {
 	                        $ischoose = true;
@@ -545,14 +577,14 @@ class AdminUserFunc {
 	                        }
 	                    }
 	                    break;
-	    
+
 	                case 3:
 	                case 4:  //class
 	                    if($userdetail == null)
 	                    {
 	                        break;
 	                    }
-	    
+
 	                    if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
 	                    {
 	                        $ischoose = true;
@@ -577,7 +609,7 @@ class AdminUserFunc {
 	                        }
 	                    }
 	                    break;
-	    
+
 	                case 5:
 	                    $guest = User::where('name', '=', $anew->visitor)->get();
 	                    if($guest != null)
@@ -589,7 +621,7 @@ class AdminUserFunc {
 	                            break;
 	                        }
 	                    }
-	    
+
 	                    if($userdetail != null)
 	                    {
 	                        if($userdetail->grade == 1 && $user->privilege > 4)	//administrator
@@ -603,7 +635,7 @@ class AdminUserFunc {
 	                    }
 	                    break;
 	            }
-	    
+
 	            if($ischoose)
 	            {
 	                //action=2 looking for news
@@ -621,13 +653,13 @@ class AdminUserFunc {
 	                    $user->noreadcount++;
 	                    $anew->isread = false;
 	                }
-	    
+
 	                $user->recvcount++;
 	                array_push($etnews, $anew);
 	            }
 	        }
 	    }
-	    
+
 	    $recvnewspagetag = new PageTag(3, 5, count($etnews), $this->menus->getPage());
 	    if($recvnewspagetag->isAvaliable())
 	    {
@@ -642,7 +674,7 @@ class AdminUserFunc {
 	        {
 	            $recvtindex = $recvcount;
 	        }
-	    
+
 	        for($i=$recvhindex; $i < $recvtindex; $i++)
 	        {
 	            array_push($enews, $etnews[$i]);
@@ -657,8 +689,28 @@ class AdminUserFunc {
 	    }
 
 	    $actcontent = new \stdClass();
-	    $actcontent->action = 'admin';
+	    if(Input::get('adminmenus') == 1)
+	    {
+	       $actcontent->action = 'adminmenus';
+	    }
+	    else
+	    {
+	       $actcontent->action = 'admin';
+	    }
+
 	    $actcontent->user = $user;
+
+	    if(Input::get('adminmenus') == 1)
+	    {
+	       $actcontent->returnurl = '/admin?action=useractivity&adminmenus=1';
+	       $actcontent->adminmenus = 1;
+	    }
+	    else
+	    {
+	       $actcontent->returnurl = '/home/news?action=useractivity';
+	    }
+	    $actcontent->returnurl .= '&id='.$user->id.'&page='.$this->menus->getPage();
+
 	    $actcontent->recvnewspagetag = $recvnewspagetag;
 	    $actcontent->sendnewspagetag = $sendnewspagetag;
 	    $actcontent->news = $enews;
@@ -668,6 +720,21 @@ class AdminUserFunc {
 
 	function getUserCourse($user = null, $term = null, $terms = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+	    
+	    if($term == null)
+	    {
+	        $term = $this->term;
+	    }
+	    
+	    if($terms == null)
+	    {
+	        $terms = $this->terms;
+	    }
+
 	    //coursechoose
 	    $glovals = Controller::getGlobalvals();
 	    $coursechoose = [
@@ -798,6 +865,11 @@ class AdminUserFunc {
 
 	function getUserClassgrade($user = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+
 	    if($user->grade > 3 && $user->privilege <= 3)
 	    {
 	        $actcontent = new \stdClass();
@@ -1005,6 +1077,21 @@ class AdminUserFunc {
 
 	function getUserExam($user = null, $term = null, $terms = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+	     
+	    if($term == null)
+	    {
+	        $term = $this->term;
+	    }
+	     
+	    if($terms == null)
+	    {
+	        $terms = $this->terms;
+	    }
+
 	    if($user->grade == 2)
 	    {
 	        $courses = array();
@@ -1071,6 +1158,21 @@ class AdminUserFunc {
 
 	function getUserScore($user = null, $term = null, $terms = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+	     
+	    if($term == null)
+	    {
+	        $term = $this->term;
+	    }
+	     
+	    if($terms == null)
+	    {
+	        $terms = $this->terms;
+	    }
+
 	    if($this->user->grade == 2)
 	    {
 	        if($this->menus->getAmenu()['caction'] == 'opt')
@@ -1156,6 +1258,21 @@ class AdminUserFunc {
 
 	function getUserReport($user = null, $term = null, $terms = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+	     
+	    if($term == null)
+	    {
+	        $term = $this->term;
+	    }
+	     
+	    if($terms == null)
+	    {
+	        $terms = $this->terms;
+	    }
+
 	    $actcontent = new \stdClass();
 	    $actcontent->user = $user;
 	    $actcontent->term = $term;
@@ -1163,8 +1280,13 @@ class AdminUserFunc {
 	    return $actcontent;
 	}
 
-	function getUserDetails($user)
+	function getUserDetails($user = null)
 	{
+	    if($user == null)
+	    {
+	        $user = $this->user;
+	    }
+
 	    $userdetail = DB::table('userdetails')->where('sn', $this->user->sn)->get();
 		if($userdetail != null)
 		{
@@ -1488,8 +1610,14 @@ adddtailreturn:
 		}
 
 		News::find($newsid)->delete();
-	
-		return redirect("admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
+
+	    $returnurl = Input::get('returnurl');
+		if($returnurl != null)
+		{
+			return redirect($returnurl);
+		}
+
+		return redirect("/admin?action=useractivity&id=".$userid."&tabpos=".$tabpos);
 	}
 
 	public function coursearrange()
@@ -1690,7 +1818,7 @@ adddtailreturn:
 	        }
 	    }
 
-	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
+	    return redirect('/admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
 	public function coursechoosestart()
@@ -1729,7 +1857,7 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
+	    return redirect('/admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
 	public function coursechoosestudsave()
@@ -1758,7 +1886,7 @@ adddtailreturn:
     	                    {
     	                        return redirect($tobj->returnurl.'&warning='.$warning);
     	                    }
-    	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+    	                    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
     	            
@@ -1772,7 +1900,7 @@ adddtailreturn:
     	                    {
     	                        return redirect($tobj->returnurl.'&warning='.$warning);
     	                    }
-    	                    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+    	                    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
     	        }
@@ -1791,7 +1919,7 @@ adddtailreturn:
 	            {
 	                return redirect($tobj->returnurl.'&warning='.$warning);
 	            }
-	            return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+	            return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
 	        }
 	    }
 
@@ -1847,7 +1975,7 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
+	    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
 	public function userexamadd()
@@ -1869,7 +1997,7 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('admin?action=userexam');
+	    return redirect('/admin?action=userexam');
 	}
 
 	public function userexamedt()
@@ -1892,7 +2020,7 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('admin?action=userexam');
+	    return redirect('/admin?action=userexam');
 	}
 
 	public function userexamdel()
@@ -1906,7 +2034,7 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('admin?action=userexam');
+	    return redirect('/admin?action=userexam');
 	}
 
 	public function userscoreedt()
@@ -1932,7 +2060,7 @@ adddtailreturn:
 	        }
 	    }
 
-	    return redirect('admin?action=userscore&id='.$tobj->userid.'&examsn='.$tobj->examsn);
+	    return redirect('/admin?action=userscore&id='.$tobj->userid.'&examsn='.$tobj->examsn);
 	}
 
 	public function coursestudsinfo($coursesn, $examsn = null)

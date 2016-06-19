@@ -1,5 +1,5 @@
 <div>
-  <a href="admin?action=usercourse&id={{ $user->id }}">返回</a><br>
+  <a href="/admin?action=usercourse&id={{ $user->id }}">返回</a><br>
   @if($user->grade == 1)
   <div class="alert alert-info" style="margin-top: 5px;">
     学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
@@ -90,7 +90,7 @@ function EndforCourseAlert()
 	tobj.userid = '{{ $user->id }}';
 	tobj.choose = '0';
 
-	tobj.returnurl = 'admin?action=usercourse/change&id={{ $user->id }}&term={{ $term->val }}';
+	tobj.returnurl = '/admin?action=usercourse/change&id={{ $user->id }}&term={{ $term->val }}';
 
 	dataPost('/admin/usercourse/choose/start', JSON.stringify(tobj), '{{ csrf_token() }}', null);	
 }
@@ -105,7 +105,7 @@ function studCourseChange(id)
 	tobj.term = tlink.attr('termval');
 	tobj.ids = JSON.parse(tlink.attr('ids'));
 	tobj.defids = JSON.parse(tlink.parent().parent().children('input').val());
-	tobj.returnurl = 'admin?action=usercourse/change&id={{ $user->id }}&term={{ $term->val }}';
+	tobj.returnurl = '/admin?action=usercourse/change&id={{ $user->id }}&term={{ $term->val }}';
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/usercourse/choose/studsave', JSON.stringify(tobj), '{{ csrf_token() }}', null);

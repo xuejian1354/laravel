@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Home;
 
-use DB,Auth;
+use DB, Auth, Input;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\AdminUserFunc;
@@ -25,15 +25,18 @@ class HomeController extends Controller {
 
 	public function news()
 	{
-	    $actcontent = (new AdminUserFunc())->getUserActivity();
+	    $adminUserFunc = new AdminUserFunc();
+	    $actcontent = $adminUserFunc->getUserActivity();
+	    $retview = 'home.news';
+	    if(Input::get('iscontent') == 1)
+	    {
+	        $retview = 'admin.useractivity.useractivity';
+	    }
 
-		return $this->getUserView('home.news')
-						->withTitle('news')
-						->withUser(Auth::user())
-						->withGlobalvals(Controller::getGlobalvals())
-						->withRecvnewspagetag($actcontent->recvnewspagetag)
-						->withSendnewspagetag($actcontent->sendnewspagetag)
-						->withNews($actcontent->news);
+        return $this->getUserView($retview)
+            	        ->withTitle('news')
+            	        ->withActcontent($actcontent)
+            	        ->withGlobalvals(Controller::getGlobalvals());
 	}
 
 	public function status()

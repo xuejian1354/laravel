@@ -135,7 +135,7 @@ function examEdtRequest()
 		}
 	});
 
-	tobj.returnurl = 'admin?action=userexam&id={{ $user->id }}';
+	tobj.returnurl = '/admin?action=userexam&id={{ $user->id }}';
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/userexam/edt', JSON.stringify(tobj), '{{ csrf_token() }}', '确定要修改选中考试?');
@@ -153,7 +153,7 @@ function examDelRequest()
 		}
 	});
 
-	tobj.returnurl = 'admin?action=userexam&id={{ $user->id }}';
+	tobj.returnurl = '/admin?action=userexam&id={{ $user->id }}';
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/userexam/del', JSON.stringify(tobj), '{{ csrf_token() }}', '确定要删除选中考试?');
@@ -222,7 +222,7 @@ $(".examcheck").bind("examEdtEvent", function() {
 @endif
 
 $('#termchoose').change(function(){
-	var reurl = 'admin?action=userexam&id={{ $user->id }}&term='+$(this).val();
+	var reurl = '/admin?action=userexam&id={{ $user->id }}&term='+$(this).val();
 	location.replace(reurl);
 });
 </script>

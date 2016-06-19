@@ -844,7 +844,7 @@ function roomEdtPost(data, token) {
   if(confirm("确定修改教室信息?")) {
     var postForm = document.createElement("form");
     postForm.method="post";
-    postForm.action = "admin/roomedt";
+    postForm.action = "/admin/roomedt";
 
     var dataInput = document.createElement("input");
     dataInput.setAttribute("name", "data");
@@ -867,7 +867,7 @@ function roomDelPost(data, token) {
   if(confirm("确定删除选中教室?")) {
     var postForm = document.createElement("form");
     postForm.method="post";
-    postForm.action = "admin/roomdel";
+    postForm.action = "/admin/roomdel";
 
     var dataInput = document.createElement("input");
     dataInput.setAttribute("name", "data");
@@ -917,6 +917,11 @@ function loadDeviceTab(pos) {
 
 function loadContent(bodyid, url) {
   var xmlhttp;
+
+  if($('#adminflag').text() == 1)
+  {
+	  url += '&adminflag=1';
+  }
 
   if (window.XMLHttpRequest)
   {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -980,7 +985,7 @@ function userDelAlert(id, userid, tabpos, token) {
   if(confirm("确定要删除该用户?")) {
     var postForm = document.createElement("form");
     postForm.method="post";
-    postForm.action = "admin/userdel";
+    postForm.action = "/admin/userdel";
 
     var tokenInput = document.createElement("input");
     tokenInput.setAttribute("name", "_token");
@@ -1006,7 +1011,7 @@ function userDelAlert(id, userid, tabpos, token) {
 function userEditAlert(id, token) {
 	var postForm = document.createElement("form");
 	postForm.method="post";
-	postForm.action = "admin/useredit";
+	postForm.action = "/admin/useredit";
 
 	var tokenInput = document.createElement("input");
 	tokenInput.setAttribute("name", "_token");
@@ -1143,7 +1148,7 @@ function deviceDelAlert(id, devsn, tabpos, token)
   if(confirm("确定要删除设备?\n\n序列号="+devsn)) {
     var postForm = document.createElement("form");
     postForm.method="post";
-    postForm.action = "admin/devdel";
+    postForm.action = "/admin/devdel";
 
     var tokenInput = document.createElement("input");
     tokenInput.setAttribute("name", "_token");
@@ -1171,7 +1176,7 @@ function deviceRemoveAreaAlert(id, devsn, roomsn, token)
   if(confirm("确定要要将该设备从列表中移除?\n\n序列号="+devsn)) {
     var postForm = document.createElement("form");
     postForm.method="post";
-    postForm.action = "admin/devmvarea";
+    postForm.action = "/admin/devmvarea";
 
     var tokenInput = document.createElement("input");
     tokenInput.setAttribute("name", "_token");
@@ -1199,7 +1204,7 @@ function deviceEditAlert(id, token, aroomsn) {
 
 	var postForm = document.createElement("form");
 	postForm.method="post";
-	postForm.action = "admin/devedit";
+	postForm.action = "/admin/devedit";
 
 	var tokenInput = document.createElement("input");
 	tokenInput.setAttribute("name", "_token");

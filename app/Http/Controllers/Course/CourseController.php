@@ -3,6 +3,7 @@
 use DB, Auth;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\AdminUserFunc;
 
 class CourseController extends Controller {
 
@@ -25,8 +26,10 @@ class CourseController extends Controller {
 
 	public function query()
 	{
+	    $actcontent = (new AdminUserFunc())->getUserCourse();
 		return $this->getUserView('course.query')
 						->withTitle('query')
+						->withActcontent($actcontent)
 						->withGlobalvals(Controller::getGlobalvals());
 	}
 
@@ -39,8 +42,10 @@ class CourseController extends Controller {
 
 	public function exam()
 	{
+	    $actcontent = (new AdminUserFunc())->getUserExam();
 	    return $this->getUserView('course.exam')
                 	    ->withTitle('exam')
+                	    ->withActcontent($actcontent)
                 	    ->withGlobalvals(Controller::getGlobalvals());
 	}
 
@@ -53,8 +58,10 @@ class CourseController extends Controller {
 
 	public function score()
 	{
+	    $actcontent = (new AdminUserFunc())->getUserScore();
 	    return $this->getUserView('course.score')
                 	    ->withTitle('score')
+                	    ->withActcontent($actcontent)
                 	    ->withGlobalvals(Controller::getGlobalvals());
 	}
 }

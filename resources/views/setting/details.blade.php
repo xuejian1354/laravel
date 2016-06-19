@@ -1,3 +1,6 @@
 @extends('app')
 @extends('setting.sidemenu')
-@extends('welcome.school')
+
+@section('content')
+@include('admin.userdetails.userdetails')
+@endsection

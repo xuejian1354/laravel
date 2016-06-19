@@ -14,7 +14,7 @@
 </div>
 <script type="text/javascript">
 $('#termchoose').change(function(){
-	var reurl = 'admin?action=userreport&id={{ $user->id }}&term='+$(this).val();
+	var reurl = '/admin?action=userreport&id={{ $user->id }}&term='+$(this).val();
 	location.replace(reurl);
 });
 </script>

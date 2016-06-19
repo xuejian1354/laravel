@@ -9,7 +9,7 @@
         <th>教师</th>
         <th>说明</th>
         <th>创建时间</th>
-        <th><a href="javascript:loadContent('academybody', 'admin?action=userinfo/addacademy');">添加</a></th>
+        <th><a href="javascript:loadContent('academybody', '/admin?action=userinfo/addacademy');">添加</a></th>
         <th><input type="checkbox" class="academiescheckall"></th>
       </tr>
     </thead>
@@ -23,7 +23,7 @@
         <td>{{ $academies[$index]->otherteachers }}</td>
         <td>{{ $academies[$index]->text }}</td>
         <td>{{ $academies[$index]->updated_at }}</td>
-        <td><a href="javascript:loadContent('academybody', 'admin?action=userinfo/academyedt&id={{ $academies[$index]->id }}');">修改</a></td>
+        <td><a href="javascript:loadContent('academybody', '/admin?action=userinfo/academyedt&id={{ $academies[$index]->id }}');">修改</a></td>
         <th><input type="checkbox" class="academycheck" eleid="{{ $academies[$index]->id }}"></th>
       </tr>
       @elseif($academypagetag->isavaliable())
@@ -43,7 +43,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=1&page={{ $academypagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=1&page={{ $academypagetag->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$academypagetag->start; $index < $academypagetag->end; $index++)
         @if($academypagetag->getPage() == $index)
@@ -59,7 +59,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=userinfo&tabpos=1&page={{ $academypagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="/admin?action=userinfo&tabpos=1&page={{ $academypagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>

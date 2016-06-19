@@ -2,7 +2,10 @@
   <form method="POST" action="{{ url('/admin/addnews') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     @if(isset($returnurl))
-      <input type="hidden" name="returnurl" value="{{ $returnurl }}">
+    <input type="hidden" name="returnurl" value="{{ $returnurl }}">
+    @endif
+    @if(isset($adminflag) && $adminflag == 1)
+    <input type="hidden" name="adminflag" value="1">
     @endif
     <label>标题</label>
     <input name="title" type="text" class="form-control" placeholder="必填">
@@ -56,9 +59,9 @@
     <div style="margin-top: 10px;">
       <button type="submit" class="btn btn-primary">添加</button>
       @if(isset($returnurl))
-      <a href="{{ $returnurl }}" class="btn btn-info">返回</a>
+      <a href="javascript:loadContent('activitycontent', '{{ $returnurl }}&iscontent=1');" class="btn btn-info">返回</a>
       @else
-      <a href="admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
+      <a href="/admin?action=userinfo&tabpos=0" class="btn btn-info">返回</a>
       @endif
     </div>
   </form>

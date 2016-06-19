@@ -36,7 +36,7 @@
             <td>{{ $arg->area }}</td>
             <td>{{ $arg->updated_at }}</td>
             <td>
-              <a href="{{ url('/admin?action=userfunc&id='.$arg->id) }}" class="btn btn-sm btn-primary">操作</a>
+              <a href="{{ url('/admin?action=userfunc&id='.$arg->id.'&adminmenus=1') }}" class="btn btn-sm btn-primary">操作</a>
             </td>
             <td>
               <a href="{{ url('/admin?action=usermanage/edit&tabpos='.Input::get('tabpos').'&page='.Input::get('page').'&id='.$arg->id) }}"
@@ -71,7 +71,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->start-1 }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
       @for($index=$pagetags[$i]->start; $index < $pagetags[$i]->end; $index++)
         @if($pagetags[$i]->getPage() == $index)
@@ -79,7 +79,7 @@
         @else
         <li>
         @endif
-          <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $index }}">{{ $index }}</a>
+          <a href="/admin?action=usermanage&tabpos={{ $i }}&page={{ $index }}">{{ $index }}</a>
         </li>
       @endfor
       @if($pagetags[$i]->end == $pagetags[$i]->getPageSize() + 1)
@@ -87,7 +87,7 @@
       @else
       <li>
       @endif
-        <a href="admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="/admin?action=usermanage&tabpos={{ $i }}&page={{ $pagetags[$i]->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   </nav>

@@ -1,3 +1,6 @@
 @extends('app')
 @extends('course.sidemenu')
-@extends('welcome.school')
+
+@section('content')
+@include('admin.userexam.userexam')
+@endsection

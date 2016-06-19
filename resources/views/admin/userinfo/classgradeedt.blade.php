@@ -54,7 +54,7 @@
     <textarea name="text" rows="12" class="form-control">{{ $classgrade->text }}</textarea>
     <div style="margin-top: 10px;">
       <button type="submit" class="btn btn-primary">修改</button>
-      <a href="admin?action=userinfo&tabpos=2" class="btn btn-info">返回</a>
+      <a href="/admin?action=userinfo&tabpos=2" class="btn btn-info">返回</a>
     </div>
   </form>
 </div>
