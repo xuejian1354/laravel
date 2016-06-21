@@ -1,5 +1,5 @@
 <div>
-  <a href="/admin?action=usercourse&id={{ $user->id }}">返回</a><br>
+  <a href="{{ $returnurl }}">返回</a><br>
   @if($user->grade == 1)
   <div class="alert alert-info" style="margin-top: 5px;">
     学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
@@ -60,6 +60,18 @@ function getCoursesObj()
 	var tobj = new Object(); 
 	tobj.term = '{{ $term->val }}';
 	tobj.userid = '{{ $user->id }}';
+
+	tobj.returnurl = "/course/choice";
+    if($('#adminflag').text() == 1)
+    {
+    	tobj.returnurl = "/admin";
+    }
+    tobj.returnurl += "?action=usercourse/choose&id={{ $user->id }}";
+    if($('#adminflag').text() == 1)
+    {
+    	tobj.returnurl += "&adminmenus=1";
+    }
+
 	tobj.courses = new Array();
 
 	$('.coursesval').each(function(){

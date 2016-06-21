@@ -2,5 +2,5 @@
 @extends('course.sidemenu')
 
 @section('content')
-@include('admin.usercourse.coursearrange')
+@include('admin.usercourse.choose')
 @endsection

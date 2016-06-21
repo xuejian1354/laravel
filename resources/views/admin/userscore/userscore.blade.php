@@ -78,6 +78,7 @@ function examSelect()
 {
 	var examsn = $('#optsel option:selected').attr('examsn');
 	var coursesn = $('#optsel option:selected').attr('coursesn');
+
 	loadContent('optlist', '/admin?action=userscore/opt&id={{ $user->id }}&examsn='+examsn+'&coursesn='+coursesn);
 }
 
@@ -88,6 +89,17 @@ function changeScoreRequest()
 	tobj.examsn = $('#optsel option:selected').attr('examsn');
 	tobj.coursesn = $('#optsel option:selected').attr('coursesn');
 	tobj.scores = new Array();
+
+	tobj.returnurl = "/course/score";
+	if($("#adminflag").text() == 1)
+	{
+		tobj.returnurl = "/admin";
+	}
+	tobj.returnurl += '?action=userscore&id='+tobj.userid+'&examsn='+tobj.examsn;
+	if($("#adminflag").text() == 1)
+	{
+		tobj.returnurl += "&adminmenus=1";
+	}
 
 	$('.trlist').each(function(){
 		var score = new Object();
@@ -116,7 +128,17 @@ $('#optsel').change(function(){
 @endif
 
 $('#termchoose').change(function(){
-	var reurl = '/admin?action=userscore&id={{ $user->id }}&term='+$(this).val();
-	location.replace(reurl);
+	var returl = "/course/score";
+	if($('#adminflag').text() == 1)
+	{
+		returl = "/admin";
+	}
+	returl += '?action=userscore&id={{ $user->id }}&term='+$(this).val();
+	if($('#adminflag').text() == 1)
+	{
+		returl += "&adminmenus=1";
+	}
+
+	location.replace(returl);
 });
 </script>

@@ -32,7 +32,7 @@
   <td class="classsubtitle" style="padding: 5px;">第{{ $t1 }}节<br>({{ $coursetime[$t1] }})</td>
   @foreach(['一', '二', '三', '四', '五', '六', '日'] as $y => $t2)
     <td class="arrangeweekcourse" style="padding: 5px;">
-      <button id="{{ $x.'-'.$y }}" sn="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->sn }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" snums="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->studentnums }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');">{!! $coursetable['星期'.$t2.'第'.$t1.'节']->table !!}</button>
+      <button id="{{ $x.'-'.$y }}" sn="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->sn }}" tval="{{ '星期'.$t2.'第'.$t1.'节' }}" snums="{{ $coursetable['星期'.$t2.'第'.$t1.'节']->studentnums }}" class="arrangeweekbtn" disabled="disabled" onclick="javascript:loadWeekEdt('{{ $x.'-'.$y }}');" style="min-height: 40px;">{!! $coursetable['星期'.$t2.'第'.$t1.'节']->table !!}</button>
     </td>
   @endforeach
 </tr>

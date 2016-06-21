@@ -1,36 +1,10 @@
-<div>
+<div id="coursecontent">
   @if($user->grade == 1)
   <h3>1.教师排课</h3>
-  <span>学期</span>
-  <select id="coursearrange" style="height: 26px;">
-    @for($index=0; $index < count($terms); $index++)
-    <option class="arropt"
-    @if($term->val == $terms[$index]->val)
-      selected="selected"
-    @endif 
-    isarranged="{{ $terms[$index]->coursearrange }}" start="{{ date('Y-m-d', strtotime($terms[$index]->arrangestart)) }}" end="{{ date('Y-m-d', strtotime($terms[$index]->arrangeend)) }}">{{ $terms[$index]->val }}</option>
-    @endfor
-  </select><br>
-  @if($terms[0]->coursearrange)
-  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangestart)) }}" style="margin-right: 10px;"> 到：<input id="termetime" type="text" value="{{ date('Y-m-d', strtotime($terms[0]->arrangeend)) }}"></div>
-  @else
-  <div style="margin: 10px 0;"> 从：<input id="termstime" type="text" style="margin-right: 10px;"> 到：<input id="termetime" type="text"></div>
-  @endif
-  <a id="coursearrangehref" href="javascript:courseArrangeRequest();" class="btn btn-primary" style="margin-bottom: 10px;">排课</a>
+  @include('admin.usercourse.coursearrange')
   <br><br>
   <h3>2.学生选课</h3>
-  <span>学期</span>
-  <select id="coursechoose" style="height: 26px; margin-right: 10px;">
-    @foreach($terms as $aterm)
-    <option
-    @if($term->val == $aterm->val)
-      selected="selected"
-    @endif  
-    ischoosen="{{ $aterm->coursechoose }}">{{ $aterm->val }}</option>
-    @endforeach
-  </select>
-  <a href="javascript:courseChooseRequest();" class="btn btn-info">选课</a>
-  <a href="javascript:courseChangeRequest();" class="btn btn-success" style="margin-left: 5px;">调课</a>
+  @include('admin.usercourse.coursechoice')
   @elseif($user->grade == 2)
   <div class="alert alert-info" style="margin-top: 5px;">
     <span>学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})</span>
@@ -68,7 +42,7 @@
           </div>
           <div id="teachercourseBody" class="modal-body container-fluid">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="returnurl" value="/admin?action=usercourse&id={{ $user->id }}">
+            <input type="hidden" name="returnurl" value="{{ $returnurl }}">
             <label>标题</label>
             <input id="teacherChangeTitle" name="title" type="text" class="form-control" readonly="true">
             <input name="allowgrade" type="hidden" class="form-control" value="指定用户">
@@ -192,38 +166,21 @@
   @endif
 </div>
 
-@if($user->grade == 1)
-<script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
-<script type="text/javascript">
-function courseArrangeRequest() {
-  location.replace("admin?action=usercourse/arrange&id={{ $user->id }}&term="
-            		  + $('#coursearrange').val()
-            		  + "&start="
-            		  + $('#termstime').val()
-            		  + "&end="
-            		  + $('#termetime').val());
-}
-
-function courseChooseRequest() {
-  location.replace("/admin?action=usercourse/choose&id={{ $user->id }}&term="
-            		  + $('#coursechoose').val());
-}
-
-function courseChangeRequest() {
-  location.replace("/admin?action=usercourse/change&id={{ $user->id }}&term="
-            		  + $('#coursechoose').val());
-}
-
-courseArrangeChanged();
-
-laydate({elem: '#termstime', format: 'YYYY-MM-DD'});
-laydate({elem: '#termetime', format: 'YYYY-MM-DD'});
-</script>
-
-@elseif($user->grade == 2 || $user->grade == 3)
+@if($user->grade == 2 || $user->grade == 3)
 <script type="text/javascript">
 $("#coursequery").change(function() {
-	location.replace("/admin?action=usercourse&id={{ $user->id }}&term="+$("#coursequery").val());
+	var returl = "/course/query";
+	if($('#adminflag').text() == 1)
+	{
+		returl = "/admin";
+	}
+	returl += "?action=usercourse&id={{ $user->id }}&term="+$("#coursequery").val();
+	if($('#adminflag').text() == 1)
+	{
+		returl += "&adminmenus=1";
+	}
+
+	location.replace(returl);
 });
 @if($user->grade == 2)
 $('.arrangeweekbtn').each(function(){
@@ -275,6 +232,12 @@ function studCourseChoose()
 	tobj.userid = '{{ $user->id }}';
 	tobj.username = '{{ $user->name }}';
 	tobj.term = '{{ $term->val }}';
+
+	tobj.adminflag = 0;
+	if($('#adminflag').text() == 1)
+	{
+		tobj.adminflag = 1;
+	}
 
 	dataPost('/admin/usercourse/choose/studsave', JSON.stringify(tobj), '{{ csrf_token() }}', null);
 }

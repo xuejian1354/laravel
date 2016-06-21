@@ -16,6 +16,7 @@
   <script type="text/javascript" src="{{ asset('/js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/bootstrap-submenu.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('/js/smartlab.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('/js/laydate.js') }}"></script>
 </head>
 <body>
   <nav class="smartlab-nav navbar navbar-fixed-top">

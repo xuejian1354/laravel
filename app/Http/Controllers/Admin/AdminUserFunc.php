@@ -80,169 +80,151 @@ class AdminUserFunc {
 
 	public function getFuncView()
 	{
-		if(Auth::user()->grade == 1 || Auth::user()->privilege == 5)
+		if(Auth::user()->privilege < 5 && Auth::user()->grade > 1)
 		{
-			if($this->menus->getAmenu()->action == 'useractivity')
+			if(Auth::user()->sn !== $this->user->sn)
 			{
-			    $actcontent = $this->getUserActivity($this->user, $this->term, $this->terms);
-			    if($actcontent->action == 'newscontent')
-			    {
-                    return view('admin.userinfo.newscontent')
-                            ->withActcontent($actcontent);
-			    }
-		        else if($actcontent->action == 'newsrecvlist')
-		        {
-	                return view('admin.userinfo.newsrecvlist')
-    	                    ->withActcontent($actcontent);
-	            }
-		        else if($actcontent->action == 'addnews')
-		        {
-	                return view('admin.userinfo.addnews')
-    	                    ->withActcontent($actcontent);
-		        }
-		        else if($actcontent->action == 'newsedts')
-		        {
-	                return view('admin.userinfo.newsedts')
-    	                    ->withActcontent($actcontent);
-	            }
-	            else if($actcontent->action == 'adminmenus')
-	            {
-	                return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-	                           ->withActcontent($actcontent);
-	            }
+				return view('errors.permitts');
+			}
+		}
 
-	            return view('admin.useractivity.useractivity')
-	                       ->withActcontent($actcontent);
-			}
-			else if($this->menus->getAmenu()->action == 'usercourse')
+		if($this->menus->getAmenu()->action == 'useractivity')
+		{
+			$actcontent = $this->getUserActivity($this->user, $this->term, $this->terms);
+			if($actcontent->action == 'newscontent')
 			{
-			    $actcontent = $this->getUserCourse($this->user, $this->term, $this->terms);
-			    if($actcontent->action == 'arrange')
-			    {
-			        $view = 'admin.admin';
-			        if(Input::get('isweektbody') == 'true')
-			        {
-			            $view = 'admin.usercourse.weektbody';;
-			        }
-
-			        return AdminController::getViewWithMenus($view, null, $actcontent->user)
-            			        ->withActcontent($actcontent);
-			    }
-			    elseif($actcontent->action == 'choose')
-			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-			                    ->withActcontent($actcontent);
-			    }
-			    elseif($actcontent->action == 'change')
-			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-			                    ->withActcontent($actcontent);
-			    }
-		        elseif($actcontent->action == 'coursestudsinfo')
-		        {
-		            return view('admin.usercourse.coursestudsinfo')
-		                     ->withActcontent($actcontent);
-		        }
-		        else if($actcontent->action == 'teacher')
-		        {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                			        ->withActcontent($actcontent);
-		        }
-		        elseif($actcontent->action == 'student')
-		        {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                			        ->withActcontent($actcontent);
-		        }
-		        elseif($actcontent->action == 'error')
-		        {
-		            return view('errors.permitts');
-		        }
-
-			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-			                 ->withActcontent($actcontent);
+				return view('admin.userinfo.newscontent')->withActcontent($actcontent);
 			}
-			else if($this->menus->getAmenu()->action == 'userclassgrade')
+			else if($actcontent->action == 'newsrecvlist')
 			{
-			    $actcontent = $this->getUserClassgrade($this->user);
-			    if($actcontent->action == 'error')
-			    {
-			        return view('errors.permitts');
-			    }
-			    elseif($actcontent->action == 'opt')
-			    {
-			        return view('admin.userclassgrade.opt')
-        			        ->withActcontent($actcontent);
-			    }
-			    elseif($actcontent->action == 'optnone')
-			    {
-			        return '<div class="alert alert-danger"><b>未发现设备</b></div>';
-			    }
-			    else if($actcontent->action == 'optroomnone')
-			    {
-	                return '<div class="alert alert-danger"><b>未发现教室</b></div>';
-			    }
-			    else if($actcontent->action == 'qsroom')
-			    {
-			        return view('admin.userclassgrade.qsroom')
-			                 ->withActcontent($actcontent);
-			    }
-
-			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-			                                ->withActcontent($actcontent);
+				return view('admin.userinfo.newsrecvlist')->withActcontent($actcontent);
 			}
-			else if($this->menus->getAmenu()->action == 'userexam')
+			else if($actcontent->action == 'addnews')
 			{
-			    $actcontent = $this->getUserExam($this->user, $this->term, $this->terms);
-			    if($actcontent->action == 'examteacher')
-			    {
-    			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                    			     ->withActcontent($actcontent);
-			    }
-			    elseif($actcontent->action == 'examstudent')
-			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                			        ->withActcontent($actcontent);
-			    }
+				return view('admin.userinfo.addnews')->withActcontent($actcontent);
 			}
-			else if($this->menus->getAmenu()->action == 'userscore')
+			else if($actcontent->action == 'newsedts')
 			{
-			    $actcontent = $this->getUserScore($this->user, $this->term, $this->terms);
-			    if($actcontent->action == 'optteacher')
-			    {
-		            return view('admin.userscore.coursestudsinfo')
-		                     ->withActcontent($actcontent);
-			    }
-			    else if($actcontent->action == 'scoreteacher')
-			    {
-    			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                                			     ->withActcontent($actcontent);
-			    }
-			    else if($actcontent->action == 'scorestudent')
-			    {
-			        return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                            			        ->withActcontent($actcontent);
-			    }
+				return view('admin.userinfo.newsedts')->withActcontent($actcontent);
 			}
-			else if($this->menus->getAmenu()->action == 'userreport')
+			else if($actcontent->action == 'adminmenus')
 			{
-			    $actcontent = $this->getUserReport($this->user, $this->term, $this->terms);
-			    return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-                            			    ->withActcontent($actcontent);
-			}
-			else if($this->menus->getAmenu()->action == 'userdetails')
-			{
-			    $actcontent = $this->getUserDetails($this->user);
 				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
-							->withActcontent($actcontent);
+											->withActcontent($actcontent);
 			}
-
-			return AdminController::getViewWithMenus('admin.admin', null, $this->user)
-						->withUser($this->user);
+		
+			return view('admin.useractivity.useractivity')->withActcontent($actcontent);
 		}
-		else
+		else if($this->menus->getAmenu()->action == 'usercourse')
 		{
-			return view('errors.permitts');
+			$actcontent = $this->getUserCourse($this->user, $this->term, $this->terms);
+			if($actcontent->action == 'adminmenus')
+			{
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+											->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'arrange')
+			{
+				$view = 'admin.usercourse.arrange';
+				if(Input::get('isweektbody') == 'true')
+				{
+					$view = 'admin.usercourse.weektbody';;
+				}
+		
+				return view($view)->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'choose')
+			{
+				return view('admin.usercourse.choose')->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'change')
+			{
+				return view('admin.usercourse.change')->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'coursestudsinfo')
+			{
+				return view('admin.usercourse.coursestudsinfo')->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'error')
+			{
+				return view('errors.permitts');
+			}
+		
+			return view('admin.usercourse.usercourse')->withActcontent($actcontent);
 		}
+		else if($this->menus->getAmenu()->action == 'userclassgrade')
+		{
+			$actcontent = $this->getUserClassgrade($this->user);
+			if($actcontent->action == 'error')
+			{
+				return view('errors.permitts');
+			}
+			elseif($actcontent->action == 'opt')
+			{
+				return view('admin.userclassgrade.opt')->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'optnone')
+			{
+				return '<div class="alert alert-danger"><b>未发现设备</b></div>';
+			}
+			else if($actcontent->action == 'optroomnone')
+			{
+				return '<div class="alert alert-danger"><b>未发现教室</b></div>';
+			}
+			else if($actcontent->action == 'qsroom')
+			{
+				return view('admin.userclassgrade.qsroom')->withActcontent($actcontent);
+			}
+		
+			return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+										->withActcontent($actcontent);
+		}
+		else if($this->menus->getAmenu()->action == 'userexam')
+		{
+			$actcontent = $this->getUserExam($this->user, $this->term, $this->terms);
+			if($actcontent->action == 'examteacher')
+			{
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+											->withActcontent($actcontent);
+			}
+			elseif($actcontent->action == 'examstudent')
+			{
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+											->withActcontent($actcontent);
+			}
+		}
+		else if($this->menus->getAmenu()->action == 'userscore')
+		{
+			$actcontent = $this->getUserScore($this->user, $this->term, $this->terms);
+			if($actcontent->action == 'optteacher')
+			{
+				return view('admin.userscore.coursestudsinfo')->withActcontent($actcontent);
+			}
+			else if($actcontent->action == 'scoreteacher')
+			{
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+											->withActcontent($actcontent);
+			}
+			else if($actcontent->action == 'scorestudent')
+			{
+				return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+											->withActcontent($actcontent);
+			}
+		}
+		else if($this->menus->getAmenu()->action == 'userreport')
+		{
+			$actcontent = $this->getUserReport($this->user, $this->term, $this->terms);
+			return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+										->withActcontent($actcontent);
+		}
+		else if($this->menus->getAmenu()->action == 'userdetails')
+		{
+			$actcontent = $this->getUserDetails($this->user);
+			return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+										->withActcontent($actcontent);
+		}
+		
+		return AdminController::getViewWithMenus('admin.admin', null, $this->user)->withUser($this->user);
 	}
 
 	function getUserActivity($user = null, $term = null, $terms = null)
@@ -769,6 +751,23 @@ class AdminUserFunc {
 
 	            $actcontent = new \stdClass();
 	            $actcontent->action = 'arrange';
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	                $actcontent->action = 'adminmenus';
+	                $actcontent->returnurl = '/admin';
+	            }
+	            else
+	            {
+	                $actcontent->returnurl = '/course/arrange';
+	            }
+	            $actcontent->returnurl .= '?action=usercourse&id='.$user->id;
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	                $actcontent->returnurl .= '&adminmenus=1';
+	            }
+
 	            $actcontent->user = $user;
 	            $actcontent->term = $term;
 	            $actcontent->rooms = Room::all();
@@ -796,6 +795,24 @@ class AdminUserFunc {
 
 	            $actcontent = new \stdClass();
 	            $actcontent->action = 'choose';
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	                $actcontent->action = 'adminmenus';
+	                $actcontent->returnurl = '/admin';
+	            }
+	            else
+	            {
+	                $actcontent->returnurl = '/course/choice';
+	            }
+
+	            $actcontent->returnurl .= '?action=usercourse&id='.$user->id;
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	                $actcontent->returnurl .= '&adminmenus=1';
+	            }
+
 	            $actcontent->classgrades = $classgrades;
 	            $actcontent->courses = Course::query()->OrderBy('course', 'asc')->GroupBy('course')->distinct()->get();
 	            $actcontent->coursechoose = $coursechoose;
@@ -807,6 +824,24 @@ class AdminUserFunc {
 	        {
 	            $actcontent = new \stdClass();
 	            $actcontent->action = 'change';
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	            	$actcontent->action = 'adminmenus';
+	                $actcontent->returnurl = '/admin';
+	            }
+	            else
+	            {
+	                $actcontent->returnurl = '/course/choice';
+	            }
+
+	            $actcontent->returnurl .= '?action=usercourse&id='.$user->id;
+
+	            if(Input::get('adminmenus') == 1)
+	            {
+	            	$actcontent->returnurl .= '&adminmenus=1';
+	            }
+
 	            $actcontent->user = $user;
 	            $actcontent->term = $term;
 	            $actcontent->courses = $this->getCoursesByTerm($term);
@@ -825,7 +860,17 @@ class AdminUserFunc {
 	        }
 
 	        $actcontent = new \stdClass();
-	        $actcontent->action = 'teacher';
+	        $actcontent->action = 'adminmenus';
+	        if(Input::get('adminmenus') == 1)
+	        {
+	        	$actcontent->returnurl = '/admin';
+	        }
+	        else
+	        {
+	        	$actcontent->returnurl = '/course/query';
+	        }
+	        $actcontent->returnurl .= '?action=usercourse&id='.$user->id;
+
 	        $actcontent->coursetime = $this->getCoursetimeArray();
 	        $actcontent->coursetable = $this->getCourseForWeekByTeacher($term->val, $user->name);
 	        $actcontent->term = $term;
@@ -838,7 +883,17 @@ class AdminUserFunc {
 	    elseif($this->user->grade == 3)
 	    {
 	        $actcontent = new \stdClass();
-	        $actcontent->action = 'student';
+	        $actcontent->action = 'adminmenus';
+	        if(Input::get('adminmenus') == 1)
+	        {
+	        	$actcontent->returnurl = '/admin';
+	        }
+	        else
+	        {
+	        	$actcontent->returnurl = '/course/query';
+	        }
+	        $actcontent->returnurl .= '?action=usercourse&id='.$user->id;
+
 	        $actcontent->coursetime = $this->getCoursetimeArray();
 	        $actcontent->coursetable = $this->getCourseForWeekByStudent($term->val, $user->name);
 	        $actcontent->term = $term;
@@ -856,7 +911,14 @@ class AdminUserFunc {
 	    }
 
 	    $actcontent = new \stdClass();
-	    $actcontent->action = 'admin';
+	    if(Input::get('adminmenus') == 1)
+	    {
+	        $actcontent->action = 'adminmenus';
+	    }
+	    else
+	    {
+	        $actcontent->action = 'admin';
+	    }
 	    $actcontent->term = $term;
 	    $actcontent->terms = Term::query()->orderBy('val', 'desc')->get();
 	    $actcontent->user = $user;
@@ -1818,6 +1880,11 @@ adddtailreturn:
 	        }
 	    }
 
+	    if(isset($tobj->returnurl))
+	    {
+	    	return redirect($tobj->returnurl);
+	    }
+
 	    return redirect('/admin?action=usercourse/choose&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
@@ -1886,7 +1953,14 @@ adddtailreturn:
     	                    {
     	                        return redirect($tobj->returnurl.'&warning='.$warning);
     	                    }
-    	                    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+
+    	                    $retpath = '/course/query';
+    	                    if($tobj->adminflag == 1)
+    	                    {
+    	                    	$retpath = '/admin';
+    	                    }
+
+    	                    return redirect($retpath.'?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
     	            
@@ -1900,7 +1974,14 @@ adddtailreturn:
     	                    {
     	                        return redirect($tobj->returnurl.'&warning='.$warning);
     	                    }
-    	                    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+
+    	                    $retpath = '/course/query';
+    	                    if($tobj->adminflag == 1)
+    	                    {
+    	                    	$retpath = '/admin';
+    	                    }
+
+    	                    return redirect($retpath.'?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
     	                }
     	            }
     	        }
@@ -1919,7 +2000,14 @@ adddtailreturn:
 	            {
 	                return redirect($tobj->returnurl.'&warning='.$warning);
 	            }
-	            return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
+
+	            $retpath = '/course/query';
+	            if($tobj->adminflag == 1)
+	            {
+	            	$retpath = '/admin';
+	            }
+
+	            return redirect($retpath.'?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term.'&choose=1&warning='.$warning);
 	        }
 	    }
 
@@ -1975,7 +2063,13 @@ adddtailreturn:
 	        return redirect($tobj->returnurl);
 	    }
 
-	    return redirect('/admin?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
+	    $retpath = '/course/query';
+	    if($tobj->adminflag == 1)
+	    {
+	    	$retpath = '/admin';
+	    }
+
+	    return redirect($retpath.'?action=usercourse&id='.$tobj->userid.'&term='.$tobj->term);
 	}
 
 	public function userexamadd()
@@ -2058,6 +2152,11 @@ adddtailreturn:
 	                'examsn' => $tobj->examsn,
 	            ]);
 	        }
+	    }
+
+	    if(isset($tobj->returnurl))
+	    {
+	    	return redirect($tobj->returnurl);
 	    }
 
 	    return redirect('/admin?action=userscore&id='.$tobj->userid.'&examsn='.$tobj->examsn);

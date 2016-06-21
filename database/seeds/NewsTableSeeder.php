@@ -18,8 +18,8 @@ class NewsTableSeeder extends Seeder
         if(count(News::all()) == 0)
         {
 	        News::create([
-	        		'sn' => AdminUserInfo::genNewsSN('Welcome to SmartClass'),
-	        		'title' => 'Welcome to SmartClass',
+	        		'sn' => AdminUserInfo::genNewsSN('Welcome to ClassYun'),
+	        		'title' => 'Welcome to ClassYun',
 	        		'subtitle' => 'Welcome longyuan smart labrotary or classroom main console',
 	        		'owner' => 'root',
 	        		'allowgrade' => '1',

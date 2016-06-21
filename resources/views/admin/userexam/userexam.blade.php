@@ -112,7 +112,16 @@ function examAddRequest()
 	tobj.time = $('#examAddtime').val();
 	tobj.addr = $('#examAddaddr').val();
 	tobj.owner = $('#examAddowner').val();
-	tobj.returnurl = 'admin?action=userexam&id={{ $user->id }}';
+	tobj.returnurl = "/course/exam";
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl = "/admin";
+	}
+	tobj.returnurl += '?action=userexam&id={{ $user->id }}';
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl += "&adminmenus=1";
+	}
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/userexam/add', JSON.stringify(tobj), '{{ csrf_token() }}');
@@ -135,7 +144,16 @@ function examEdtRequest()
 		}
 	});
 
-	tobj.returnurl = '/admin?action=userexam&id={{ $user->id }}';
+	tobj.returnurl = "/course/exam";
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl = "/admin";
+	}
+	tobj.returnurl += '?action=userexam&id={{ $user->id }}';
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl += "&adminmenus=1";
+	}
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/userexam/edt', JSON.stringify(tobj), '{{ csrf_token() }}', '确定要修改选中考试?');
@@ -153,7 +171,16 @@ function examDelRequest()
 		}
 	});
 
-	tobj.returnurl = '/admin?action=userexam&id={{ $user->id }}';
+	tobj.returnurl = "/course/exam";
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl = "/admin";
+	}
+	tobj.returnurl += '?action=userexam&id={{ $user->id }}';
+	if($('#adminflag').text() == 1)
+	{
+		tobj.returnurl += "&adminmenus=1";
+	}
 
 	//alert(JSON.stringify(tobj));
 	dataPost('/admin/userexam/del', JSON.stringify(tobj), '{{ csrf_token() }}', '确定要删除选中考试?');
@@ -222,7 +249,17 @@ $(".examcheck").bind("examEdtEvent", function() {
 @endif
 
 $('#termchoose').change(function(){
-	var reurl = '/admin?action=userexam&id={{ $user->id }}&term='+$(this).val();
+	var reurl = "/course/exam";
+	if($('#adminflag').text() == 1)
+	{
+		reurl = "/admin";
+	}
+	reurl += '?action=userexam&id={{ $user->id }}&term='+$(this).val();
+	if($('#adminflag').text() == 1)
+	{
+		reurl += "&adminmenus=1";
+	}
+
 	location.replace(reurl);
 });
 </script>

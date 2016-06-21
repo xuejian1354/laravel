@@ -106,7 +106,7 @@ h6, .h6 {
 }
 
 .dropdown-link:hover .dropdown-menu {
-	display: block;
+	display: none;
 }
 
 @media (max-width: 768px) {

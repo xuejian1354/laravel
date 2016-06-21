@@ -12,7 +12,7 @@
 
 //全局配置，如果采用默认均不需要改动
 var config =  {
-    path: 'css/laydate/', //laydate所在路径
+    path: '/css/laydate/', //laydate所在路径
     defSkin: 'default', //初始化皮肤
     format: 'YYYY-MM-DD', //日期格式
     min: '1990-01-01 00:00:00', //最小日期

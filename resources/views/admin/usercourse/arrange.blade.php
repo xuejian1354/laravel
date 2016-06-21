@@ -1,5 +1,5 @@
 <div>
-  <a href="admin?action=usercourse&id={{ $user->id }}">返回</a><br>
+  <a href="{{ $returnurl }}">返回</a><br>
   @if($user->grade == 1)
   <div class="alert alert-info" style="margin-top: 5px;">
     学期：{{ $term->val }} ({{ date('Y年m月d日', strtotime($term->arrangestart)) }} ～ {{ date('Y年m月d日', strtotime($term->arrangeend)) }})
@@ -133,7 +133,17 @@ function courseArrangeAlert(token, force) {
 
 	    var returnurlInput = document.createElement("input");
 	    returnurlInput.setAttribute("name", "returnurl");
-	    returnurlInput.setAttribute("value", "/admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
+	    var edtreturl = "/course/arrange";
+	    if($('#adminflag').text() == 1)
+	    {
+	    	edtreturl = "/admin";
+	    }
+	    edtreturl += "?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val();
+	    if($('#adminflag').text() == 1)
+	    {
+	    	edtreturl += "&adminmenus=1";
+	    }
+	    returnurlInput.setAttribute("value", edtreturl);
 	    postForm.appendChild(returnurlInput);
 
 	    var tokenInput = document.createElement("input");
@@ -163,8 +173,8 @@ function courseArrangeDelAlert(token) {
 	tobj.time = $('#usercourseOptHeader').text();
 	tobj.term = '{{ $term->val }}';
 	tobj.teacher = $('#arrangeteacher').val();
-	
-	if(confirm("确定删除"+tobj.term+tobj.time+"位于"+tobj.room+"处的课程？"))
+
+	if(confirm("确定删除"+tobj.term+tobj.time+"课程？"))
 	{
 	    var postForm = document.createElement("form");
 	    postForm.method="post";
@@ -177,7 +187,17 @@ function courseArrangeDelAlert(token) {
 
 	    var returnurlInput = document.createElement("input");
 	    returnurlInput.setAttribute("name", "returnurl");
-	    returnurlInput.setAttribute("value", "/admin?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val());
+	    var delreturl = "/course/arrange";
+	    if($('#adminflag').text() == 1)
+	    {
+	    	delreturl = "/admin";
+	    }
+	    delreturl += "?action=usercourse/arrange&edit=1&id={{ $user->id }}&term={{ $term->val }}&start={{ date('Y-m-d-', strtotime($term->arrangestart)) }}&end={{ date('Y-m-d-', strtotime($term->arrangeend)) }}&teacher="+$('#arrangeteacher').val();
+	    if($('#adminflag').text() == 1)
+	    {
+	    	delreturl += "&adminmenus=1";
+	    }
+	    returnurlInput.setAttribute("value", delreturl);
 	    postForm.appendChild(returnurlInput);
 
 	    var tokenInput = document.createElement("input");
