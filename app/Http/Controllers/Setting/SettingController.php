@@ -26,6 +26,7 @@ class SettingController extends Controller {
 	    $actcontent = (new AdminUserFunc())->getUserDetails();
 	    return $this->getUserView('setting.details')
                 	    ->withTitle('details')
+                	    ->withAdminmenus(0)
                 	    ->withActcontent($actcontent)
                 	    ->withGlobalvals(Controller::getGlobalvals());
 	}

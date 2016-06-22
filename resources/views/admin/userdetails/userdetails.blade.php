@@ -9,6 +9,11 @@
   <form method="POST" action="{{ url('/admin/userdetails/adddetail') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <input type="hidden" name="sn" value="{{ $user->sn }}">
+    @if($adminmenus == 1)
+    <input type="hidden" name="adminflag" value="1">
+    @else
+    <input type="hidden" name="adminflag" value="0">
+    @endif
     <table class="table table-striped table-bordered">
       <tbody>
         <tr>
@@ -141,6 +146,11 @@
   <form method="POST" action="{{ url('/admin/userdetails/adddetail') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <input type="hidden" name="sn" value="{{ $user->sn }}">
+    @if($adminmenus == 1)
+    <input type="hidden" name="adminflag" value="1">
+    @else
+    <input type="hidden" name="adminflag" value="0">
+    @endif
     <table class="table table-striped table-bordered">
       <tbody>
         <tr>

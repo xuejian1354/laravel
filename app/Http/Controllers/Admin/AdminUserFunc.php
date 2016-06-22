@@ -221,6 +221,7 @@ class AdminUserFunc {
 		{
 			$actcontent = $this->getUserDetails($this->user);
 			return AdminController::getViewWithMenus('admin.admin', null, $actcontent->user)
+										->withAdminmenus(1)
 										->withActcontent($actcontent);
 		}
 		
@@ -1594,12 +1595,26 @@ class AdminUserFunc {
 		}
 
 adddtailreturn:
-		return AdminController::getViewWithMenus('admin.admin', 'userdetails')
-									->withAcademies(Academy::all())
-									->withClassgrades(Classgrade::all())
-									->withUserdetail($userdetail)
-									->withUser($user)
-									->withInfo($info);
+		if(Input::get('adminflag') == 1)
+		{
+			return AdminController::getViewWithMenus('admin.admin', 'userdetails')
+						->withAdminmenus(1)
+						->withAcademies(Academy::all())
+						->withClassgrades(Classgrade::all())
+						->withUserdetail($userdetail)
+						->withUser($user)
+						->withInfo($info);
+		}
+
+		return view('setting.details')
+				->withAdminmenus(0)
+				->withTitle('details')
+				->withAcademies(Academy::all())
+				->withClassgrades(Classgrade::all())
+				->withUserdetail($userdetail)
+				->withUser($user)
+				->withInfo($info)
+				->withGlobalvals(Controller::getGlobalvals());
 	}
 
 	public function addAllowTextToNews($news)
