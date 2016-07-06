@@ -291,8 +291,7 @@ class AdminUserInfo {
 		if(($user!= null && $user->grade == 4)
 			|| ($user != null && $user->privilege == 1)
 			|| Auth::user()->grade == 4
-			|| Auth::user()->privilege == 1
-			|| (Auth::user()->grade != 1 && Auth::user()->privilege != 5))
+			|| Auth::user()->privilege == 1)
 		{
 			return view('errors.permitts');
 		}

@@ -1497,10 +1497,17 @@ function getCurDate()
 {
 	var curDate = new Date();
 	var mm = curDate.getMonth()+1;
+	var dd = curDate.getDate();
+	
 	if(mm < 10)
 	{
 		mm = '0' + mm;
 	}
+	
+	if(dd < 10)
+	{
+		dd = '0' + dd;
+	}
 
-	return curDate.getFullYear()+'-'+mm+'-'+curDate.getDate();
+	return curDate.getFullYear()+'-'+mm+'-'+dd;
 }

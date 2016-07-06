@@ -6,7 +6,7 @@
   
   <title>{{ $globalvals['title'] }}</title>
   
-  <link rel="shortcut icon" href="{{ asset('/img/favicon.icon') }}">
+  <link rel="shortcut icon" href="{{ asset('/img/favicon.ico') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/smartlab.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap-submenu.min.css') }}">

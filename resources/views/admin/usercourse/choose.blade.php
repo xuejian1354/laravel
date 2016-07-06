@@ -66,7 +66,7 @@ function getCoursesObj()
     {
     	tobj.returnurl = "/admin";
     }
-    tobj.returnurl += "?action=usercourse/choose&id={{ $user->id }}";
+    tobj.returnurl += "?action=usercourse/choose&id={{ $user->id }}&term={{ $term->val }}";
     if($('#adminflag').text() == 1)
     {
     	tobj.returnurl += "&adminmenus=1";
