@@ -20,7 +20,7 @@
       </thead>
       @include('admin.devstats.gwasync')
     </table>
-    <table class="table table-striped table-dev hidden" style="min-width: 1050px;">
+    <table class="table table-striped table-dev hidden">
       <thead>
        <tr>
           <th>#</th>

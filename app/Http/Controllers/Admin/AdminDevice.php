@@ -108,7 +108,7 @@ class AdminDevice {
 
 				return AdminController::getViewWithMenus($async)
 							->withRoom($room[0])
-							->withDevcmds($devcmds)
+							->withDevcmds(Controller::getDevCmds())
 							->withUsers(User::all())
 							->withGwpagetag($this->gwPagetag)
 							->withDevpagetag($this->devPagetag)

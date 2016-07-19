@@ -13,7 +13,7 @@
       <td>{{ $devices[$index]->ispublic }}</td>
       <td>{{ $devices[$index]->owner }}</td>
       <td>{{ $devices[$index]->updated_at }}</td>
-      <td style="min-width: 160px;">
+      <td style="min-width: 162px;">
         <button onclick="javascript:deviceOptDialog('{{ $devices[$index]->name }}', '{{ $devices[$index]->gw_sn }}', '{{ $devices[$index]->dev_sn }}', '{{ $devices[$index]->dev_type }}', '{{ $devices[$index]->iscmdfound }}');" type="button" class="btn btn-info" role="button" data-target="#devOptModal" data-toggle="modal">操作</button>
         <button onclick="location='{{ url('/admin?action=devstats/devedit&page='.$devpagetag->getPage().'&id='.$devices[$index]->id) }}'" type="button" class="btn btn-primary" role="button">修改</button>
         <button onclick="javascript:deviceDelAlert('{{ $devices[$index]->id }}', '{{ $devices[$index]->dev_sn }}', '1', '{{ csrf_token() }}');" type="button" class="btn btn-danger" role="button">删除</button>
