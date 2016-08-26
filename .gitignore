@@ -3,6 +3,7 @@
 /public/storage
 /vendor
 /.idea
+/.settings
 Homestead.json
 Homestead.yaml
 .env
