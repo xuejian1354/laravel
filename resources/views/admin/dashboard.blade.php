@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Starter</title>
+  <meta name="viewport" content="width=device-width">
+  <title>Cullive</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -16,6 +13,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css') }}">
   <!-- Ionicons -->
   <link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css') }}">
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.print.css') }}" media="print">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/dist/css/AdminLTE.min.css') }}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
@@ -55,9 +55,9 @@ desired effect
 <div class="wrapper">
 
   <!-- Main Header -->
-  @include('lte.header')
+  @include('admin.header')
   <!-- Left side column. contains the logo and sidebar -->
-  @include('lte.sidebar')
+  @include('admin.mainside')
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -83,10 +83,10 @@ desired effect
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
-  @include('lte.footer')
+  @include('admin.footer')
 
   <!-- Control Sidebar -->
-  @include('lte.setside')
+  @include('admin.setside')
   <!-- /.control-sidebar -->
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
@@ -103,9 +103,7 @@ desired effect
 <!-- AdminLTE App -->
 <script src="{{ asset('/bower_components/AdminLTE/dist/js/app.min.js') }}"></script>
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
+<!-- Page script -->
+@yield('conscript')
 </body>
 </html>

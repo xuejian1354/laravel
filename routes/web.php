@@ -11,8 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'AdminController@index');
 
-Route::get('adminlte', 'LteTestController@index');
+Route::get('/curinfo', 'AdminController@curInfo');
+Route::get('/areactrl', 'AdminController@areaCtrl');
+Route::get('/devstats', 'AdminController@devStats');
+Route::get('/videoreal', 'AdminController@videoReal');
+Route::get('/alarminfo', 'AdminController@alarmInfo');
