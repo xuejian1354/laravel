@@ -5,75 +5,81 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\ConsoleMenu;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Input;
 
 class AdminController extends Controller
 {
-	private $data = Array();
-	
-	function __construct() {
-		$this->data['tasks'] = [
-				[
-						'name' => 'Design New Dashboard',
-						'progress' => '87',
-						'color' => 'danger'
-				],
-				[
-						'name' => 'Create Home Page',
-						'progress' => '76',
-						'color' => 'warning'
-				],
-				[
-						'name' => 'Some Other Task',
-						'progress' => '32',
-						'color' => 'success'
-				],
-				[
-						'name' => 'Start Building Website',
-						'progress' => '56',
-						'color' => 'info'
-				],
-				[
-						'name' => 'Develop an Awesome Algorithm',
-						'progress' => '12',
-						'color' => 'success'
-				]
-		];
+	public function index(Request $request) {
+		return redirect('curinfo');
 	}
 	
-	public function index() {
+	public function curInfo(Request $request) {
+		return $this->getViewWithMenus('curinfo', $request)
+						->with('page_title', '当前信息')
+						->with('page_description', '主页面实时刷新，显示新的状态');
+	}
 
-		return $this->curInfo();
+	public function areaCtrl(Request $request, $areaid = null) {
+		return $this->getViewWithMenus('areactrl', $request)
+						->with('page_title', '场景监控'.$areaid);
+	}
+
+	public function devStats(Request $request) {
+		return $this->getViewWithMenus('devstats', $request)
+						->with('page_title', '设备状态');
+	}
+
+	public function videoReal(Request $request) {
+		return $this->getViewWithMenus('videoreal', $request)
+						->with('page_title', '视频图像');
+	}
+
+	public function alarmInfo(Request $request) {
+		return $this->getViewWithMenus('alarminfo', $request)
+						->with('page_title', '报警提示');
+	}
+
+	public function getViewWithMenus($view = null, Request $request, $data = [], $mergeData = [])
+	{
+		return view($view, $data, $mergeData)
+				->with('reurl', $this->getReurlArray())
+				->with('console_menus', (new ConsoleMenu())->getConsleMenuLists($request->path()));
+	}
+
+	public static function getReurlArray() {
+		$reurl = Array();
+		foreach (['menu_stats'] as $ele) {
+			$val = Input::get($ele);
+			if($val != null) {
+				$reurl[$ele] = $val;
+			}
+		}
+
+		return $reurl;
 	}
 	
-	public function curInfo() {
-		return view('curinfo')
-				->with($this->data)
-				->with('page_title', '当前信息')
-				->with('page_description', '主页面实时刷新，显示新的状态');
-	}
+	public static function withurl($url) {
 
-	public function areaCtrl() {
-		return view('areactrl')
-				->with($this->data)
-				->with('page_title', '场景监控');
-	}
+		$params = '';
 
-	public function devStats() {
-		return view('devstats')
-				->with($this->data)
-				->with('page_title', '设备状态');
-	}
+		$reurl = AdminController::getReurlArray();
+		foreach ($reurl as $k => $v) {
+			$params .= '&'.$k.'='.$v;
+		}
+		$params = substr($params, 1);
 
-	public function videoReal() {
-		return view('videoreal')
-				->with($this->data)
-				->with('page_title', '视频图像');
-	}
+		if(strstr($url, '?') == false && strlen($params) > 0) {
+			$url = $url.'?'.$params;
+		}
+		else {
+			$url = $url.$params;
+		}
 
-	public function alarmInfo() {
-		return view('alarminfo')
-				->with($this->data)
-				->with('page_title', '报警提示');
+		return url($url);
 	}
 }
     

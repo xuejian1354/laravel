@@ -1,16 +1,14 @@
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
-
   <!-- sidebar: style can be found in sidebar.less -->
   <section class="sidebar">
-
     <!-- Sidebar user panel (optional) -->
     <div class="user-panel">
       <div class="pull-left image">
-        <img src="{{ asset('/bower_components/AdminLTE/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
+        <img src="{{ asset('/bower_components/AdminLTE/dist/img/user_579px_1201412_easyicon.net.png') }}" class="img-circle" alt="User Image">
       </div>
       <div class="pull-left info">
-        <p>Alexander Pierce</p>
+        <p>{{ Auth::user()->name }}</p>
         <!-- Status -->
         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
       </div>
@@ -20,39 +18,49 @@
     <ul class="sidebar-menu">
       <li class="header">智能农业系统</li>
       <!-- Optionally, you can add icons to the links -->
-      <li class="active">
-        <a href="{{ url('curinfo') }}"><i class="fa fa-paw"></i><span>当前信息</span></a>
-      </li>
-      <li class="treeview">
-        <a href="#"><i class="fa fa-file-picture-o"></i> <span>场景监控</span>
-          <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li>
-            <a href="{{ url('areactrl') }}"><i class="fa fa-th-large"></i>大棚1</a>
-          </li>
-          <li>
-            <a href="{{ url('areactrl') }}"><i class="fa fa-th-large"></i>大棚2</a>
-          </li>
-          <li>
-            <a href="{{ url('areactrl') }}"><i class="fa fa-align-center"></i>鱼业基地</a>
-          </li>
-          <li>
-            <a href="{{ url('areactrl') }}"><i class="fa fa-pause"></i>养猪场</a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a href="{{ url('devstats') }}"><i class="fa fa-chain"></i> <span>设备状态</span></a>
-      </li>
-      <li>
-        <a href="{{ url('videoreal') }}"><i class="fa fa-video-camera"></i> <span>视频图像</span></a>
-      </li>
-      <li>
-        <a href="{{ url('alarminfo') }}"><i class="fa fa-volume-up"></i> <span>报警提示</span></a>
-      </li>
+      @foreach($console_menus[0] as $home_menu)
+        @if($home_menu->haschild == 0)
+        @if(isset($home_menu->isactive) && $home_menu->isactive == true)
+        <li class="active">
+        @else
+        <li>
+        @endif
+          <a href="{{ App\Http\Controllers\AdminController::withurl($home_menu->action) }}">
+            <i class="{{ $home_menu->img }}"></i><span>{{ $home_menu->name }}</span>
+          </a>
+        </li>
+        @else
+        @if(isset($home_menu->isactive) && $home_menu->isactive == true)
+        <li class="treeview active">
+        @else
+        <li class="treeview">
+        @endif
+          <a href="#"><i class="{{ $home_menu->img }}"></i>
+            <span>{{ $home_menu->name }}</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+          @if(isset($console_menus[$home_menu->inode]))
+            @foreach($console_menus[$home_menu->inode] as $child_menu)
+            @if(isset($child_menu->isactive) && $child_menu->isactive == true)
+            <li class="active">
+            @else
+            <li>
+            @endif
+              <a href="{{ App\Http\Controllers\AdminController::withurl($child_menu->action) }}">
+                <i class="{{ $child_menu->img }}"></i><span>{{ $child_menu->name }}</span>
+              </a>
+            </li>
+            @endforeach
+          @else
+            <li><a href="#"><i></i><span>None</span></a></li>
+          @endif
+          </ul>
+        </li>
+        @endif
+      @endforeach
     </ul>
     <!-- /.sidebar-menu -->
   </section>

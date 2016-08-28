@@ -51,7 +51,11 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
+@if(isset($reurl['menu_stats']) && $reurl['menu_stats'] == 'mini')
+<body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
+@else
 <body class="hold-transition skin-blue sidebar-mini">
+@endif
 <div class="wrapper">
 
   <!-- Main Header -->
