@@ -6,7 +6,7 @@
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini"><b>C</b>ul</span>
     <!-- logo for regular state and mobile devices -->
-    <span class="logo-lg"><b>C</b>ullive</span>
+    <span class="logo-lg"><b>{{ App\Globalval::getVal('title') }}</b></span>
   </a>
 
   <!-- Header Navbar -->

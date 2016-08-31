@@ -13,5 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ConsoleMenuTableSeeder::class);
         $this->call(UserTableSeeder::class);
+        $this->call(GlobalvalTableSeeder::class);
+        $this->call(AreaTableSeeder::class);
     }
 }

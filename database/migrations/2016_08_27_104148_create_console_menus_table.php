@@ -17,7 +17,7 @@ class CreateConsoleMenusTable extends Migration
         {
         	$table->increments('id');
             $table->string('name');
-            $table->string('action');
+            $table->string('action')->nullable();
             $table->integer('pnode');
             $table->integer('inode');
             $table->boolean('haschild');
