@@ -6,9 +6,8 @@
     <!-- small box -->
     <div class="small-box bg-aqua">
       <div class="inner">
-        <h3>150</h3>
-
-        <p>New Orders</p>
+        <h3>{{ App\Device::query()->count() }}</h3>
+        <p><b>设 备</b></p>
       </div>
       <div class="icon">
         <i class="ion ion-android-bookmark"></i>
@@ -21,9 +20,8 @@
     <!-- small box -->
     <div class="small-box bg-green">
       <div class="inner">
-        <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-        <p>Bounce Rate</p>
+        <h3>{{ App\Area::query()->count() }}</h3>
+        <p><b>场 景</b></p>
       </div>
       <div class="icon">
         <i class="ion ion-images"></i>
@@ -36,9 +34,8 @@
     <!-- small box -->
     <div class="small-box bg-yellow">
       <div class="inner">
-        <h3>44</h3>
-
-        <p>User Registrations</p>
+        <h3>{{ App\User::query()->count() }}</h3>
+        <p><b>人 员</b></p>
       </div>
       <div class="icon">
         <i class="ion ion-person-stalker"></i>
@@ -51,9 +48,9 @@
     <!-- small box -->
     <div class="small-box bg-red">
       <div class="inner">
-        <h3>65</h3>
+        <h3>65<sup style="font-size: 20px">%</sup></h3>
 
-        <p>Unique Visitors</p>
+        <p><b>更 新</b></p>
       </div>
       <div class="icon">
         <i class="ion ion-pie-graph"></i>
@@ -70,16 +67,13 @@
     <div class="box box-primary">
       <div class="box-header with-border">
         <i class="fa fa-bar-chart-o"></i>
-
-        <h3 class="box-title">Interactive Area Chart</h3>
-
-        <div class="box-tools pull-right">
-        Real time
+        <h3 class="box-title">统计信息</h3>
+        <!--div class="box-tools pull-right">
           <div class="btn-group" id="realtime" data-toggle="btn-toggle">
             <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
             <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
           </div>
-        </div>
+        </div-->
       </div>
       <div class="box-body">
         <div id="interactive" style="height: 300px; padding: 0px; position: relative;"><canvas class="flot-base" width="908" height="300" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 908px; height: 300px;"></canvas><div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);"><div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 21px; text-align: center;">0</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 106px; text-align: center;">10</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 195px; text-align: center;">20</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 283px; text-align: center;">30</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 372px; text-align: center;">40</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 460px; text-align: center;">50</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 549px; text-align: center;">60</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 637px; text-align: center;">70</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 726px; text-align: center;">80</div><div class="flot-tick-label tickLabel" style="position: absolute; max-width: 82px; top: 282px; left: 814px; text-align: center;">90</div></div><div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;"><div class="flot-tick-label tickLabel" style="position: absolute; top: 269px; left: 13px; text-align: right;">0</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 215px; left: 7px; text-align: right;">20</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 161px; left: 7px; text-align: right;">40</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 108px; left: 7px; text-align: right;">60</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 54px; left: 7px; text-align: right;">80</div><div class="flot-tick-label tickLabel" style="position: absolute; top: 1px; left: 1px; text-align: right;">100</div></div></div><canvas class="flot-overlay" width="908" height="300" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 908px; height: 300px;"></canvas></div>
@@ -87,55 +81,43 @@
       <!-- /.box-body-->
     </div>
     <!-- /.box -->
-
   </div>
+
   <div class="col-md-6">
     <!-- The time line -->
     <ul class="timeline">
-      <!-- timeline time label -->
-      <li class="time-label">
-        <span class="bg-red">
-          10 Feb. 2014
-        </span>
-      </li>
+      @foreach($record->data as $redata)
+        @if(($day = date('j M. Y', strtotime($redata->updated_at))) != (isset($exday)?$exday:'') )
+          <!-- timeline time label -->
+          <li class="time-label">
+            <span class="bg-red">{{ $exday=$day, $day }}</span>
+          </li>
       <!-- /.timeline-label -->
+        @endif
+      
       <!-- timeline item -->
       <li>
-        <i class="fa fa-envelope bg-blue"></i>
-
+        <i class="{{ $redata->rel_action->img }}"></i>
         <div class="timeline-item">
-          <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
-
-          <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
-
-          <div class="timeline-body">
-            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-            weebly ning heekya handango imeem plugg dopplr jibjab, movity
-            jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-            quora plaxo ideeli hulu weebly balihoo...
-          </div>
-          <div class="timeline-footer">
-            <a class="btn btn-primary btn-xs">Read more</a>
-            <a class="btn btn-danger btn-xs">Delete</a>
-          </div>
+          <span class="time"><i class="fa fa-clock-o"></i>{{ date('h:i:s', strtotime($redata->updated_at)) }}</span>
+          <h3 class="timeline-header no-border">{{ $redata->content }}</h3>
+		  @if(isset($redata->data))
+          <div class="timeline-body">{{ $redata->data }}</div>
+          @endif
         </div>
       </li>
       <!-- END timeline item -->
-      <!-- timeline item -->
-      <li>
-        <i class="fa fa-user bg-aqua"></i>
-
-        <div class="timeline-item">
-          <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
-
-          <h3 class="timeline-header no-border"><a href="#">Sarah Young</a> accepted your friend request</h3>
-        </div>
-      </li>
-      <!-- END timeline item -->
+	  @endforeach
       <li>
         <i class="fa fa-clock-o bg-gray"></i>
+        @if($record->hasmore)
+        <div class="timeline-item">
+          <a href="#" class="btn btn-primary btn-xs pull-right">more</a>
+        </div>
+        @endif
       </li>
     </ul>
+    <!-- END time line -->
   </div>
 </div><!-- /.row -->
 @endsection

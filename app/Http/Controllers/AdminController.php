@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Input;
+use App\Area;
+use App\Record;
 
 class AdminController extends Controller
 {
@@ -18,36 +20,54 @@ class AdminController extends Controller
 	}
 	
 	public function curInfo(Request $request) {
+
+		$record = new \stdClass();
+		$record->data = Record::query()->orderBy('updated_at', 'desc')->get();
+		$record->hasmore = false;
+
+		if(count($record->data) > 5) {
+			$record->hasmore = true;
+			$record->data = array_slice(iterator_to_array($record->data), 0, 5);
+		}
+
 		return $this->getViewWithMenus('curinfo', $request)
-						->with('page_title', '当前信息')
-						->with('page_description', '主页面实时刷新，显示新的状态');
+						->with('page_description', '智能农业控制平台')
+						->with('record', $record);
 	}
 
 	public function areaCtrl(Request $request, $areaid = null) {
-		return $this->getViewWithMenus('areactrl', $request)
-						->with('page_title', '场景监控'.$areaid);
+		return $this->getViewWithMenus('areactrl', $request);
 	}
 
 	public function devStats(Request $request) {
-		return $this->getViewWithMenus('devstats', $request)
-						->with('page_title', '设备状态');
+		return $this->getViewWithMenus('devstats', $request);
 	}
 
 	public function videoReal(Request $request) {
-		return $this->getViewWithMenus('videoreal', $request)
-						->with('page_title', '视频图像');
+		return $this->getViewWithMenus('videoreal', $request);
 	}
 
 	public function alarmInfo(Request $request) {
-		return $this->getViewWithMenus('alarminfo', $request)
-						->with('page_title', '报警提示');
+		return $this->getViewWithMenus('alarminfo', $request);
 	}
 
 	public function getViewWithMenus($view = null, Request $request, $data = [], $mergeData = [])
 	{
+		$select_menus = array();
+		$console_menus = (new ConsoleMenu())->getConsleMenuLists($request->path());
+
+		foreach ($console_menus as $menus) {
+			foreach ($menus as $menu) {
+				if(isset($menu->isactive) && $menu->isactive == 1) {
+					array_push($select_menus, $menu);
+				}
+			}
+		}
+
 		return view($view, $data, $mergeData)
 				->with('reurl', $this->getReurlArray())
-				->with('console_menus', (new ConsoleMenu())->getConsleMenuLists($request->path()));
+				->with('select_menus', $select_menus)
+				->with('console_menus', $console_menus);
 	}
 
 	public static function getReurlArray() {
@@ -61,7 +81,7 @@ class AdminController extends Controller
 
 		return $reurl;
 	}
-	
+
 	public static function withurl($url) {
 
 		$params = '';
@@ -73,11 +93,9 @@ class AdminController extends Controller
 		$params = substr($params, 1);
 
 		if(strstr($url, '?') == false && strlen($params) > 0) {
-			$url = $url.'?'.$params;
+			$url .= '?';
 		}
-		else {
-			$url = $url.$params;
-		}
+		$url .= $params;
 
 		return url($url);
 	}

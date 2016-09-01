@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
+use App\Http\Controllers\Controller;
 
 class UserTableSeeder extends Seeder
 {
@@ -12,10 +13,10 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-    	if(count(DB::table('users')->where('email', 'root@cullive.com')->get()) == 0)
+    	if(DB::table('users')->where('email', 'root@cullive.com')->count() == 0)
     	{
     		User::create([
-    				'sn' => substr(hexdec(md5('root@cullive.com')), 2, 6),
+    				'sn' => Controller::getRandNum('root@cullive.com'),
     				'name' => 'root',
     				'email' => 'root@cullive.com',
     				'password' => bcrypt('root'),
