@@ -18,12 +18,12 @@ class CreateDevicesTable extends Migration
     		$table->increments('id');
     		$table->string('sn')->unique();
     		$table->string('name')->nullable();
-    		$table->string('type');
-    		$table->string('status');
+    		$table->integer('type');
+    		$table->string('status')->nullable();
     		$table->string('data')->nullable();
     		$table->string('psn')->nullable();
     		$table->string('area')->nullable();
-    		$table->boolean('ispublic')->nullable();
+    		$table->boolean('ispublic');
     		$table->string('owner')->nullable();
     		$table->timestamps();
     	});

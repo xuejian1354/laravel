@@ -5,5 +5,5 @@
     <b>Version</b> 0.0.1
   </div>
   <!-- Default to the left -->
-  <strong>Copyright &copy; 2016 <a href="{{ asset('http://www.lysoc.cn') }}">NanJing LongYuan Microelectronic Co.,Ltd</a>.</strong> All rights reserved.
+  <strong>Copyright &copy; 2016 <a href="{{ asset('http://www.lysoc.cn') }}" target="_blank">NanJing LongYuan Microelectronic Co.,Ltd</a>.</strong> All rights reserved.
 </footer>

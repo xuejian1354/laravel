@@ -12,13 +12,15 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Input;
 use App\Area;
 use App\Record;
+use App\Device;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
 	public function index(Request $request) {
 		return redirect('curinfo');
 	}
-	
+
 	public function curInfo(Request $request) {
 
 		$record = new \stdClass();
@@ -36,7 +38,27 @@ class AdminController extends Controller
 	}
 
 	public function areaCtrl(Request $request, $areaid = null) {
-		return $this->getViewWithMenus('areactrl', $request);
+
+		/* Device lists from page */
+		$gp = Input::get('page');	//From URL
+		$devices = Device::query();	//All devices
+
+		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);
+		$devices = $devices->orderBy('updated_at', 'desc')
+							->paginate($pagetag->getRow());
+
+		/* Area */
+		$area = Area::where('sn', $areaid)->first();
+		if($area == null) {
+			$area = Area::query()->first();
+		}
+
+		/* View */
+		return $this->getViewWithMenus('areactrl', $request)
+						->with('area', $area)
+						->with('devices', $devices)
+						->with('pagetag', $pagetag)
+						->with('video_file', $this->getRandVideoName());
 	}
 
 	public function devStats(Request $request) {
@@ -44,7 +66,8 @@ class AdminController extends Controller
 	}
 
 	public function videoReal(Request $request) {
-		return $this->getViewWithMenus('videoreal', $request);
+		return $this->getViewWithMenus('videoreal', $request)
+						->with('video_file', $this->getRandVideoName());
 	}
 
 	public function alarmInfo(Request $request) {
@@ -65,9 +88,27 @@ class AdminController extends Controller
 		}
 
 		return view($view, $data, $mergeData)
+				->with('request', $request)
 				->with('reurl', $this->getReurlArray())
 				->with('select_menus', $select_menus)
 				->with('console_menus', $console_menus);
+	}
+
+	protected function getAllVideoNames() {
+		$video_file_names = array();
+
+		$video_files = Storage::files('/public/video');
+		foreach ($video_files as $video_file) {
+			$video_file_path_array = explode('/', $video_file);
+			array_push($video_file_names, end($video_file_path_array));
+		}
+
+		return $video_file_names;
+	}
+
+	protected function getRandVideoName() {
+		$video_file_names = $this->getAllVideoNames();
+		return $video_file_names[array_rand($video_file_names)];
 	}
 
 	public static function getReurlArray() {
