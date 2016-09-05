@@ -39,14 +39,6 @@ class AdminController extends Controller
 
 	public function areaCtrl(Request $request, $areaid = null) {
 
-		/* Device lists from page */
-		$gp = Input::get('page');	//From URL
-		$devices = Device::query();	//All devices
-
-		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);
-		$devices = $devices->orderBy('updated_at', 'desc')
-							->paginate($pagetag->getRow());
-
 		/* Area */
 		$area = Area::where('sn', $areaid)->first();
 		if($area == null) {
@@ -56,13 +48,13 @@ class AdminController extends Controller
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
 						->with('area', $area)
-						->with('devices', $devices)
-						->with('pagetag', $pagetag)
+						->with($this->getDevicesWithPage())
 						->with('video_file', $this->getRandVideoName());
 	}
 
 	public function devStats(Request $request) {
-		return $this->getViewWithMenus('devstats', $request);
+		return $this->getViewWithMenus('devstats', $request)
+						->with($this->getDevicesWithPage());
 	}
 
 	public function videoReal(Request $request) {
@@ -92,6 +84,18 @@ class AdminController extends Controller
 				->with('reurl', $this->getReurlArray())
 				->with('select_menus', $select_menus)
 				->with('console_menus', $console_menus);
+	}
+
+	protected function getDevicesWithPage() {
+		/* Device lists from page */
+		$gp = Input::get('page');	//From URL
+		$devices = Device::query();	//All devices
+
+		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);
+		$devices = $devices->orderBy('updated_at', 'desc')
+							->paginate($pagetag->getRow());
+
+		return ['pagetag' => $pagetag, 'devices' => $devices];
 	}
 
 	protected function getAllVideoNames() {

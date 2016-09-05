@@ -6,13 +6,7 @@
           <!-- TABLE: LATEST ORDERS -->
           <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Latest Orders</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
+              <h3 class="box-title">设备</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -20,69 +14,38 @@
                 <table class="table no-margin">
                   <thead>
                   <tr>
-                    <th>Order ID</th>
-                    <th>Item</th>
-                    <th>Status</th>
-                    <th>Popularity</th>
+                    <th>#</th>
+                    <th>序列号</th>
+                    <th>名称</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                    <th>时间</th>
                   </tr>
                   </thead>
                   <tbody>
+                  @foreach($devices as $index => $device)
                   <tr>
-                    <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                    <td>Call of Duty IV</td>
-                    <td><span class="label label-success">Shipped</span></td>
+                    <td>{{ $index+1 }}</td>
+                    <td><a href="#">{{ $device->sn }}</a></td>
+                    <td>{{ $device->name }}</td>
+                    <td><span class="label label-success">在线</span></td>
                     <td>
                       <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
                     </td>
+                    @if(strcmp(date('Y', time()), date('Y', strtotime($device->updated_at))) != 0)
+                    <td>{{ date('Y年', strtotime($device->updated_at)) }}</td>
+                    @elseif(strcmp(date('m-d', time()-(1*24*60*60)), date('m-d', strtotime($device->updated_at))) == 0)
+                    <td>昨天</td>
+                    @elseif(strcmp(date('m-d', time()), date('m-d', strtotime($device->updated_at))) != 0)
+                    <td>{{ date('n月j日', strtotime($device->updated_at)) }}</td>
+                    @else
+                    <td>{{ date('H:i:s', strtotime($device->updated_at)) }}</td>
+                    @endif
                   </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                    <td>Samsung Smart TV</td>
-                    <td><span class="label label-warning">Pending</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                    <td>iPhone 6 Plus</td>
-                    <td><span class="label label-danger">Delivered</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                    <td>Samsung Smart TV</td>
-                    <td><span class="label label-info">Processing</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                    <td>Samsung Smart TV</td>
-                    <td><span class="label label-warning">Pending</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                    <td>iPhone 6 Plus</td>
-                    <td><span class="label label-danger">Delivered</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                    <td>Call of Duty IV</td>
-                    <td><span class="label label-success">Shipped</span></td>
-                    <td>
-                      <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                    </td>
-                  </tr>
+                  @endforeach
+                  @while(++$index < $pagetag->getRow())
+                  <tr><td height="37"></td></tr>
+                  @endwhile
                   </tbody>
                 </table>
               </div>
@@ -90,8 +53,33 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix">
-              <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>
-              <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>
+              @if($pagetag->isavaliable())
+              <ul class="pagination pagination-sm no-margin">
+                @if($pagetag->start == 1)
+                <li class="hidden disabled">
+                @else
+                <li>
+                @endif
+                  <a href="{{ '/'.$request->path().'?page='.($pagetag->start-1) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+                @for($index=$pagetag->start; $index < $pagetag->end; $index++)
+                  @if($pagetag->getPage() == $index)
+                  <li class="active">
+                  @else
+                  <li>
+                  @endif
+                    <a href="{{ '/'.$request->path().'?page='.$index }}">{{ $index }}</a>
+                  </li>
+                @endfor
+                @if($pagetag->end == $pagetag->getPageSize() + 1)
+                <li class="hidden disabled">
+                @else
+                <li>
+                @endif
+                  <a href="{{ '/'.$request->path().'?page='.$pagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+              </ul>
+              @endif
             </div>
             <!-- /.box-footer -->
           </div>

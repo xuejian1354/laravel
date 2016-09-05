@@ -99,7 +99,7 @@
       <li>
         <i class="{{ $redata->rel_action->img }}"></i>
         <div class="timeline-item">
-          <span class="time"><i class="fa fa-clock-o"></i>{{ date('h:i:s', strtotime($redata->updated_at)) }}</span>
+          <span class="time"><i class="fa fa-clock-o"></i>{{ date('H:i:s', strtotime($redata->updated_at)) }}</span>
           <h3 class="timeline-header no-border">{{ $redata->content }}</h3>
 		  @if(isset($redata->data))
           <div class="timeline-body">{{ $redata->data }}</div>

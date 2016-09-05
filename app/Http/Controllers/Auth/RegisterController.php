@@ -6,6 +6,11 @@ use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Action;
+use App\Globalval;
+use App\Record;
 
 class RegisterController extends Controller
 {
@@ -68,5 +73,33 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function register(Request $request)
+    {
+    	$this->validator($request->all())->validate();
+    
+    	$this->guard()->login($this->create($request->all()));
+
+    	$this->addLogingRecord('register');
+    
+    	return redirect($this->redirectPath());
+    }
+
+    public function addLogingRecord($method) {
+    
+    	$user = Auth::user();
+    
+    	if($method == 'register') {
+    		$action = Action::where('content', '注册')->first();
+    		Record::create([
+    				'sn' => Controller::getRandNum(),
+    				'content' => '注册 "'.$user->name.'" 到 "'.Globalval::getVal('title').'"',
+    				'usersn' => $user->sn,
+    				'action' => $action->id,
+    				'optnum' => Controller::getRandHex($user->email.$action->id),
+    				'data' => null,
+    		]);
+    	}
     }
 }

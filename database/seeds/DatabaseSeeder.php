@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GlobalvalTableSeeder::class);
         $this->call(AreaTableSeeder::class);
         $this->call(ActionTableSeeder::class);
-        $this->call(RecordTableSeeder::class);
         $this->call(DevtypeTableSeeder::class);
         $this->call(DeviceTableSeeder::class);
     }
