@@ -19,6 +19,7 @@ class CreateDevicesTable extends Migration
     		$table->string('sn')->unique();
     		$table->string('name')->nullable();
     		$table->integer('type');
+    		$table->integer('attr');
     		$table->string('status')->nullable();
     		$table->string('data')->nullable();
     		$table->string('psn')->nullable();

@@ -67,7 +67,7 @@
           <!-- TABLE: LATEST ORDERS -->
           <div class="box box-info">
             <div class="box-header with-border">
-              <span class="box-title">设备</span>
+              <span class="box-title">控制设备</span>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -88,7 +88,7 @@
                   <tr>
                     <td>{{ $index+1 }}</td>
                     <td><a href="#">{{ $device->sn }}</a></td>
-                    <td>{{ $device->name }}</td>
+                    <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
                     <td><span class="label label-success">在线</span></td>
                     <td>
                       <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>

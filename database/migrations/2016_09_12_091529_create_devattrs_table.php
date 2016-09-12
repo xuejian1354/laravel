@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDevtypesTable extends Migration
+class CreateDevattrsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateDevtypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('devtypes', function(Blueprint $table)
+        Schema::create('devattrs', function(Blueprint $table)
 		{
 			$table->integer('id')->unique();
 			$table->string('name');
-			$table->integer('attr');
-			$table->string('img')->nullable();
 			$table->timestamps();
 		});
     }
@@ -30,6 +28,6 @@ class CreateDevtypesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('devtypes');
+        Schema::drop('devattrs');
     }
 }

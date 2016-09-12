@@ -11,11 +11,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(GlobalvalTableSeeder::class);
         $this->call(ConsoleMenuTableSeeder::class);
         $this->call(UserTableSeeder::class);
-        $this->call(GlobalvalTableSeeder::class);
-        $this->call(AreaTableSeeder::class);
         $this->call(ActionTableSeeder::class);
+        $this->call(AreaTableSeeder::class);
+        $this->call(DevattrTableSeeder::class);
         $this->call(DevtypeTableSeeder::class);
         $this->call(DeviceTableSeeder::class);
     }

@@ -48,7 +48,7 @@ class AdminController extends Controller
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
 						->with('area', $area)
-						->with($this->getDevicesWithPage())
+						->with($this->getDevicesWithPage(2))
 						->with('video_file', $this->getRandVideoName());
 	}
 
@@ -86,10 +86,14 @@ class AdminController extends Controller
 				->with('console_menus', $console_menus);
 	}
 
-	protected function getDevicesWithPage() {
+	protected function getDevicesWithPage($attr = null) {
 		/* Device lists from page */
 		$gp = Input::get('page');	//From URL
-		$devices = Device::query();	//All devices
+
+		$devices = Device::query();	//if $attr == null, All devices
+		if($attr != null) {
+			$devices = Device::where('attr', $attr);
+		}
 
 		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);
 		$devices = $devices->orderBy('updated_at', 'desc')

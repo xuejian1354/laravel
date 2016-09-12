@@ -24,6 +24,7 @@ class DeviceTableSeeder extends Seeder
         				'sn' => $ran,
         				'name' => $devtype->name.substr($ran, -4),
         				'type' => $devtype->id,
+        				'attr' => $devtype->attr,
         				'ispublic' => false,
         				'owner' => $root->sn,
         		]);
