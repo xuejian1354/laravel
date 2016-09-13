@@ -24,6 +24,10 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 		Route::get('/alarminfo', 'AdminController@alarmInfo');
 	});
 
+	Route::group(['middleware' => ['api', 'auth']], function () {
+		Route::post('/devctrl/{devsn}', 'DeviceController@devCtrl');
+	});
+
 	Auth::routes();
 });
 

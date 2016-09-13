@@ -62,11 +62,17 @@
                     <td>{{ $index+1 }}</td>
                     <td><a href="#">{{ $device->sn }}</a></td>
                     <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
-                    <td>{!! $device->data==null?'<span class="label label-danger">离线</span>':'<span class="label label-success">'.$device->data.'</span>' !!}</td>
+                    <td>
+                      @if($device->data == null)
+                      <span id="devsta{{ $device->sn }}" class="label label-danger">离线</span>
+                      @else
+                      <span id="devsta{{ $device->sn }}" class="label label-success">{{ $device->data }}</span>
+                      @endif
+                    </td>
                     <td>
                       <div class="btn-group">
-                        <button type="button" class="btn btn-xs btn-info"><b>开</b></button>
-                        <button type="button" class="btn btn-xs btn-default"><b>关</b></button>
+                        <button type="button" class="btn btn-xs btn-info" onClick="javascript:devCtrlPost(1, '{{ $device->sn }}');"><b>开</b></button>
+                        <button type="button" class="btn btn-xs btn-default" onClick="javascript:devCtrlPost(0, '{{ $device->sn }}');"><b>关</b></button>
                       </div>
                     </td>
                     @if(strcmp(date('Y', time()), date('Y', strtotime($device->updated_at))) != 0)
@@ -370,6 +376,28 @@
 <script src="/bower_components/AdminLTE/dist/js/pages/dashboard2.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/bower_components/AdminLTE/dist/js/demo.js"></script>
+
+<script type="text/javascript">
+function devCtrlPost(sw, devsn) {
+  $.post('/devctrl/'+devsn, { _token:'{{ csrf_token() }}', data:sw }, function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+		if(data == '打开' || data == '关闭') {
+		  $('#devsta'+devsn).removeClass('label-danger');
+		  $('#devsta'+devsn).addClass('label-success');
+		  $('#devsta'+devsn).text(data);
+		}
+		else {
+		  $('#devsta'+devsn).addClass('label-danger');
+		  $('#devsta'+devsn).removeClass('label-success');
+		  $('#devsta'+devsn).text('离线');
+		}
+	  }
+  });
+}
+</script>
 @endsection
 
 @extends('admin.dashboard')
