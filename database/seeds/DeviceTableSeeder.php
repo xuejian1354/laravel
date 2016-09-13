@@ -5,6 +5,7 @@ use App\Device;
 use App\Devtype;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Area;
 
 class DeviceTableSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class DeviceTableSeeder extends Seeder
     {
         if(count(Device::all()) == 0) {
         	$root = User::where('name', 'root')->firstOrFail();
+            $area = ['大棚1', '大棚2'];
 
         	foreach (Devtype::all() as $devtype) {
         		$ran = Controller::getRandHex();
@@ -25,6 +27,7 @@ class DeviceTableSeeder extends Seeder
         				'name' => $devtype->name.substr($ran, -4),
         				'type' => $devtype->id,
         				'attr' => $devtype->attr,
+                        'area' => Area::where('name', $area[array_rand($area)])->first()->sn,
         				'ispublic' => false,
         				'owner' => $root->sn,
         		]);

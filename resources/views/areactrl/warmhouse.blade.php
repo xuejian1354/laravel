@@ -1,62 +1,35 @@
 @section('content')
 <!-- Info boxes -->
       <div class="row">
+      @foreach($areaboxes as $areabox)
+        @if($areabox->column == 4)
         <div class="col-md-3 col-sm-6 col-xs-12">
+        @elseif($areabox->column == 3)
+        <div class="col-md-4 col-sm-6 col-xs-12">
+        @elseif($areabox->column == 2)
+        <div class="col-md-6 col-sm-6 col-xs-12">
+        @elseif($areabox->column == 1)
+        <div class="col-md-12 col-sm-12 col-xs-12">
+        @else
+        <div class="col-md-4 col-sm-6 col-xs-12">
+        @endif
           <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-cloud"></i></span>
+            <span class="info-box-icon {{ $areabox->color_class }}"><i class="fa {{ $areabox->icon_class }}"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-number">空气指数</span>
-              <span class="info-box-text">温度：湿度：<br>光照强度：<br>CO2浓度：</span>
+              <span class="info-box-number">{{ $areabox->title }}</span>
+              <p class="info-box-text">
+              @foreach($areabox->contents as $areaboxcontent)
+                {{ $areaboxcontent->key }}{{ $areaboxcontent->key && $areaboxcontent->val?'：':''}}{{ $areaboxcontent->val }}<br>
+              @endforeach
+              </p>
             </div>
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
         </div>
         <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-eraser"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-number">土壤指数</span>
-              <span class="info-box-text">温度：水分：<br>PH值：</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="fa fa-spoon"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-number">气象站</span>
-              <span class="info-box-text">风速：风向：<br>降雨量：</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-support"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-number">设备</span>
-              <span class="info-box-number" style="margin-left: 8px;">43</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
+      @endforeach
       </div>
       <!-- /.row -->
 
@@ -89,9 +62,12 @@
                     <td>{{ $index+1 }}</td>
                     <td><a href="#">{{ $device->sn }}</a></td>
                     <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
-                    <td><span class="label label-success">在线</span></td>
+                    <td>{!! $device->data==null?'<span class="label label-danger">离线</span>':'<span class="label label-success">'.$device->data.'</span>' !!}</td>
                     <td>
-                      <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-xs btn-info"><b>开</b></button>
+                        <button type="button" class="btn btn-xs btn-default"><b>关</b></button>
+                      </div>
                     </td>
                     @if(strcmp(date('Y', time()), date('Y', strtotime($device->updated_at))) != 0)
                     <td>{{ date('Y年', strtotime($device->updated_at)) }}</td>
@@ -159,7 +135,7 @@
             <div class="box-body no-padding">
               <div class="pad">
                 <div class="embed-responsive embed-responsive-4by3">
-                    <video class="embed-responsive-item" allowfullscreen controls autoplay loop>
+                    <video class="embed-responsive-item" allowfullscreen controls loop>
   				      <source src="{{ '/video/'.$video_file }}" type="video/mp4">
 				    </video>
                 </div>

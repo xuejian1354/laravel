@@ -14,6 +14,8 @@ use App\Area;
 use App\Record;
 use App\Device;
 use Illuminate\Support\Facades\Storage;
+use App\Areabox;
+use App\Areaboxcontent;
 
 class AdminController extends Controller
 {
@@ -45,10 +47,17 @@ class AdminController extends Controller
 			$area = Area::query()->first();
 		}
 
+		/* Box & Content */
+		$areaboxes = Areabox::where('area_type', $area->type)->get();
+		foreach ($areaboxes as $areabox) {
+			$areabox->contents = Areaboxcontent::where('area_sn', $area->sn)->where('box_id', $areabox->id)->get();
+		}
+
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
 						->with('area', $area)
-						->with($this->getDevicesWithPage(2))
+						->with('areaboxes', $areaboxes)
+						->with($this->getDevicesWithPage($area->sn, 2))
 						->with('video_file', $this->getRandVideoName());
 	}
 
@@ -86,13 +95,17 @@ class AdminController extends Controller
 				->with('console_menus', $console_menus);
 	}
 
-	protected function getDevicesWithPage($attr = null) {
+	protected function getDevicesWithPage($area = null, $attr = null) {
 		/* Device lists from page */
 		$gp = Input::get('page');	//From URL
 
-		$devices = Device::query();	//if $attr == null, All devices
+		$devices = Device::query();	//All devices
+		if($area != null) {
+			$devices = $devices->where('area', $area);
+		}
+
 		if($attr != null) {
-			$devices = Device::where('attr', $attr);
+			$devices = $devices->where('attr', $attr);
 		}
 
 		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);

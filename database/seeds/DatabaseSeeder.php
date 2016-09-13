@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DevattrTableSeeder::class);
         $this->call(DevtypeTableSeeder::class);
         $this->call(DeviceTableSeeder::class);
+        $this->call(AreaboxTableSeeder::class);
+        $this->call(AreaboxcontentTableSeeder::class);
     }
 }
