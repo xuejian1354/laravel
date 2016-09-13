@@ -12,7 +12,7 @@
       <div class="icon">
         <i class="ion ion-android-bookmark"></i>
       </div>
-      <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      <a href="/devstats" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
     </div>
   </div>
   <!-- ./col -->
@@ -26,7 +26,7 @@
       <div class="icon">
         <i class="ion ion-images"></i>
       </div>
-      <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      <a href="/areactrl" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
     </div>
   </div>
   <!-- ./col -->
@@ -48,7 +48,7 @@
     <!-- small box -->
     <div class="small-box bg-red">
       <div class="inner">
-        <h3>65<sup style="font-size: 20px">%</sup></h3>
+        <h3>{{ App\Http\Controllers\ComputeController::getDeviceUpdateRate() }}<sup style="font-size: 20px">%</sup></h3>
 
         <p><b>更 新</b></p>
       </div>

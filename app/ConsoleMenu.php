@@ -88,5 +88,9 @@ class ConsoleMenu extends Model
 
     		array_push($this->menus[$pmenu->inode], $ele);
     	}
+
+        if ( $pmenu->action == $request_path ) {
+            $this->menus[$pmenu->inode][0]->isactive = true;
+        }
     }
 }
