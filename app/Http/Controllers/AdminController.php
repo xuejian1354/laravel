@@ -39,10 +39,12 @@ class AdminController extends Controller
 						->with('record', $record);
 	}
 
-	public function areaCtrl(Request $request, $areaid = null) {
+	public function areaCtrl(Request $request, $areasn = null) {
+
+		DeviceController::updateAreaboxDB($areasn);
 
 		/* Area */
-		$area = Area::where('sn', $areaid)->first();
+		$area = Area::where('sn', $areasn)->first();
 		if($area == null) {
 			$area = Area::query()->first();
 		}

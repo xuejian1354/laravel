@@ -167,7 +167,7 @@ return [
          * Package Service Providers...
          */
 
-        //
+    	Vinkla\Pusher\PusherServiceProvider::class,
 
         /*
          * Application Service Providers...

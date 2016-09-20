@@ -19,9 +19,12 @@
             <div class="info-box-content">
               <span class="info-box-number">{{ $areabox->title }}</span>
               <p class="info-box-text">
-              @foreach($areabox->contents as $areaboxcontent)
-                {{ $areaboxcontent->key }}{{ $areaboxcontent->key && $areaboxcontent->val?'：':''}}{{ $areaboxcontent->val }}<br>
+              @foreach($areabox->contents as $index => $areaboxcontent)
+                {{ $areaboxcontent->key }}{{ $areaboxcontent->key && $areaboxcontent->val?'：':''}}<span id="devspan{{ $areaboxcontent->id }}">{{ $areaboxcontent->val }}</span><br>
               @endforeach
+              @while($index++ < 2)
+                <br>
+              @endwhile
               </p>
             </div>
             <!-- /.info-box-content -->
@@ -58,9 +61,9 @@
                   </thead>
                   <tbody>
                   @foreach($devices as $index => $device)
-                  <tr>
+                  <tr class="devtr">
                     <td>{{ $index+1 }}</td>
-                    <td><a href="#">{{ $device->sn }}</a></td>
+                    <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
                     <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
                     <td>
                       @if($device->data == null)
@@ -76,13 +79,13 @@
                       </div>
                     </td>
                     @if(strcmp(date('Y', time()), date('Y', strtotime($device->updated_at))) != 0)
-                    <td>{{ date('Y年', strtotime($device->updated_at)) }}</td>
+                    <td id="devat{{ $device->sn }}">{{ date('Y年', strtotime($device->updated_at)) }}</td>
                     @elseif(strcmp(date('m-d', time()-(1*24*60*60)), date('m-d', strtotime($device->updated_at))) == 0)
-                    <td>昨天</td>
+                    <td id="devat{{ $device->sn }}">昨天</td>
                     @elseif(strcmp(date('m-d', time()), date('m-d', strtotime($device->updated_at))) != 0)
-                    <td>{{ date('n月j日', strtotime($device->updated_at)) }}</td>
+                    <td id="devat{{ $device->sn }}">{{ date('n月j日', strtotime($device->updated_at)) }}</td>
                     @else
-                    <td>{{ date('H:i:s', strtotime($device->updated_at)) }}</td>
+                    <td id="devat{{ $device->sn }}">{{ date('H:i:s', strtotime($device->updated_at)) }}</td>
                     @endif
                   </tr>
                   @endforeach
@@ -378,25 +381,51 @@
 <script src="/bower_components/AdminLTE/dist/js/demo.js"></script>
 
 <script type="text/javascript">
+function devstaSwitch(devsn, data, at) {
+  if(data == '打开' || data == '关闭') {
+    $('#devsta'+devsn).removeClass('label-danger');
+    $('#devsta'+devsn).addClass('label-success');
+    $('#devsta'+devsn).text(data);
+    $('#devat'+devsn).text(at);
+  }
+  else {
+	$('#devsta'+devsn).addClass('label-danger');
+	$('#devsta'+devsn).removeClass('label-success');
+	$('#devsta'+devsn).text('离线');
+	}
+}
+
 function devCtrlPost(sw, devsn) {
   $.post('/devctrl/'+devsn, { _token:'{{ csrf_token() }}', data:sw }, function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);
 	  }
 	  else {
-		if(data == '打开' || data == '关闭') {
-		  $('#devsta'+devsn).removeClass('label-danger');
-		  $('#devsta'+devsn).addClass('label-success');
-		  $('#devsta'+devsn).text(data);
-		}
-		else {
-		  $('#devsta'+devsn).addClass('label-danger');
-		  $('#devsta'+devsn).removeClass('label-success');
-		  $('#devsta'+devsn).text('离线');
-		}
+		devstaSwitch(devsn, data[0], data[1]);
 	  }
   });
 }
+</script>
+
+<script src="//cdn.bootcss.com/pusher/3.0.0/pusher.min.js"></script>
+<script>
+var pusher = new Pusher("{{env('PUSHER_KEY')}}")
+var channel = pusher.subscribe('devdata-updating');
+channel.bind('update', function(devdata) {
+  if(devdata.attr == 1) {
+    for (var item in devdata.areaboxcontent){
+      $('#devspan'+item).text(devdata.areaboxcontent[item]);
+    }
+  }
+  else if(devdata.attr == 2) {
+    $('.devtr').each(function() {
+      var devsn = $(this).find('.devsna').text();
+      if(devsn == devdata.sn) {
+        devstaSwitch(devsn, devdata.data, devdata.updated_at);
+      }
+    });
+  }
+});
 </script>
 @endsection
 

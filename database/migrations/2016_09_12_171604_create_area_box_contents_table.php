@@ -16,6 +16,7 @@ class CreateAreaBoxContentsTable extends Migration
         Schema::create('areaboxcontents', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('type');
 			$table->integer('box_id');
 			$table->string('area_sn')->nullable();
 			$table->string('key')->nullable();

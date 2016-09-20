@@ -13,20 +13,25 @@
 
 Route::group(['domain' => 'loongsky3.net'], function () {
 
+	// Web URL
 	Route::group(['middleware' => ['web', 'auth']], function () {
 
 		Route::get('/', 'AdminController@index');
 
 		Route::get('/curinfo', 'AdminController@curInfo');
-		Route::get('/areactrl/{areaid?}', 'AdminController@areaCtrl');
+		Route::get('/areactrl/{areasn?}', 'AdminController@areaCtrl');
 		Route::get('/devstats', 'AdminController@devStats');
 		Route::get('/videoreal', 'AdminController@videoReal');
 		Route::get('/alarminfo', 'AdminController@alarmInfo');
 	});
 
+	// Post Request
 	Route::group(['middleware' => ['api', 'auth']], function () {
 		Route::post('/devctrl/{devsn}', 'DeviceController@devCtrl');
 	});
+
+	// Console URL
+	Route::get('/devdata', 'DevDataController@index');
 
 	Auth::routes();
 });
