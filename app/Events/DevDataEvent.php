@@ -10,6 +10,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Device;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\AlarminfoController;
 
 class DevDataEvent implements ShouldBroadcast
 {
@@ -53,9 +54,11 @@ class DevDataEvent implements ShouldBroadcast
     public function updateToDB() {
     	$device = Device::where('sn', $this->sn)->first();
     	if ($device != null) {
+    		$before_data = $device->data; 
     		$device->data = $this->data;
     		$device->save();
 
+    		// update areabox
     		if($device->attr == 1) {
     			$contenttype = null;
     			switch ($device->type) {
@@ -102,10 +105,38 @@ class DevDataEvent implements ShouldBroadcast
     		}
 
     		$this->attr = $device->attr;
+
+    		//trigger alarminfo
+    		$alarmthres = json_decode($device->alarmthres);
+    		if($alarmthres != null) {
+    			switch($alarmthres->m) {
+    			case 'up':
+    				if($device->data > $alarmthres->v && $alarmthres->v >= $before_data) {
+    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
+    				}
+    				break;
+
+    			case 'down':
+    				if($device->data < $alarmthres->v && $alarmthres->v <= $before_data) {
+    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
+    				}
+    				break;
+
+    			case 'cmp':
+					if($device->data == $alarmthres->v && $alarmthres->v != $before_data) {
+						AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
+					}
+					break;
+
+    			case 'none':
+    				break;
+    			}
+    		}
     	}
 
     	$this->updated_at = date('H:i:s', strtotime($device->updated_at));
 
+    	// update devctrl record
     	if($device->attr == 2) {
     		DeviceController::addDevCtrlRecord($device);
     	}

@@ -25,11 +25,6 @@ class AreaTableSeeder extends Seeder
         		'user' => 'root', 'owner' => 'root', 'remarks' => null]);
 
         Area::create(['sn' => Controller::getRandNum(),
-        		'name' => '鱼业基地', 'type' => '鱼塘', 'addr' => '淳溪镇芜太路', 
-        		'status' => '正使用', 'user' => 'root', 'owner' => 'root', 
-        		'remarks' => '可以现抓现吃  还可钓鱼  来时提前电话预约  因不是商家不是饭店 要准备饭菜招待的   蟹塘不会有太多人  安静  而且还有螃蟹可抓 可卖  价格都是批发市场价格']);
-
-        Area::create(['sn' => Controller::getRandNum(),
         		'name' => '养猪场', 'type' => '养猪场', 'addr' => '', 'status' => '正使用',
         		'user' => 'root', 'owner' => 'root', 'remarks' => null]);
     }

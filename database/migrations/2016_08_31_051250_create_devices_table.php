@@ -24,7 +24,7 @@ class CreateDevicesTable extends Migration
     		$table->string('data')->nullable();
     		$table->string('psn')->nullable();
     		$table->string('area')->nullable();
-    		$table->boolean('ispublic');
+    		$table->string('alarmthres')->nullable();
     		$table->string('owner')->nullable();
     		$table->timestamps();
     	});

@@ -28,7 +28,6 @@ class DeviceTableSeeder extends Seeder
         				'type' => $devtype->id,
         				'attr' => $devtype->attr,
                         'area' => Area::where('name', $area[array_rand($area)])->first()->sn,
-        				'ispublic' => false,
         				'owner' => $root->sn,
         		]);
         	}
