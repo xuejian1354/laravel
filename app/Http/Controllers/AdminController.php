@@ -70,8 +70,17 @@ class AdminController extends Controller
 	}
 
 	public function videoReal(Request $request) {
+		$gp = Input::get('page');	//From URL
+
+		$video_files = $this->getAllVideoNames();
+		$pagetag = new PageTag(6, 3, count($video_files), $gp?$gp:1);
+
+		$video_files = array_slice($video_files, ($pagetag->getPage()-1)*6, 6);
+
 		return $this->getViewWithMenus('videoreal', $request)
-						->with('video_file', $this->getRandVideoName());
+						->with('pagetag', $pagetag)
+						->with('video_files', $video_files)
+						->with('video_rand', $this->getRandVideoName($video_files));
 	}
 
 	public function alarmInfo(Request $request) {
@@ -136,7 +145,7 @@ class AdminController extends Controller
 		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
 	}
 
-	protected function getAllVideoNames() {
+	public function getAllVideoNames() {
 		$video_file_names = array();
 
 		$video_files = Storage::files('/public/video');
@@ -148,8 +157,11 @@ class AdminController extends Controller
 		return $video_file_names;
 	}
 
-	protected function getRandVideoName() {
-		$video_file_names = $this->getAllVideoNames();
+	protected function getRandVideoName($video_file_names = null) {
+		if($video_file_names == null) {
+			$video_file_names = $this->getAllVideoNames();
+		}
+
 		return $video_file_names[array_rand($video_file_names)];
 	}
 

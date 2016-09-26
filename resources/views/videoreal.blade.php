@@ -1,140 +1,81 @@
 @section('content')
-	  <div class="row">
-	  
-	    <!-- Left col -->
-        <div class="col-md-8">
-          <!-- TABLE: Real Video -->
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">{{ $video_file }}</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <div class="embed-responsive embed-responsive-4by3">
-                <video class="embed-responsive-item" allowfullscreen controls autoplay>
-  				  <source src="{{ '/video/'.$video_file }}" type="video/mp4">
-				</video>
-              </div>
-            </div>
-          </div>
-          <!-- /.box -->
-        </div>
-        <!-- /.col -->
-	  
-        <div class="col-md-4">
-          <div class="box">
-            <div class="box-header with-border">
-              <h3 class="box-title">Bordered Table</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table class="table table-bordered">
-                <tbody><tr>
-                  <th style="width: 10px">#</th>
-                  <th>Task</th>
-                  <th>Progress</th>
-                  <th style="width: 40px">Label</th>
-                </tr>
-                <tr>
-                  <td>1.</td>
-                  <td>Update</td>
-                  <td>
-                    <div class="progress progress-xs">
-                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-red">55%</span></td>
-                </tr>
-                <tr>
-                  <td>2.</td>
-                  <td>Clean</td>
-                  <td>
-                    <div class="progress progress-xs">
-                      <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-yellow">70%</span></td>
-                </tr>
-                <tr>
-                  <td>3.</td>
-                  <td>Cron</td>
-                  <td>
-                    <div class="progress progress-xs progress-striped active">
-                      <div class="progress-bar progress-bar-primary" style="width: 60%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-light-blue">60%</span></td>
-                </tr>
-                <tr>
-                  <td>4.</td>
-                  <td>Fix</td>
-                  <td>
-                    <div class="progress progress-xs progress-striped active">
-                      <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-green">90%</span></td>
-                </tr>
-                <tr>
-                  <td>5.</td>
-                  <td>Hello</td>
-                  <td>
-                    <div class="progress progress-xs">
-                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-red">55%</span></td>
-                </tr>
-                <tr>
-                  <td>6.</td>
-                  <td>Class</td>
-                  <td>
-                    <div class="progress progress-xs">
-                      <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-yellow">70%</span></td>
-                </tr>
-                <tr>
-                  <td>7.</td>
-                  <td>goto</td>
-                  <td>
-                    <div class="progress progress-xs progress-striped active">
-                      <div class="progress-bar progress-bar-primary" style="width: 60%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-light-blue">60%</span></td>
-                </tr>
-                <tr>
-                  <td>8.</td>
-                  <td>World</td>
-                  <td>
-                    <div class="progress progress-xs progress-striped active">
-                      <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-green">90%</span></td>
-                </tr>
-              </tbody></table>
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer clearfix">
-              <ul class="pagination pagination-sm no-margin pull-right">
-                <li><a href="#">«</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">»</a></li>
-              </ul>
-            </div>
-          </div>
-          <!-- /.box -->
-        </div>
-        
+<div class="row">
+  <div class="col-md-8">
+    <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 id="vtitle" class="box-title">{{ $video_rand }}</h3>
       </div>
+      <div class="box-body">
+        <div class="embed-responsive embed-responsive-4by3">
+          <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
+  		    <source src="{{ '/video/'.$video_rand }}" type="video/mp4">
+	      </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="box box-primary">
+      <div class="box-header with-border"><h3 class="box-title">视频列表</h3></div>
+      <div class="box-body">
+        <ul class="products-list product-list-in-box">
+        @foreach($video_files as $index => $video_file)
+          <li class="item">
+            <div class="product-img">
+              <a href="javascript:refreshVideo('{{ $video_file }}')"><img src="/bower_components/AdminLTE/dist/img/default-50x50.gif" alt="Product Image"></a>
+            </div>
+            <div class="product-info">
+              <br><a href="javascript:refreshVideo('{{ $video_file }}')" class="product-description">{{ $video_file }}</a>
+            </div>
+          </li>
+        @endforeach
+        @while(++$index < $pagetag->getRow())
+          <li class="item" style="height: 71px;"></li>
+        @endwhile
+        </ul>
+      </div>
+      <div class="box-footer">
+      @if($pagetag->isavaliable())
+        <ul class="pagination pagination-sm no-margin pull-right">
+        @if($pagetag->start == 1)
+          <li class="hidden disabled">
+        @else
+          <li>
+        @endif
+            <a href="{{ '/'.$request->path().'?page='.($pagetag->start-1) }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+          </li>
+        @for($index=$pagetag->start; $index < $pagetag->end; $index++)
+          @if($pagetag->getPage() == $index)
+          <li class="active">
+          @else
+          <li>
+          @endif
+            <a href="{{ '/'.$request->path().'?page='.$index }}">{{ $index }}</a>
+          </li>
+        @endfor
+        @if($pagetag->end == $pagetag->getPageSize() + 1)
+          <li class="hidden disabled">
+        @else
+          <li>
+        @endif
+            <a href="{{ '/'.$request->path().'?page='.$pagetag->end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+          </li>
+        </ul>
+      @endif
+      </div>
+    </div>
+  </div>  
+</div>
 @endsection
 
 @section('conscript')
+<script>
+function refreshVideo(name) {
+	$('#vtitle').text(name);
+	$('#vplay source').attr('src','/video/'+name);
+	$('#vplay').load();
+}
+</script>
 @endsection
 
 @extends('admin.dashboard')
