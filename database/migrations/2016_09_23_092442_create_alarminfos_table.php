@@ -22,7 +22,7 @@ class CreateAlarminfosTable extends Migration
 			$table->string('thres')->nullable();
 			$table->string('val')->nullable();
 			$table->string('optnum')->nullable();
-			$table->boolean('isread');
+			$table->boolean('enable');
             $table->timestamps();
         });
     }

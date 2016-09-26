@@ -10,6 +10,7 @@ class PageTag
     protected $pagesize;
 
     protected $listnum;
+    protected $allcols;
 
     public $start, $end;
 
@@ -20,6 +21,7 @@ class PageTag
        $this->page = $page;
        $this->pagesize = ceil($allcols/$row);
 
+       $this->allcols = $allcols;
        if($this->page == 0)
        {
            $this->row = $allcols;
@@ -46,7 +48,7 @@ class PageTag
     {
         return $this->row;
     }
-    
+
     public function getColumns()
     {
         return $this->column;
@@ -82,5 +84,10 @@ class PageTag
     public function getListNum()
     {
         return $this->listnum;
+    }
+
+    public function getAllcols()
+    {
+    	return $this->allcols;
     }
 }

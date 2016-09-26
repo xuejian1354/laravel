@@ -16,6 +16,7 @@ use App\Device;
 use Illuminate\Support\Facades\Storage;
 use App\Areabox;
 use App\Areaboxcontent;
+use App\Alarminfo;
 
 class AdminController extends Controller
 {
@@ -74,7 +75,8 @@ class AdminController extends Controller
 	}
 
 	public function alarmInfo(Request $request) {
-		return $this->getViewWithMenus('alarminfo', $request);
+		return $this->getViewWithMenus('alarminfo', $request)
+						->with($this->getAlarminfosWithPage());
 	}
 
 	public function getViewWithMenus($view = null, Request $request, $data = [], $mergeData = [])
@@ -115,6 +117,22 @@ class AdminController extends Controller
 							->paginate($pagetag->getRow());
 
 		return ['pagetag' => $pagetag, 'devices' => $devices];
+	}
+
+	protected function getAlarminfosWithPage() {
+		/* Device lists from page */
+		$gp = Input::get('page');	//From URL
+
+		$alarminfos = Alarminfo::query(); //All alarminfos
+
+		$pagetag = new PageTag(8, 3, $alarminfos->count(), $gp?$gp:1);
+		$alarminfos = $alarminfos->orderBy('updated_at', 'desc')
+								->paginate($pagetag->getRow());
+
+		$pagetag->col_start = ($pagetag->getPage()-1)*$pagetag->getRow()+1;
+		$pagetag->col_end = $pagetag->col_start + $alarminfos->count()-1;
+
+		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
 	}
 
 	protected function getAllVideoNames() {

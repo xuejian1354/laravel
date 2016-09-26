@@ -40,7 +40,7 @@ class AlarminfoController extends Controller
     			'thres' => $thresval,
     			'val' => $device->data,
     			'optnum' => Controller::getRandHex($devsn.$action.$thresval.$device->data),
-    			'isread' => false,
+    			'enable' => true,
     	]);
     }
 }
