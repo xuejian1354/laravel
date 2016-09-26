@@ -6,7 +6,7 @@
     <!-- small box -->
     <div class="small-box bg-aqua">
       <div class="inner">
-        <h3>{{ App\Device::query()->count() }}</h3>
+        <h3>{{ App\Device::where('attr', '!=', 3)->count() }}</h3>
         <p><b>设 备</b></p>
       </div>
       <div class="icon">

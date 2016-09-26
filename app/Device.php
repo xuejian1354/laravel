@@ -13,4 +13,8 @@ class Device extends Model
 	public function rel_owner() {
 		return $this->hasOne('App\User', 'owner', 'sn');
 	}
+
+	public function rel_area() {
+		return $this->hasOne('App\Area', 'sn', 'area');
+	}
 }

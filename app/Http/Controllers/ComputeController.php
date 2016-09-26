@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Device;
 use Carbon\Carbon;
+use App\Alarminfo;
 
 class ComputeController extends Controller
 {
@@ -17,6 +18,22 @@ class ComputeController extends Controller
 
 		$day_devices = Device::where('updated_at', 'like', $day.'%');
 		$day_count = $day_devices->count();
+
+		return round($day_count*100/$all_count, 2);
+	}
+
+	public static function getAlarminfoUpdateRate() {
+		$alarminfos = Alarminfo::query();
+		$all_count = $alarminfos->count();
+
+		$max_time = $alarminfos->max('updated_at');
+		$day = date('Y-m-d', strtotime($max_time));
+
+		$day_alarminfos = Alarminfo::where('updated_at', 'like', $day.'%');
+		$day_count = $day_alarminfos->count();
+		if($day_count == 0) {
+			return 0;
+		}
 
 		return round($day_count*100/$all_count, 2);
 	}

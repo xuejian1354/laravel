@@ -89,34 +89,46 @@ class DeviceController extends Controller
 	}
 
 	public static function getHumiTempFromArea($areasn) {
-		return round(DeviceController::getDevAverageFromArea($areasn, 2))
-				.'℃/'
-				.DeviceController::getDevAverageFromArea($areasn, 3)
-				.'%';
+		$temp = DeviceController::getDevAverageFromArea($areasn, 2);
+		$temp = ($temp == null ? '未知' : round($temp).'℃');
+
+		$humi = DeviceController::getDevAverageFromArea($areasn, 3);
+		$humi = ($humi == null ? '未知' : $humi.'%');
+
+		return $temp.'/'.$humi;
 	}
 
 	public static function getIllumiFromArea($areasn) {
-		return round(DeviceController::getDevAverageFromArea($areasn, 4)).' Lux';
+		$illumi = DeviceController::getDevAverageFromArea($areasn, 4);
+		return $illumi == null ? '未知' : round($illumi).' Lux';
 	}
 
 	public static function getDioxideFromArea($areasn) {
-		return DeviceController::getDevAverageFromArea($areasn, 14, 'float').'%';
+		$dioxide = DeviceController::getDevAverageFromArea($areasn, 14, 'float');
+		return $dioxide == null ? '未知' : $dioxide.'%';
 	}
 
 	public static function getSoilTempFromArea($areasn) {
-		return DeviceController::getDevAverageFromArea($areasn, 20).'℃';
+		$soiltemp = DeviceController::getDevAverageFromArea($areasn, 20);
+		return $soiltemp == null ? '未知' : $soiltemp.'℃';
 	}
 
 	public static function getSoilMoistureFromArea($areasn) {
-		return DeviceController::getDevAverageFromArea($areasn, 21, 'float');
+		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, 21, 'float');
+		return $soilmoisture == null ? '未知' : $soilmoisture;
 	}
 
 	public static function getSoilPHFromArea($areasn) {
-		return DeviceController::getDevAverageFromArea($areasn, 23, 'float');
+		$soilph = DeviceController::getDevAverageFromArea($areasn, 23, 'float');
+		return $soilph == null ? '未知' : $soilph;
 	}
 
 	public static function getAirSpeedFromArea($areasn) {
 		$speed = DeviceController::getDevAverageFromArea($areasn, 6, 'float');
+		if($speed == null) {
+			return '未知';
+		}
+
 		if(floor($speed) < ceil($speed)) {
 			return '&lt; '.ceil($speed).' 级';
 		}
@@ -127,7 +139,7 @@ class DeviceController extends Controller
 
 	public static function getAirDirectionFromArea($areasn) {
 		$dev = Device::where('area', $areasn)->where('type', 7)->first();
-		if($dev == null) {
+		if($dev == null || $dev->data == null) {
 			return '未知';
 		}
 		else {
@@ -136,7 +148,8 @@ class DeviceController extends Controller
 	}
 
 	public static function getRainfallFromArea($areasn) {
-		return DeviceController::getDevAverageFromArea($areasn, 5).'mm';
+		$rainfall = DeviceController::getDevAverageFromArea($areasn, 5);
+		return $rainfall == null ? '未知' : $rainfall.'mm';
 	}
 
 	public static function getDeviceNumsFromArea($areasn) {
@@ -146,7 +159,12 @@ class DeviceController extends Controller
 	public static function getDevAverageFromArea($areasn, $opttype, $ol = 'int') {
 		$devals = array();
 		$devs = Device::where('area', $areasn)->where('type', $opttype)->get();
+
 		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
 			if($ol == 'int') {
 				array_push($devals, (int)$dev->data);
 			}
@@ -162,6 +180,10 @@ class DeviceController extends Controller
 	}
 
 	public static function getAverageVal(array $tovals) {
+
+		if(count($tovals) == 0) {
+			return null;
+		}
 
 		$sum = 0;
 		$count = count($tovals);

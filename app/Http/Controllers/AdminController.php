@@ -76,6 +76,7 @@ class AdminController extends Controller
 
 	public function alarmInfo(Request $request) {
 		return $this->getViewWithMenus('alarminfo', $request)
+						->with('alarminforate', ComputeController::getAlarminfoUpdateRate().'%')
 						->with($this->getAlarminfosWithPage());
 	}
 
@@ -103,7 +104,7 @@ class AdminController extends Controller
 		/* Device lists from page */
 		$gp = Input::get('page');	//From URL
 
-		$devices = Device::query();	//All devices
+		$devices = Device::where('attr', '!=', 3);	//All devices, except camera
 		if($area != null) {
 			$devices = $devices->where('area', $area);
 		}

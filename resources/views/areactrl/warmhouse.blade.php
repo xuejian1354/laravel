@@ -61,7 +61,7 @@
             <tbody>
             @foreach($devices as $index => $device)
               <tr class="devtr">
-                <td>{{ $index+1 }}</td>
+                <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
                 <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
                 <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
                 <td>
