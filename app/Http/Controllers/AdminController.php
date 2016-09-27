@@ -21,7 +21,10 @@ use App\Alarminfo;
 class AdminController extends Controller
 {
 	public function index(Request $request) {
-		return redirect('curinfo');
+
+		if($request->isMethod('get')) {
+			return redirect('curinfo');
+		}
 	}
 
 	public function curInfo(Request $request) {
@@ -56,6 +59,13 @@ class AdminController extends Controller
 			$areabox->contents = Areaboxcontent::where('area_sn', $area->sn)->where('box_id', $areabox->id)->get();
 		}
 
+		if($request->isMethod('post')) {
+			if($request->input('way') == 'devlist') {
+				return view('areactrl.devlist')
+						->with($this->getDevicesWithPage($area->sn, 2));
+			}
+		}
+
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
 						->with('area', $area)
@@ -65,6 +75,14 @@ class AdminController extends Controller
 	}
 
 	public function devStats(Request $request) {
+
+		if($request->isMethod('post')) {
+			if($request->input('way') == 'devlist') {
+				return view('devstats.devlist')
+						->with($this->getDevicesWithPage());
+			}
+		}
+
 		return $this->getViewWithMenus('devstats', $request)
 						->with($this->getDevicesWithPage());
 	}
@@ -77,15 +95,31 @@ class AdminController extends Controller
 
 		$video_files = array_slice($video_files, ($pagetag->getPage()-1)*6, 6);
 
+		if($request->isMethod('post')) {
+			if($request->input('way') == 'videolist') {
+				return view('videoreal.videolist')
+						->with('pagetag', $pagetag)
+						->with('video_files', $video_files);
+			}
+		}
+
 		return $this->getViewWithMenus('videoreal', $request)
 						->with('pagetag', $pagetag)
 						->with('video_files', $video_files)
-						->with('video_rand', $this->getRandVideoName($video_files));
+						->with('video_rand', $this->getRandVideoName());
 	}
 
 	public function alarmInfo(Request $request) {
+
+		if($request->isMethod('post')) {
+			if($request->input('way') == 'alarmlist') {
+				return view('alarminfo.alarmlist')
+						->with($this->getAlarminfosWithPage());
+			}
+		}
+
 		return $this->getViewWithMenus('alarminfo', $request)
-						->with('alarminforate', ComputeController::getAlarminfoUpdateRate().'%')
+						->with('alarminforate', ComputeController::getAlarminfoUpdateRate())
 						->with($this->getAlarminfosWithPage());
 	}
 

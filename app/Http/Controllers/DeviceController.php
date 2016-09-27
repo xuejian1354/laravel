@@ -153,7 +153,7 @@ class DeviceController extends Controller
 	}
 
 	public static function getDeviceNumsFromArea($areasn) {
-		return Device::where('area', $areasn)->count();
+		return Device::where('area', $areasn)->where('attr', '!=', 3)->count();
 	}
 
 	public static function getDevAverageFromArea($areasn, $opttype, $ol = 'int') {
@@ -211,13 +211,11 @@ class DeviceController extends Controller
 		$device = Device::where('sn', $devsn)->first();
 		if(Input::get('data') == 1 && $device->data != '打开') {
 			$device->data = '打开';
-			$device->save();
-			DeviceController::addDevCtrlRecord($device);
+			event(new \App\Events\DevDataEvent($device->sn, $device->data));
 		}
 		elseif(Input::get('data') == 0 && $device->data != '关闭') {
 			$device->data = '关闭';
-			$device->save();
-			DeviceController::addDevCtrlRecord($device);
+			event(new \App\Events\DevDataEvent($device->sn, $device->data));
 		}
 
 		return [$device->data, date('H:i:s', strtotime($device->updated_at))];
