@@ -57,14 +57,7 @@
         <!-- i class="pull-right ion ion-trash-a"></i -->
       </div>
       <div class="box-body">
-        <!-- the events -->
-        <div id="external-events">
-          <div class="external-event bg-green">20号记得设置灌溉</div>
-          <div class="external-event bg-yellow">不要频繁的操作阀门开头</div>
-          <div class="external-event bg-aqua">温度超出阈值，但可忽略</div>
-          <div class="external-event bg-light-blue">注意大棚1温湿度的变化</div>
-          <div class="external-event bg-red">大棚1开启灌溉后要记得关闭</div>
-        </div>
+        @include('alarminfo.msglist')
       </div>
       <!-- /.box-body -->
     </div>
@@ -124,7 +117,20 @@ function updateDevListPost(hid, pg) {
     });
 
     $("#add-new-event").click(function (e) {
-      e.preventDefault();
+    	$.post('/'+'{{ $request->path() }}',
+    	  { _token:'{{ csrf_token() }}', 
+      	    way:'msgadd', color:currColor, 
+      	    content:$("#new-event").val() },
+    	  function(data, status) {
+    		if(status != 'success') {
+    		  alert("Status: " + status);
+    		}
+    		else {
+    		  $('#msglist').html(data);
+    		}
+    	  }
+    	);
+      /*e.preventDefault();
       //Get value and make sure it is not null
       var val = $("#new-event").val();
       if (val.length == 0) {
@@ -135,13 +141,13 @@ function updateDevListPost(hid, pg) {
       var event = $("<div />");
       event.css({"background-color": currColor, "border-color": currColor, "color": "#fff"}).addClass("external-event");
       event.html(val);
-      $('#external-events').prepend(event);
+      $('#external-events').prepend(event); */
 
       //Add draggable funtionality
       //ini_events(event);
 
       //Remove event from text input
-      $("#new-event").val("");
+      //$("#new-event").val("");
     });
   });
 </script>

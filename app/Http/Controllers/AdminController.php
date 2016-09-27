@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Areabox;
 use App\Areaboxcontent;
 use App\Alarminfo;
+use App\Msgboard;
 
 class AdminController extends Controller
 {
@@ -116,9 +117,37 @@ class AdminController extends Controller
 				return view('alarminfo.alarmlist')
 						->with($this->getAlarminfosWithPage());
 			}
+			else if($request->input('way') == 'msgadd') {
+				$color = $request->input('color');
+				$content = $request->input('content');
+				if(trim($content) == '') {
+					$content = '<br>';
+				}
+
+				$msgboards = Msgboard::orderBy('updated_at', 'asc');
+				if(count($msgboards->get()) < 6) {
+					Msgboard::create([
+							'bgcolor' => $color,
+							'content' => $content,
+					]);
+				}
+				else {
+					$addmsg = $msgboards->first();
+					$addmsg->bgcolor = $color;
+					$addmsg->content = $content;
+					$addmsg->save();
+				}
+
+				$msgboards = Msgboard::orderBy('updated_at', 'desc')->limit(6)->get();
+				return view('alarminfo.msglist')
+						->with('msgboards', $msgboards);
+			}
 		}
 
+		$msgboards = Msgboard::orderBy('updated_at', 'desc')->limit(6)->get();
+
 		return $this->getViewWithMenus('alarminfo', $request)
+						->with('msgboards', $msgboards)
 						->with('alarminforate', ComputeController::getAlarminfoUpdateRate())
 						->with($this->getAlarminfosWithPage());
 	}

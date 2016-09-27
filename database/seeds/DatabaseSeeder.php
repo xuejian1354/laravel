@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Msgboard;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceTableSeeder::class);
         $this->call(AreaboxTableSeeder::class);
         $this->call(AreaboxcontentTableSeeder::class);
+        $this->call(MsgboardTableSeeder::class);
     }
 }
