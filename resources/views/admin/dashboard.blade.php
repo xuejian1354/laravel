@@ -92,7 +92,7 @@ desired effect
   @include('admin.footer')
 
   <!-- Control Sidebar -->
-  @include('admin.setside')
+  <!-- include('admin.setside') -->
   <!-- /.control-sidebar -->
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->

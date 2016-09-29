@@ -19,7 +19,8 @@ class AreaboxTableSeeder extends Seeder
         		'title' => '空气指数', 
         		'column' => 4, 
         		'icon_class' => 'fa-cloud', 
-        		'color_class' => 'bg-aqua']);
+        		'color_class' => 'bg-aqua',
+        ]);
 
         Areabox::create([
         		'id' => 2,
@@ -27,7 +28,8 @@ class AreaboxTableSeeder extends Seeder
         		'title' => '土壤指数',
         		'column' => 4,
         		'icon_class' => 'fa-eraser',
-        		'color_class' => 'bg-red']);
+        		'color_class' => 'bg-red',
+        ]);
 
         Areabox::create([
         		'id' => 3,
@@ -35,7 +37,8 @@ class AreaboxTableSeeder extends Seeder
         		'title' => '气象站',
         		'column' => 4,
         		'icon_class' => 'fa-spoon',
-        		'color_class' => 'bg-green']);
+        		'color_class' => 'bg-green',
+        ]);
 
         Areabox::create([
         		'id' => 4,
@@ -43,6 +46,34 @@ class AreaboxTableSeeder extends Seeder
         		'title' => '设备',
         		'column' => 4,
         		'icon_class' => 'fa-support',
-        		'color_class' => 'bg-yellow']);
+        		'color_class' => 'bg-yellow',
+        ]);
+
+        Areabox::create([
+        		'id' => 5,
+        		'area_type' => '养猪场',
+        		'title' => '温湿度',
+        		'column' => 3,
+        		'icon_class' => 'fa-tint',
+        		'color_class' => 'bg-green',
+        ]);
+
+        Areabox::create([
+        		'id' => 6,
+        		'area_type' => '养猪场',
+        		'title' => '光照',
+        		'column' => 3,
+        		'icon_class' => 'fa-sun-o',
+        		'color_class' => 'bg-aqua',
+        ]);
+
+        Areabox::create([
+        		'id' => 7,
+        		'area_type' => '养猪场',
+        		'title' => '空气质量',
+        		'column' => 3,
+        		'icon_class' => 'fa-cloud',
+        		'color_class' => 'bg-red',
+        ]);
     }
 }

@@ -26,8 +26,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 		];
 
 		foreach ($url_requests as $key => $val) {
-			Route::get($key, $val);
-			Route::post($key, $val);
+			Route::match(['get', 'post'], $key, $val);
 		}
 	});
 

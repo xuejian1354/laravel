@@ -36,9 +36,11 @@
             <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
           </tr>
         @endforeach
+        @if(isset($index))
         @while(++$index < $pagetag->getRow())
           <tr><td height="37"></td></tr>
         @endwhile
+        @endif
         </tbody>
         </table>
       </div>
