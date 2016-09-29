@@ -18,6 +18,7 @@ use App\Areabox;
 use App\Areaboxcontent;
 use App\Alarminfo;
 use App\Msgboard;
+use App\User;
 
 class AdminController extends Controller
 {
@@ -28,20 +29,69 @@ class AdminController extends Controller
 		}
 	}
 
-	public function curInfo(Request $request) {
+	public function curInfo(Request $request, $curopt = null) {
+		if($curopt == null) {
+			$record = new \stdClass();
+			$record->data = Record::query()->orderBy('updated_at', 'desc')->get();
+			$record->hasmore = false;
 
-		$record = new \stdClass();
-		$record->data = Record::query()->orderBy('updated_at', 'desc')->get();
-		$record->hasmore = false;
+			if(count($record->data) > 5) {
+				$record->hasmore = true;
+				$record->data = array_slice(iterator_to_array($record->data), 0, 5);
+			}
 
-		if(count($record->data) > 5) {
-			$record->hasmore = true;
-			$record->data = array_slice(iterator_to_array($record->data), 0, 5);
+			return $this->getViewWithMenus('curinfo', $request)
+							->with('page_description', '智能农业控制平台')
+							->with('record', $record);
 		}
+		elseif($curopt == 'user') {
 
-		return $this->getViewWithMenus('curinfo', $request)
-						->with('page_description', '智能农业控制平台')
-						->with('record', $record);
+			if($request->isMethod('post') && $request->input('way') == 'userdel') {
+				$usersns = json_decode($request->input('usersns'));
+				foreach ($usersns as $usersn) {
+					$user = User::where('sn', $usersn)->first();
+					$user->delete();
+				}
+			}
+
+			/* User lists from page */
+			$gp = Input::get('page');	//From URL
+			$users = User::query();
+
+			$pagetag = new PageTag(6, 3, $users->count(), $gp?$gp:1);
+			$users = $users->orderBy('updated_at', 'desc')
+							->paginate($pagetag->getRow());
+
+			$recordcount = Record::query()->count();
+			foreach ($users as $user) {
+				$user->actcount = round(Record::where('usersn', $user->sn)->count() / $recordcount * 100, 2);
+			}
+
+			if($request->isMethod('post')) {
+				if($request->input('way') == 'userlist' || $request->input('way') == 'userdel') {
+					return view('curinfo.userlist')
+							->with('request', $request)
+							->with('pagetag', $pagetag)
+							->with('users', $users);
+				}
+				else if($request->input('way') == 'useractive') {
+					$user = User::where('sn', $request->input('usersn'))->first();
+					if($user != null) {
+						$user->active = true;
+						$user->save();
+						return 1;
+					}
+					else {
+						return 0;
+					}
+				}
+			}
+
+			return $this->getViewWithMenus('curinfo.user', $request)
+							->with('page_title', '用户')
+							->with('pagetag', $pagetag)
+							->with('users', $users);
+		}
 	}
 
 	public function areaCtrl(Request $request, $areasn = null) {
@@ -159,7 +209,7 @@ class AdminController extends Controller
 
 		foreach ($console_menus as $menus) {
 			foreach ($menus as $menu) {
-				if(isset($menu->isactive) && $menu->isactive == 1) {
+				if(isset($menu->isactive) && $menu->isactive == true) {
 					array_push($select_menus, $menu);
 				}
 			}

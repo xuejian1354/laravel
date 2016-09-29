@@ -78,11 +78,20 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
     	$this->validator($request->all())->validate();
-    
+
     	$this->guard()->login($this->create($request->all()));
 
     	$this->addLogingRecord('register');
-    
+
+    	if ($this->guard()->user()->active != true) {
+    		$request->session()->flush();
+    		$request->session()->regenerate();
+    		return redirect('/register')
+    		->withErrors([
+    				'email' => 'This account is not active, please contact with admin for setting first.',
+    		]);
+    	}
+
     	return redirect($this->redirectPath());
     }
 

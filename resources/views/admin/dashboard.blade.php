@@ -67,23 +67,23 @@ desired effect
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>
-          {{ end($select_menus)->name }}
-          <small>{{ $page_description or null }}</small>
-        </h1>
-        <!-- You can dynamically generate breadcrumbs here -->
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>{{ $select_menus[0]->name }}</a></li>
-            @if(count($select_menus) > 1)
-            <li class="active">{{ end($select_menus)->name }}</li>
-            @endif
-        </ol>
+      <h1>
+        {{ $page_title or end($select_menus)->name }}
+        <small>{{ $page_description or null }}</small>
+      </h1>
+      <!-- You can dynamically generate breadcrumbs here -->
+      <ol class="breadcrumb">
+        <li><a href="/{{ $select_menus[0]->action }}"><i class="fa fa-dashboard"></i>{{ $select_menus[0]->name }}</a></li>
+        @if(isset($page_title) || count($select_menus) > 1)
+        <li class="active">{{ $page_title or end($select_menus)->name }}</li>
+        @endif
+      </ol>
     </section>
 
     <!-- Main content -->
     <section class="content">
-        <!-- Your Page Content Here -->
-        @yield('content')
+      <!-- Your Page Content Here -->
+      @yield('content')
     </section><!-- /.content -->
   </div>
   <!-- /.content-wrapper -->

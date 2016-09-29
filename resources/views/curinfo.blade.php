@@ -35,12 +35,12 @@
     <div class="small-box bg-yellow">
       <div class="inner">
         <h3>{{ App\User::query()->count() }}</h3>
-        <p><b>人 员</b></p>
+        <p><b>用 户</b></p>
       </div>
       <div class="icon">
         <i class="ion ion-person-stalker"></i>
       </div>
-      <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      <a href="/curinfo/user" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
     </div>
   </div>
   <!-- ./col -->
@@ -123,7 +123,6 @@
 @endsection
 
 @section('conscript')
-<!-- FLOT CHARTS -->
 <script src="{{ asset('/bower_components/AdminLTE/plugins/flot/jquery.flot.min.js') }}"></script>
 <script>
   $(function () {

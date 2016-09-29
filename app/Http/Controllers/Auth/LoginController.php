@@ -47,9 +47,28 @@ class LoginController extends Controller
     	$request->session()->regenerate();
     	$this->clearLoginAttempts($request);
 
-    	$this->addLogingRecord('login');
-
     	return $this->authenticated($request, $this->guard()->user()) ?: redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+    	if ($user->active != true) {
+    		$request->session()->flush();
+    		$request->session()->regenerate();
+    		return redirect('/login')
+    				->withErrors([
+			            'email' => 'This account is not active, please contact with admin for setting first.',
+			        ]);
+    	}
+
+    	$this->addLogingRecord('login');
     }
 
     public function logout(Request $request)

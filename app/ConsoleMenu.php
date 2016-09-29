@@ -44,12 +44,18 @@ class ConsoleMenu extends Model
     	$pmenu->action == 'areactrl'
     		&& $this->getAreactrlMenus($pmenu, $request_path);
 
-    	if ($pmenu->action == $request_path) {
-    		$tmenu = $pmenu;
-    		do {
-    			$tmenu->isactive = true;
-    			$tmenu = $tmenu->pmenu;
-    		} while (isset($tmenu));
+    	$reqars = explode('/', $request_path);
+    	$allreqar = null;
+    	$rel_requests = array();
+    	foreach ($reqars as $reqar) {
+    		$allreqar == null ? $allreqar = $reqar : $allreqar .= '/'.$reqar;
+    		array_push($rel_requests, $allreqar);
+    	}
+
+    	foreach ($rel_requests as $rel_request) {
+    		if ($pmenu->action == $rel_request) {
+    			$pmenu->isactive = true;
+    		}
     	}
 
     	$imenus = ConsoleMenu::where('pnode', $pmenu->inode)

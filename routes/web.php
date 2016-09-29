@@ -18,7 +18,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 
 		$url_requests = [
 				'/' => 'AdminController@index',
-				'/curinfo' => 'AdminController@curInfo',
+				'/curinfo/{curopt?}' => 'AdminController@curInfo',
 				'/areactrl/{areasn?}' => 'AdminController@areaCtrl',
 				'/devstats' => 'AdminController@devStats',
 				'/videoreal' => 'AdminController@videoReal',
