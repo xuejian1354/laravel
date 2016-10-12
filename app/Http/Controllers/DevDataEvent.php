@@ -1,21 +1,13 @@
 <?php
 
-namespace App\Events;
+namespace App\Http\Controllers;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Device;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\AlarminfoController;
 
-class DevDataEvent implements ShouldBroadcast
+class DevDataEvent
 {
-    use InteractsWithSockets, SerializesModels;
-
     public $sn, $data, $attr, $areaboxcontent, $updated_at;
 
     /**
@@ -36,7 +28,10 @@ class DevDataEvent implements ShouldBroadcast
     {
     	$dataArray = array();
 
-    	foreach(['sn' => $this->sn, 'data' => $this->data, 'updated_at' => $this->updated_at] as $key => $value)
+    	foreach(['sn' => $this->sn,
+    			'data' => $this->data,
+    			'attr' => $this->attr, 
+    			'updated_at' => $this->updated_at] as $key => $value)
     	{
     		$value != null && $dataArray[$key] = $value;
     	}
@@ -45,10 +40,14 @@ class DevDataEvent implements ShouldBroadcast
     }
 
     public function updateToPusher() {
-    	// Disable pusher because trigger by event()
+    	$pusher = new \Pusher(
+    			env('PUSHER_KEY'),
+    			env('PUSHER_SECRET'),
+    			env('PUSHER_APP_ID'),
+    			['encrypted' => true]
+    	);
 
-    	//$pusher = \Illuminate\Support\Facades\App::make('pusher');
-    	//$pusher->trigger($this->broadcastOn(), $this->broadcastAs(), $this->dataToArray());
+    	$pusher->trigger('devdata-updating', 'update', $this->dataToArray());
     } 
 
     public function updateToDB() {
@@ -132,37 +131,17 @@ class DevDataEvent implements ShouldBroadcast
     				break;
     			}
     		}
-    	}
 
-    	$this->updated_at = date('H:i:s', strtotime($device->updated_at));
+    		$this->updated_at = date('H:i:s', strtotime($device->updated_at));
 
-    	// update devctrl record
-    	if($device->attr == 2) {
-    		DeviceController::addDevCtrlRecord($device);
+    		// update devctrl record
+    		if($device->attr == 2) {
+    			DeviceController::addDevCtrlRecord($device);
+    		}
     	}
     } 
 
     public function test() {
     	dd($this->dataToArray());
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return Channel|array
-     */
-    public function broadcastOn()
-    {
-        return ['devdata-updating'];
-    }
-
-    /**
-     * Get the names the event should broadcast as.
-     *
-     * @return Name|string
-     */
-    public function broadcastAs()
-    {
-    	return 'update';
     }
 }

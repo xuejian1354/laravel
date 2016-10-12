@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
 use App\Device;
+use App\User;
 
 class DevDataController extends Controller
 {
@@ -14,10 +15,25 @@ class DevDataController extends Controller
 
     	switch(Input::get('action', 'update')) {
     	case 'update': 
-    		event(new \App\Events\DevDataEvent(Input::get('sn'), Input::get('data')));
-    		return '<h2>Success</h2>'
-    				.'<span>Update device data!</span><br><br>'
-    				.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
+    		if(Device::where('sn', Input::get('sn'))->first() != null) {
+	    		(new DevDataEvent(Input::get('sn'), Input::get('data')))->updateToPusher();
+	    		return '<h2>Success</h2>'
+	    				.'<span>Update device data!</span><br><br>'
+	    				.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
+    		}
+    		else {
+    			Device::create([
+    					'sn' => Input::get('sn'),
+    					'type' => 0,
+    					'attr' => 0,
+    					'data' => Input::get('data'),
+    					'owner' => User::where('name', 'root')->firstOrFail()->sn,
+    			]);
+
+    			return '<h2>Success</h2>'
+    					.'<span>Create new device!</span><br><br>'
+    					.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
+    		}
 
     	case 'threshold':
     		$holds = explode(':', Input::get('threshold'));

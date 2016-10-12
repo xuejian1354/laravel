@@ -118,9 +118,9 @@ function updateDevListPost(hid, pg) {
 }
 </script>
 
-<script src="//cdn.bootcss.com/pusher/3.0.0/pusher.min.js"></script>
+<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
 <script>
-var pusher = new Pusher("{{env('PUSHER_KEY')}}")
+var pusher = new Pusher("{{ env('PUSHER_KEY') }}", { encrypted: true});
 var channel = pusher.subscribe('devdata-updating');
 channel.bind('update', function(devdata) {
   if(devdata.attr == 1) {

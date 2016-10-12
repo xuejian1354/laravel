@@ -286,14 +286,14 @@ class DeviceController extends Controller
 		$device = Device::where('sn', $devsn)->first();
 		if(Input::get('data') == 1 && $device->data != '打开') {
 			$device->data = '打开';
-			event(new \App\Events\DevDataEvent($device->sn, $device->data));
+			(new DevDataEvent($device->sn, $device->data))->updateToPusher();
 		}
 		elseif(Input::get('data') == 0 && $device->data != '关闭') {
 			$device->data = '关闭';
-			event(new \App\Events\DevDataEvent($device->sn, $device->data));
+			(new DevDataEvent($device->sn, $device->data))->updateToPusher();
 		}
 
-		return [$device->data, date('H:i:s', strtotime($device->updated_at))];
+		//return [$device->data, date('H:i:s', strtotime($device->updated_at))];
 	}
 
 	public static function addDevCtrlRecord($device) {

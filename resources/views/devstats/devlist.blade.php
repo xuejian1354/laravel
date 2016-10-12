@@ -20,8 +20,8 @@
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
           <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
-          <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
-          <td>{{ $device->rel_area->name }}</td>
+          <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name or '未设置' }}</span></td>
+          <td>{{ $device->rel_area->name or '未设置' }}</td>
           <td>
           @if($device->data == null)
             <span id="devsta{{ $device->sn }}" class="label label-danger">离线</span>

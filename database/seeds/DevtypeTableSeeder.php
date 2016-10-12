@@ -13,6 +13,7 @@ class DevtypeTableSeeder extends Seeder
     public function run()
     {
         DB::table('devtypes')->delete();
+        Devtype::create(['id' => 0, 'name' => '未知', 'attr' => 0, 'img' => 'fa fa-question']);
         Devtype::create(['id' => 1, 'name' => '摄像头', 'attr' => 3, 'img' => 'fa fa-video-camera']);
         Devtype::create(['id' => 2, 'name' => '温度', 'attr' => 1, 'img' => 'fa fa-ticket']);
         Devtype::create(['id' => 3, 'name' => '湿度', 'attr' => 1, 'img' => 'fa fa-tint']);
@@ -43,6 +44,6 @@ class DevtypeTableSeeder extends Seeder
         Devtype::create(['id' => 28, 'name' => '水泵', 'attr' => 2, 'img' => 'fa fa-eraser']);
         Devtype::create(['id' => 29, 'name' => '阀门', 'attr' => 2, 'img' => 'fa fa-delicious']);
         Devtype::create(['id' => 30, 'name' => '电磁阀', 'attr' => 2, 'img' => 'fa fa-codepen']);
-        Devtype::create(['id' => 32, 'name' => '卷帘机', 'attr' => 2, 'img' => 'fa fa-css3']);
+        Devtype::create(['id' => 31, 'name' => '卷帘机', 'attr' => 2, 'img' => 'fa fa-css3']);
     }
 }
