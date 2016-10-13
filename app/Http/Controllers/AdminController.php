@@ -126,21 +126,97 @@ class AdminController extends Controller
 						->with('video_file', $this->getRandVideoName());
 	}
 
-	public function devStats(Request $request) {
+	public function devStats(Request $request, $devopt = null) {
 
-		if($request->isMethod('post')) {
-			if($request->input('way') == 'devlist') {
-				return view('devstats.devlist')
-						->with('devtypes', Devtype::all())
-						->with('areas', Area::all())
-						->with($this->getDevicesWithPage());
+		if($devopt == null) {
+			if($request->isMethod('post')) {
+				if($request->input('way') == 'devlist') {
+					return view('devstats.devlist')
+							->with('devtypes', Devtype::all())
+							->with('areas', Area::all())
+							->with($this->getDevicesWithPage());
+				}
 			}
+	
+			return $this->getViewWithMenus('devstats', $request)
+							->with('devtypes', Devtype::all())
+							->with('areas', Area::all())
+							->with($this->getDevicesWithPage());
 		}
+		else if ($devopt == 'device') {
+			$device = Device::where('sn', $request->get('sn'))->first();
+			
+			if($request->isMethod('post')) {
+				if ($request->input('way') == 'del') {
+					if($device != null) {
+						$device->delete();
+						return 'OK';
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'nameedt') {
+					if($device != null) {
+						$device->name = $request->input('value');
+						$device->save();
 
-		return $this->getViewWithMenus('devstats', $request)
-						->with('devtypes', Devtype::all())
-						->with('areas', Area::all())
-						->with($this->getDevicesWithPage());
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'typeedt') {
+					if($device != null) {
+						$device->type = $request->input('value');
+						$device->name = $device->rel_type->name.substr($device->sn, 2);
+						$device->save();
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'areaedt') {
+					if($device != null) {
+						$device->area = $request->input('value');
+						$device->save();
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'dataedt') {
+					if($device != null) {
+						$device->data = $request->input('value');
+						$device->save();
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'alarmedt') {
+					if($device != null) {
+						$device->alarmthres = $request->input('value');
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+				else if ($request->input('way') == 'owneredt') {
+					if($device != null) {
+						$device->owner = $request->input('value');
+						$device->save();
+						return $device->updated_at;
+					}
+					return 'FAIL';
+				}
+			}
+
+			if($device == null) {
+				return redirect('devstats');
+			}
+
+			return $this->getViewWithMenus('devstats.device', $request)
+							->with('page_description', $device->name)
+							->with('page_title', '设备')
+							->with('device', $device)
+							->with('devtypes', Devtype::all())
+							->with('areas', Area::all())
+							->with('users', User::all());
+		}
 	}
 
 	public function videoReal(Request $request) {

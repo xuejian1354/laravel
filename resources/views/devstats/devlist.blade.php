@@ -19,7 +19,7 @@
         @foreach($devices as $index => $device)
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
+          <td><a class="devsna" href="/devstats/device?sn={{ $device->sn }}">{{ $device->sn }}</a></td>
           <td>
             <i class="{{ $device->rel_type->img }}">
             @if(isset($device->name))
@@ -28,7 +28,7 @@
             <select id="nametype{{ $device->sn }}" class="selnametype" selflag="0" onchange="javascript:selChangeCheck('{{ $device->sn }}', 1);" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
               <option disabled selected hidden>未设置</option>
             @for($index=2; $index < count($devtypes); $index++)
-              <option value="{{ $devtypes[$index]->id }}">&nbsp;{{ $devtypes[$index]->name.substr($device->sn, 2) }}&nbsp;</option>
+              <option value="{{ $devtypes[$index]->id }}">{{ $devtypes[$index]->name.substr($device->sn, 2) }}</option>
             @endfor
             </select>
             @endif

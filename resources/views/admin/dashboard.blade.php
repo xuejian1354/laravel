@@ -4,7 +4,14 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width">
-  <title>{{ App\Globalval::getVal('title') }}</title>
+  <title>{{ \App\Globalval::getVal('title').' | '.$select_menus[0]->name}}
+  @if(isset($page_title) || count($select_menus) > 1)
+    | {{ $page_title or end($select_menus)->name }}
+  @endif
+  @if(isset($page_description))
+    | {{ $page_description }}
+  @endif
+  </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->

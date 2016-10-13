@@ -351,7 +351,7 @@ class DeviceController extends Controller
 		foreach ($devsettings as $devsetting) {
 			$dev = Device::where('sn', $devsetting->sn)->first();
 			if($dev != null) {
-				$dev->name = $devsetting->name;
+				$dev->name = trim($devsetting->name);
 				$dev->type = $devsetting->type;
 				$dev->attr = $dev->rel_type->attr;
 				$dev->area = $devsetting->area;

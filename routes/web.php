@@ -20,7 +20,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 				'/' => 'AdminController@index',
 				'/curinfo/{curopt?}' => 'AdminController@curInfo',
 				'/areactrl/{areasn?}' => 'AdminController@areaCtrl',
-				'/devstats' => 'AdminController@devStats',
+				'/devstats/{devopt?}' => 'AdminController@devStats',
 				'/videoreal' => 'AdminController@videoReal',
 				'/alarminfo' => 'AdminController@alarmInfo',
 		];

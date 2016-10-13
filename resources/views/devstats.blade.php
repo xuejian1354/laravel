@@ -91,7 +91,7 @@ function devSettingPost(devsn = null) {
 	  if($(this).find('.selnametype').attr('selflag') > 3) {
 		devsettings.push({
 			sn: $(this).find('.devsna').text(),
-			name: $(this).find('.selnametype option:selected').text(),
+			name: $.trim($(this).find('.selnametype option:selected').text()),
 			type: $(this).find('.selnametype').val(),
 			area: $(this).find('.selarea').val() 
 		});
@@ -147,6 +147,7 @@ function updateDevListPost(hid, pg) {
 var pusher = new Pusher("{{ env('PUSHER_KEY') }}", { encrypted: true});
 var channel = pusher.subscribe('devdata-updating');
 channel.bind('update', function(devdata) {
+	console.log(JSON.stringify(devdata));
     $('.devtr').each(function() {
       var devsn = $(this).find('.devsna').text();
       if(devsn == devdata.sn) {
