@@ -19,6 +19,7 @@ use App\Areaboxcontent;
 use App\Alarminfo;
 use App\Msgboard;
 use App\User;
+use App\Devtype;
 
 class AdminController extends Controller
 {
@@ -130,11 +131,15 @@ class AdminController extends Controller
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'devlist') {
 				return view('devstats.devlist')
+						->with('devtypes', Devtype::all())
+						->with('areas', Area::all())
 						->with($this->getDevicesWithPage());
 			}
 		}
 
 		return $this->getViewWithMenus('devstats', $request)
+						->with('devtypes', Devtype::all())
+						->with('areas', Area::all())
 						->with($this->getDevicesWithPage());
 	}
 

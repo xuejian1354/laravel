@@ -111,12 +111,16 @@ function updateDevListPost(hid, pg) {
 
 <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
 <script>
+//Pusher.logToConsole = true;
 var pusher = new Pusher("{{ env('PUSHER_KEY') }}", { encrypted: true});
 var channel = pusher.subscribe('devdata-updating');
 channel.bind('update', function(devdata) {
+  console.log(JSON.stringify(devdata));
   if(devdata.attr == 1) {
-    for (var item in devdata.areaboxcontent){
-      $('#devspan'+item).text(devdata.areaboxcontent[item]);
+    for(x in devdata.areaboxcontents) {
+      for (item in devdata.areaboxcontents[x]){
+        $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
+      }
     }
   }
   else if(devdata.attr == 2) {

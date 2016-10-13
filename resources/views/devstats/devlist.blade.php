@@ -20,8 +20,31 @@
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
           <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
-          <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name or '未设置' }}</span></td>
-          <td>{{ $device->rel_area->name or '未设置' }}</td>
+          <td>
+            <i class="{{ $device->rel_type->img }}">
+            @if(isset($device->name))
+            <span>&nbsp;&nbsp;{{ $device->name }}</span>
+            @else
+            <select id="nametype{{ $device->sn }}" class="selnametype" selflag="0" onchange="javascript:selChangeCheck('{{ $device->sn }}', 1);" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
+              <option disabled selected hidden>未设置</option>
+            @for($index=2; $index < count($devtypes); $index++)
+              <option value="{{ $devtypes[$index]->id }}">&nbsp;{{ $devtypes[$index]->name.substr($device->sn, 2) }}&nbsp;</option>
+            @endfor
+            </select>
+            @endif
+          </td>
+          @if(isset($device->rel_area->name))
+          <td>{{ $device->rel_area->name }}</td>
+          @else
+          <td>
+            <select id="area{{ $device->sn }}" class="selarea" onchange="javascript:selChangeCheck('{{ $device->sn }}', 2);" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
+              <option disabled selected hidden>未设置</option>
+            @foreach($areas as $area)
+              <option value="{{ $area->sn }}">&nbsp;{{ $area->name }}&nbsp;</option>
+            @endforeach
+            </select>
+          </td>
+          @endif
           <td>
           @if($device->data == null)
             <span id="devsta{{ $device->sn }}" class="label label-danger">离线</span>
@@ -37,7 +60,7 @@
             </div>
           </center></td>
           @else
-          <td height="40"><center>---</center></td>
+          <td height="40"><center id="selopt{{ $device->sn }}">---</center></td>
           @endif
           <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
         </tr>
@@ -77,6 +100,7 @@
         </li>
       </ul>
     @endif
+    <button id="devsettingall" type="button" class="btn btn-xs bg-purple hidden pull-right" onclick="javascript:devSettingPost();"><b>全部设置</b></button>
     </div>
   </div>
 </div>

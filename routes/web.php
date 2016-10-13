@@ -32,6 +32,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 
 	// Post Request
 	Route::group(['middleware' => ['api', 'auth']], function () {
+		Route::post('/devsetting', 'DeviceController@devSetting');
 		Route::post('/devctrl/{devsn}', 'DeviceController@devCtrl');
 	});
 

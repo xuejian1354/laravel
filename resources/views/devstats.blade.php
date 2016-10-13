@@ -33,6 +33,20 @@
 
 @section('conscript')
 <script type="text/javascript">
+function selChangeCheck(sn, flag) {
+	var selflag = $('#nametype'+sn).attr('selflag');
+	if(selflag < 3) {
+	  selflag = parseInt(selflag) + parseInt(flag);
+	  $('#nametype'+sn).attr('selflag', selflag);
+	}
+
+	if(selflag == 3) {
+	  $('#nametype'+sn).attr('selflag', selflag+1);
+	  $('#selopt'+sn).html('<button type="button" class="btn btn-xs bg-purple" onclick="javascript:devSettingPost(\'' + sn + '\');"><b>设置</b></button>');
+	  $('#devsettingall').removeClass('hidden');
+	}
+}
+
 function devstaSwitch(devsn, data, at) {
   if(data == '打开' || data == '关闭') {
     $('#devsta'+devsn).removeClass('label-danger');
@@ -44,7 +58,7 @@ function devstaSwitch(devsn, data, at) {
 	$('#devsta'+devsn).addClass('label-danger');
 	$('#devsta'+devsn).removeClass('label-success');
 	$('#devsta'+devsn).text('离线');
-	}
+  }
 }
 
 function devstaChange(devsn, data, at) {
@@ -59,6 +73,46 @@ function devstaChange(devsn, data, at) {
     $('#devsta'+devsn).removeClass('label-success');
     $('#devsta'+devsn).text('离线');
   }
+}
+
+function devSettingPost(devsn = null) {
+  var devsettings = new Array();
+
+  if(devsn != null) {
+	devsettings.push({
+		sn: devsn,
+		name: $('#nametype' + devsn + ' option:selected').text(),
+		type: $('#nametype' + devsn).val(),
+		area: $('#area' + devsn).val()
+	});
+  }
+  else {
+	$('.devtr').each(function(){
+	  if($(this).find('.selnametype').attr('selflag') > 3) {
+		devsettings.push({
+			sn: $(this).find('.devsna').text(),
+			name: $(this).find('.selnametype option:selected').text(),
+			type: $(this).find('.selnametype').val(),
+			area: $(this).find('.selarea').val() 
+		});
+	  }
+	});
+  }
+
+  var devstr = JSON.stringify(devsettings);
+
+  $.post('/devsetting', { _token:'{{ csrf_token() }}', devs:devstr }, function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+		var devarrs = JSON.parse(data);
+		for(x in devarrs) {
+		  $('#selopt'+devarrs[x].sn).html('<span class="label label-success">成功</span>');
+		  $('#devat'+devarrs[x].sn).text(devarrs[x].updated_at);
+		}
+	  }
+  });
 }
 
 function devCtrlPost(sw, devsn) {

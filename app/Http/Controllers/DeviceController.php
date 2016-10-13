@@ -25,11 +25,11 @@ class DeviceController extends Controller
 					break;
 
 				case 2: //大棚光照
-					$areaboxcontent->val = DeviceController::getWarmhouseIllumiFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn);
 					break;
 
 				case 3: //大棚C02浓度
-					$areaboxcontent->val = DeviceController::getWarmhouseDioxideFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn);
 					break;
 
 				case 4: //大棚土壤温度
@@ -69,19 +69,19 @@ class DeviceController extends Controller
 					break;
 
 				case 13: //养猪场光照
-					$areaboxcontent->val = DeviceController::getHogpenIllumiFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn);
 					break;
 
 				case 14: //养猪场C02浓度
-					$areaboxcontent->val = DeviceController::getHogpenDioxideFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn);
 					break;
 
 				case 15: //养猪场氨气
-					$areaboxcontent->val = DeviceController::getHogpenAmmoniaFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getAmmoniaFromArea($areasn);
 					break;
 
 				case 16: //养猪场硫化氢
-					$areaboxcontent->val = DeviceController::getHogpenHydrothionFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getHydrothionFromArea($areasn);
 					break;
 			}
 
@@ -114,48 +114,50 @@ class DeviceController extends Controller
 
 	//大棚温湿度
 	public static function getWarmhouseHumiTempFromArea($areasn) {
-		$temp = DeviceController::getDevAverageFromArea($areasn, 2);
-		$temp = ($temp == null ? '未知' : round($temp).'℃');
 
-		$humi = DeviceController::getDevAverageFromArea($areasn, 3);
-		$humi = ($humi == null ? '未知' : $humi.'%');
+		$tempvals = array();
+		$humivals = array();
+		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+		
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
+			array_push($tempvals, hexdec(substr($dev->data, 0, 4))/100);
+			array_push($humivals, hexdec(substr($dev->data, 4, 8))/100);
+		}
+
+		$temp = DeviceController::getAverageVal($tempvals);
+		$humi = DeviceController::getAverageVal($humivals);
+
+		$temp = ($temp == null ? '未知' : $temp.' ℃');
+		$humi = ($humi == null ? '未知' : $humi.' %');
 
 		return $temp.'/'.$humi;
 	}
 
-	//大棚光照
-	public static function getWarmhouseIllumiFromArea($areasn) {
-		$illumi = DeviceController::getDevAverageFromArea($areasn, 4);
-		return $illumi == null ? '未知' : round($illumi).' Lux';
-	}
-
-	//大棚C02浓度
-	public static function getWarmhouseDioxideFromArea($areasn) {
-		$dioxide = DeviceController::getDevAverageFromArea($areasn, 14, 'float');
-		return $dioxide == null ? '未知' : $dioxide.'%';
-	}
-
 	//大棚土壤温度
 	public static function getWarmhouseSoilTempFromArea($areasn) {
-		$soiltemp = DeviceController::getDevAverageFromArea($areasn, 20);
+		$soiltemp = DeviceController::getDevAverageFromArea($areasn, 19);
 		return $soiltemp == null ? '未知' : $soiltemp.'℃';
 	}
 
 	//大棚土壤水分
 	public static function getWarmhouseSoilMoistureFromArea($areasn) {
-		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, 21, 'float');
+		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, 20, 'float');
 		return $soilmoisture == null ? '未知' : $soilmoisture;
 	}
 
 	//大棚土壤PH值
 	public static function getWarmhouseSoilPHFromArea($areasn) {
-		$soilph = DeviceController::getDevAverageFromArea($areasn, 23, 'float');
+		$soilph = DeviceController::getDevAverageFromArea($areasn, 22, 'float');
 		return $soilph == null ? '未知' : $soilph;
 	}
 
 	//大棚气象风速
 	public static function getWarmhouseAirSpeedFromArea($areasn) {
-		$speed = DeviceController::getDevAverageFromArea($areasn, 6, 'float');
+		$speed = DeviceController::getDevAverageFromArea($areasn, 5, 'float');
 		if($speed == null) {
 			return '未知';
 		}
@@ -170,7 +172,7 @@ class DeviceController extends Controller
 
 	//大棚气象风向
 	public static function getWarmhouseAirDirectionFromArea($areasn) {
-		$dev = Device::where('area', $areasn)->where('type', 7)->first();
+		$dev = Device::where('area', $areasn)->where('type', 6)->first();
 		if($dev == null || $dev->data == null) {
 			return '未知';
 		}
@@ -181,7 +183,7 @@ class DeviceController extends Controller
 
 	//大棚气象降雨量
 	public static function getWarmhouseRainfallFromArea($areasn) {
-		$rainfall = DeviceController::getDevAverageFromArea($areasn, 5);
+		$rainfall = DeviceController::getDevAverageFromArea($areasn, 4);
 		return $rainfall == null ? '未知' : $rainfall.'mm';
 	}
 
@@ -192,43 +194,105 @@ class DeviceController extends Controller
 
 	//养猪场温度
 	public static function getHogpenTempFromArea($areasn) {
-		$temp = DeviceController::getDevAverageFromArea($areasn, 2);
-		$temp = ($temp == null ? '未知' : round($temp).'℃');
+		$tempvals = array();
+		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+		
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
 
-		return $temp;
+			array_push($tempvals, hexdec(substr($dev->data, 0, 4))/100);
+		}
+
+		$temp = DeviceController::getAverageVal($tempvals);
+		return $temp == null ? '未知' : $temp.' ℃';
 	}
 
 	//养猪场湿度
 	public static function getHogpenHumiFromArea($areasn) {
-		$humi = DeviceController::getDevAverageFromArea($areasn, 3);
-		$humi = ($humi == null ? '未知' : $humi.'%');
-
-		return $humi;
+		$humivals = array();
+		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+	
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+	
+			array_push($humivals, hexdec(substr($dev->data, 4, 8))/100);
+		}
+	
+		$humi = DeviceController::getAverageVal($humivals);
+	
+		return $humi == null ? '未知' : $humi.' %';
 	}
 
-	//养猪场光照
-	public static function getHogpenIllumiFromArea($areasn) {
-		$illumi = DeviceController::getDevAverageFromArea($areasn, 4);
-		return $illumi == null ? '未知' : round($illumi).' Lux';
+	//光照
+	public static function getIllumiFromArea($areasn) {
+		$devals = array();
+
+		$devs = Device::where('area', $areasn)->where('type', 3)->get();
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
+			array_push($devals, hexdec(substr($dev->data, 0, 4)));
+		}
+
+		$illumi = DeviceController::getAverageVal($devals);
+		return $illumi === null ? '未知' : round($illumi).' Lux';
 	}
 
-	//养猪场C02浓度
-	public static function getHogpenDioxideFromArea($areasn) {
-		$dioxide = DeviceController::getDevAverageFromArea($areasn, 14, 'float');
-		return $dioxide == null ? '未知' : $dioxide.'%';
+	//C02浓度
+	public static function getDioxideFromArea($areasn) {
+		$devals = array();
+
+		$devs = Device::where('area', $areasn)->where('type', 13)->get();
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
+			array_push($devals, hexdec(substr($dev->data, 0, 4)));
+		}
+
+		$dioxide = DeviceController::getAverageVal($devals);		
+		return $dioxide === null ? '未知' : $dioxide.' ppm';
 	}
 
-	//养猪场氨气
-	public static function getHogpenAmmoniaFromArea($areasn) {
-		$ammonia = DeviceController::getDevAverageFromArea($areasn, 8, 'float');
-		return $ammonia == null ? '未知' : $ammonia.'%';
+	//氨气
+	public static function getAmmoniaFromArea($areasn) {
+		$devals = array();
+
+		$devs = Device::where('area', $areasn)->where('type', 7)->get();
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
+			array_push($devals, hexdec(substr($dev->data, 0, 4)));
+		}
+
+		$ammonia = DeviceController::getAverageVal($devals);		
+		return $ammonia === null ? '未知' : $ammonia.' ppm';
 	}
 
-	//养猪场硫化氢
-	public static function getHogpenHydrothionFromArea($areasn) {
-		$hydrothion = DeviceController::getDevAverageFromArea($areasn, 10, 'float');
-		return 
-		$hydrothion == null ? '未知' : $hydrothion.'%';
+	//硫化氢
+	public static function getHydrothionFromArea($areasn) {
+		$devals = array();
+
+		$devs = Device::where('area', $areasn)->where('type', 9)->get();
+		foreach ($devs as $dev) {
+			if($dev->data == null) {
+				continue;
+			}
+
+			array_push($devals, hexdec(substr($dev->data, 0, 4)));
+		}
+
+		$dydrothion = DeviceController::getAverageVal($devals);		
+		return $dydrothion === null ? '未知' : $dydrothion.' ppm';
 	}
 
 	public static function getDevAverageFromArea($areasn, $opttype, $ol = 'int') {
@@ -282,18 +346,37 @@ class DeviceController extends Controller
 		return $sum/$count;
 	}
 
+	public function devSetting(Request $request) {
+		$devsettings = json_decode($request->get('devs'));
+		foreach ($devsettings as $devsetting) {
+			$dev = Device::where('sn', $devsetting->sn)->first();
+			if($dev != null) {
+				$dev->name = $devsetting->name;
+				$dev->type = $devsetting->type;
+				$dev->attr = $dev->rel_type->attr;
+				$dev->area = $devsetting->area;
+				$dev->save();
+
+				$devsetting->updated_at = ComputeController::getTimeFlag($dev->updated_at);
+			}
+		}
+
+		return json_encode($devsettings);
+	}
+
 	public function devCtrl(Request $request, $devsn) {
 		$device = Device::where('sn', $devsn)->first();
+		$update_at = strtotime($device->updated_at);
 		if(Input::get('data') == 1 && $device->data != '打开') {
 			$device->data = '打开';
-			(new DevDataEvent($device->sn, $device->data))->updateToPusher();
+			$update_at = (new DevDataEvent($device->sn, $device->data))->updateToPusher();
 		}
 		elseif(Input::get('data') == 0 && $device->data != '关闭') {
 			$device->data = '关闭';
-			(new DevDataEvent($device->sn, $device->data))->updateToPusher();
+			$update_at = (new DevDataEvent($device->sn, $device->data))->updateToPusher();
 		}
 
-		//return [$device->data, date('H:i:s', strtotime($device->updated_at))];
+		return [$device->data, date('H:i:s', $update_at)];
 	}
 
 	public static function addDevCtrlRecord($device) {

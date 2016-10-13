@@ -8,7 +8,7 @@ use App\Http\Controllers\AlarminfoController;
 
 class DevDataEvent
 {
-    public $sn, $data, $attr, $areaboxcontent, $updated_at;
+    public $sn, $data, $attr, $areaboxcontents, $updated_at;
 
     /**
      * Create a new event instance.
@@ -19,7 +19,7 @@ class DevDataEvent
     {
         $this->sn = $sn;
         $this->data = $data;
-        $this->areaboxcontent = null;
+        $this->areaboxcontents = array();
 
         $this->updateToDB();
     }
@@ -31,7 +31,8 @@ class DevDataEvent
     	foreach(['sn' => $this->sn,
     			'data' => $this->data,
     			'attr' => $this->attr, 
-    			'updated_at' => $this->updated_at] as $key => $value)
+    			'updated_at' => $this->updated_at,
+    			'areaboxcontents' => $this->areaboxcontents] as $key => $value)
     	{
     		$value != null && $dataArray[$key] = $value;
     	}
@@ -48,6 +49,8 @@ class DevDataEvent
     	);
 
     	$pusher->trigger('devdata-updating', 'update', $this->dataToArray());
+
+    	return $this->updated_at;
     } 
 
     public function updateToDB() {
@@ -59,48 +62,59 @@ class DevDataEvent
 
     		// update areabox
     		if($device->attr == 1) {
-    			$contenttype = null;
+    			$contenttype = [];
     			switch ($device->type) {
     			case 2:
-    			case 3:
-    				$contenttype = 1;	//温湿度
+    				$contenttype = [1, 11, 12];	//温湿度
     				break;
 
-    			case 4:
-    				$contenttype = 2;	//光照
+    			case 3:
+    				$contenttype = [2, 13];	//光照
    					break;
 
-   				case 14:
+   				case 13:
+    				$contenttype = [3, 14];	//C02浓度
+    				break;
 
-    				$contenttype = 3;	//C02浓度
+    			case 19:
+    				$contenttype = [4];	//土壤温度
     				break;
 
     			case 20:
-    				$contenttype = 4;	//土壤温度
+    				$contenttype = [5];	//土壤水分
     				break;
 
-    			case 21:
-    				$contenttype = 5;	//土壤水分
-    				break;
-
-    			case 23:
-    				$contenttype = 6;	//土壤PH值
-    				break;
-
-    			case 6:
-    				$contenttype = 7;	//气象风速
-    				break;
-
-    			case 7:
-    				$contenttype = 8;	//气象风向
+    			case 22:
+    				$contenttype = [6];	//土壤PH值
     				break;
 
     			case 5:
-    				$contenttype = 9;	//气象降雨量
+    				$contenttype = [7];	//气象风速
+    				break;
+
+    			case 6:
+    				$contenttype = [8];	//气象风向
+    				break;
+
+    			case 4:
+    				$contenttype = [9];	//气象降雨量
+    				break;
+
+    			case 7:
+    				$contenttype = [15];	//氨气
+    				break;
+
+    			case 9:
+    				$contenttype = [16];	//硫化氢
     				break;
     			}
 
-    			$this->areaboxcontent = DeviceController::updateAreaboxDB($device->area, $contenttype);
+    			foreach ($contenttype as $ct) {
+    				$areaboxcontent = DeviceController::updateAreaboxDB($device->area, $ct);
+    				if($areaboxcontent != null) {
+    					array_push($this->areaboxcontents, $areaboxcontent);
+    				}
+    			}
     		}
 
     		$this->attr = $device->attr;
