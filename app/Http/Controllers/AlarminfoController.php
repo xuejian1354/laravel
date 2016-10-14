@@ -10,25 +10,29 @@ use App\Device;
 
 class AlarminfoController extends Controller
 {
-    public static function addAlarminfo($action, $devsn, $thresval) {
+    public static function addAlarminfo($action, $devsn, $thresval, $curdata = null) {
 
     	$device = Device::where('sn', $devsn)->first();
     	if($device == null) {
     		return;
     	}
 
+    	if($curdata == null) {
+    		$curdata = $device->data;
+    	}
+
     	$content = null;
     	switch($action) {
     	case 'up':
-    		$content = '"'.$device->name.'" 获得值 '.$device->data.'，超出阈值 '.$thresval.'.';
+    		$content = '"'.$device->name.'" 获得值 '.$curdata.'，超出阈值 '.$thresval.'.';
     		break;
 
     	case 'down':
-    		$content = '"'.$device->name.'" 获得值 '.$device->data.'，低于阈值 '.$thresval.'.';
+    		$content = '"'.$device->name.'" 获得值 '.$curdata.'，低于阈值 '.$thresval.'.';
     		break;
 
     	case 'cmp':
-    		$content = '"'.$device->name.'" 获得值 '.$device->data.'.';
+    		$content = '"'.$device->name.'" 获得值 '.$curdata.'.';
     		break;
     	}
 

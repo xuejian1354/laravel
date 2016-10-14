@@ -191,6 +191,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'alarmedt') {
 					if($device != null) {
 						$device->alarmthres = $request->input('value');
+						$device->save();
 						return $device->updated_at;
 					}
 					return 'FAIL';

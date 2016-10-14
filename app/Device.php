@@ -19,4 +19,15 @@ class Device extends Model
 	public function rel_area() {
 		return $this->hasOne('App\Area', 'sn', 'area');
 	}
+
+	public function getAlarmThres() {
+		$alarmthres = json_decode($this->alarmthres);
+		if($alarmthres == null) {
+			$alarmthres = new \stdClass();
+			$alarmthres->m = 'none';
+			$alarmthres->v = '';
+		}
+
+		return $alarmthres;
+	}
 }

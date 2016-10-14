@@ -121,29 +121,42 @@ class DevDataEvent
 
     		//trigger alarminfo
     		$alarmthres = json_decode($device->alarmthres);
+
     		if($alarmthres != null) {
-    			switch($alarmthres->m) {
-    			case 'up':
-    				if($device->data > $alarmthres->v && $alarmthres->v >= $before_data) {
-    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
-    				}
-    				break;
+	    		$thresvals = explode('/', $alarmthres->v);
+	    		for ($index=0; $index<count($thresvals); $index++) {
+	    			$curdata = hexdec(substr($device->data, $index*4, ($index+1)*4));
+	    			$checkdata = hexdec(substr($before_data, $index*4, ($index+1)*4));
 
-    			case 'down':
-    				if($device->data < $alarmthres->v && $alarmthres->v <= $before_data) {
-    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
-    				}
-    				break;
+	    			//温湿度
+	    			if($device->type == 2) {
+	    				$curdata = $curdata/100;
+	    				$checkdata = $checkdata/100;
+	    			}
 
-    			case 'cmp':
-					if($device->data == $alarmthres->v && $alarmthres->v != $before_data) {
-						AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v);
-					}
-					break;
-
-    			case 'none':
-    				break;
-    			}
+	    			switch($alarmthres->m) {
+	    			case 'up':
+	    				if($curdata > $thresvals[$index] && $thresvals[$index] >= $checkdata) {
+	    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v, $curdata);
+	    				}
+	    				break;
+	
+	    			case 'down':
+	    				if($curdata < $thresvals[$index] && $thresvals[$index] <= $checkdata) {
+	    					AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v, $curdata);
+	    				}
+	    				break;
+	
+	    			case 'cmp':
+						if($curdata == $thresvals[$index] && $thresvals[$index] != $checkdata) {
+							AlarminfoController::addAlarminfo($alarmthres->m, $device->sn, $alarmthres->v, $curdata);
+						}
+						break;
+	
+	    			case 'none':
+	    				break;
+	    			}
+	    		}
     		}
 
     		$this->updated_at = date('H:i:s', strtotime($device->updated_at));

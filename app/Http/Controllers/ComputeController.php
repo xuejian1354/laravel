@@ -13,6 +13,10 @@ class ComputeController extends Controller
 		$devices = Device::query();
 		$all_count = $devices->count();
 
+		if($all_count == 0) {
+			return 0;
+		}
+
 		$max_time = $devices->max('updated_at');
 		$day = date('Y-m-d', strtotime($max_time));
 

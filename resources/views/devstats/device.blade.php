@@ -22,7 +22,7 @@
         <tr>
           <td>2</td>
           <td>名称</td>
-          <td><input id="devname" type="text" onkeydown="javascript:devNameEdt();" style="border:none;" value="{{ $device->name }}"></td>
+          <td><input id="devname" type="text" onblur="javascript:devNameEdt();" style="border:none;" value="{{ $device->name }}"></td>
         </tr>
         <tr>
           <td>3</td>
@@ -59,17 +59,37 @@
         <tr>
           <td>5</td>
           <td>数据</td>
-          <td><input id="devdata" type="text" onkeydown="javascript:devDataEdt();" style="border:none;" value="{{ $device->data }}"></td>
+          <td><input id="devdata" type="text" onblur="javascript:devDataEdt();" style="border:none;" value="{{ $device->data }}"></td>
         </tr>
         <tr>
           <td>6</td>
           <td>报警阈值</td>
-          <td>{{ $device->alarmthres }}</td>
+          <td>
+            <select id="devalarm" onchange="javascript:devAlarmEdt();" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
+              <option disabled selected hidden></option>
+            @foreach(['up' => '上升报警', 'done' => '下降报警', 'cmp' => '等值报警', 'none' => '无'] as $k => $v)
+              @if($device->getAlarmThres()->m == $k)
+              <option selected value="{{ $k }}">{{ $v }}</option>
+              @else
+              <option value="{{ $k }}">{{ $v }}</option>
+              @endif
+            @endforeach
+            </select>
+            @if($device->getAlarmThres()->m == 'none')
+            <span id="devalarmval" class="hidden">：
+              <input type="text" disabled placeholder="阈值" onblur="javascript:devAlarmEdt();" value="{{ $device->getAlarmThres()->v }}" style="width:60px; border:none;">
+            </span>
+            @else
+            <span id="devalarmval">：
+              <input type="text" placeholder="阈值" onblur="javascript:devAlarmEdt();" value="{{ $device->getAlarmThres()->v }}" style="width:60px; border:none;">
+            </span>
+            @endif
+          </td>
         </tr>
         <tr>
           <td>7</td>
           <td>所有者</td>
-          <td>
+          <td style="width: 60%;">
             <select id="devowner" onchange="javascript:devOwnerEdt();" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
               <option disabled selected hidden></option>
             @foreach($users as $user)
@@ -95,11 +115,8 @@
 
 @section('conscript')
 <script>
-function devNameEdt(e) {
-  var e = e || window.event; 
-  if(e.keyCode == 13) {
-	devEdtPost('nameedt', $('#devname').val());
-  }
+function devNameEdt() {
+  devEdtPost('nameedt', $('#devname').val());
 }
 
 function devTypeEdt() {
@@ -116,14 +133,22 @@ function devAreaEdt() {
 }
 
 function devDataEdt() {
-  var e = e || window.event; 
-  if(e.keyCode == 13) {
-    devEdtPost('dataedt', $('#devdata').val());
-  }
+  devEdtPost('dataedt', $('#devdata').val());
 }
 
 function devAlarmEdt() {
-  alert('devAlarmEdt');
+  var m_val = $('#devalarm option:selected').val();
+  var v_val = $('#devalarmval input').val();
+
+  if(m_val == 'none') {
+    $('#devalarmval').addClass('hidden');
+  }
+  else {
+    $('#devalarmval').removeClass('hidden');
+    $('#devalarmval input').removeAttr("disabled");
+  }
+
+  devEdtPost('alarmedt', JSON.stringify({m: m_val, v: v_val}));
 }
 
 function devOwnerEdt() {
