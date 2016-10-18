@@ -343,10 +343,30 @@ class AdminController extends Controller
 	public function getAllVideoNames() {
 		$video_file_names = array();
 
+		$ret = file_get_contents('http://127.0.0.1:8088/api/getHLSList',
+				false,
+				stream_context_create([
+						'http' => [
+								'method'  => 'POST',
+								'header'  => 'Content-type: application/x-www-form-urlencoded',
+								'content' => http_build_query([])
+						]
+				])
+		);
+		
+		$edjson = json_decode($ret);
+		//dd($edjson);
+		foreach ($edjson->EasyDarwin->Body->Sessions as $session) {
+			$sessfile = explode('/', $session->url);
+			array_push($video_file_names, ['type' => 'm3u8',
+										  	'name' => end($sessfile),
+											'url' => $session->url]);
+		}
+
 		$video_files = Storage::files('/public/video');
 		foreach ($video_files as $video_file) {
 			$video_file_path_array = explode('/', $video_file);
-			array_push($video_file_names, end($video_file_path_array));
+			array_push($video_file_names, ['type' => 'mp4', 'name' => end($video_file_path_array)]);
 		}
 
 		return $video_file_names;
@@ -355,6 +375,9 @@ class AdminController extends Controller
 	protected function getRandVideoName($video_file_names = null) {
 		if($video_file_names == null) {
 			$video_file_names = $this->getAllVideoNames();
+			if(count($video_file_names) == 0) {
+				return null;
+			}
 		}
 
 		return $video_file_names[array_rand($video_file_names)];

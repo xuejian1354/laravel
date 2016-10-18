@@ -45,7 +45,7 @@
         <div class="pad">
           <div class="embed-responsive embed-responsive-4by3">
             <video class="embed-responsive-item" allowfullscreen controls loop>
-  			  <source src="{{ '/video/'.$video_file }}" type="video/mp4">
+  			  <source src="{{ '/video/'.$video_file['name'] }}" type="video/mp4">
 			</video>
           </div>
         </div>

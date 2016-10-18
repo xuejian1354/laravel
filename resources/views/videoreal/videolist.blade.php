@@ -6,16 +6,18 @@
       @foreach($video_files as $index => $video_file)
         <li class="item">
           <div class="product-img">
-            <a href="javascript:refreshVideo('{{ $video_file }}')"><img src="/bower_components/AdminLTE/dist/img/default-50x50.gif" alt="Product Image"></a>
+            <a href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['type'] == 'm3u8' ? $video_file['url'] : $video_file['name'] }}')"><img src="/bower_components/AdminLTE/dist/img/default-50x50.gif" alt="Product Image"></a>
           </div>
           <div class="product-info">
-            <br><a href="javascript:refreshVideo('{{ $video_file }}')" class="product-description">{{ $video_file }}</a>
+            <br><a href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['type'] == 'm3u8' ? $video_file['url'] : $video_file['name'] }}')" class="product-description">{{ $video_file['name'] }}</a>
           </div>
         </li>
       @endforeach
+      @if(isset($index))
       @while(++$index < $pagetag->getRow())
         <li class="item" style="height: 71px;"></li>
       @endwhile
+      @endif
       </ul>
     </div>
     <div class="box-footer">
