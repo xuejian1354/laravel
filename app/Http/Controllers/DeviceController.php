@@ -9,6 +9,7 @@ use App\Device;
 use App\Record;
 use App\Action;
 use App\Areaboxcontent;
+use App\Globalval;
 
 class DeviceController extends Controller
 {
@@ -379,6 +380,9 @@ class DeviceController extends Controller
 		return [$device->data, date('H:i:s', $update_at)];
 	}
 
+	/*
+	 * Video Stream Operations
+	 */
 	public static function addDevCtrlRecord($device) {
 
 		$user = Auth::user();
@@ -392,5 +396,48 @@ class DeviceController extends Controller
 				'optnum' => Controller::getRandHex($user->email.$action->id.$device->sn.$device->data),
 				'data' => null,
 		]);
+	}
+
+	public static function getEasydarwinHLSList() {
+		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_hlslist'),
+						false,
+						stream_context_create([
+								'http' => [
+									'method'  => 'POST',
+									'header'  => 'Content-type: application/x-www-form-urlencoded',
+									'content' => http_build_query([])
+								]
+						])
+				);
+	}
+
+	public static function addEasydarwinHLS($name, $rtsp_url, $timeout) {
+		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_addhls'),
+						false,
+						stream_context_create([
+								'http' => [
+									'method'  => 'POST',
+									'header'  => 'Content-type: application/x-www-form-urlencoded',
+									'content' => http_build_query([
+											'n1' => $name,
+											'n2' => $rtsp_url,
+											'n3' => $timeout,
+									])
+								]
+						])
+				);
+	}
+
+	public static function delEasydarwinHLS($name) {
+		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_delhls'),
+						false,
+						stream_context_create([
+								'http' => [
+									'method'  => 'POST',
+									'header'  => 'Content-type: application/x-www-form-urlencoded',
+									'content' => http_build_query(['n1' => $name])
+								]
+						])
+				);
 	}
 }

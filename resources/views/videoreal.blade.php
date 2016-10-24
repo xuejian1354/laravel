@@ -9,7 +9,7 @@
         <div id="viewplace" class="embed-responsive embed-responsive-4by3">
           @if($video_rand['type'] == 'mp4')
           <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
-  		    <source src="{{ '/video/'.$video_rand['name'] }}" type="video/mp4">
+  		    <source src="{{ $video_rand['url'] }}" type="video/mp4">
 	      </video>
 	      @endif
 	      @if($video_rand['type'] == 'm3u8')
@@ -43,11 +43,16 @@ function updateDevListPost(hid, pg) {
   );
 }
 
-function refreshVideo(type, val) {
-	$('#vtitle').text(val);
+function refreshVideo(type, id, val) {
+	var name = $.trim($('#'+id).text());
+	if(name.length == 0) {
+      name = $.trim($('#'+id).val());
+	}
+	$('#vtitle').text(name);
+
 	if(type == 'mp4') {
-	  $('#viewplace').html('<video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay><source src="/video/' + val + '" type="video/mp4"><\/video>');
-	  $('#vplay source').attr('src','/video/'+val);
+	  $('#viewplace').html('<video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay><source src="' + val + '" type="video/mp4"><\/video>');
+	  $('#vplay source').attr('src', val);
 	  $('#vplay').load();
 	}
 	else if(type == 'm3u8') {
@@ -55,23 +60,59 @@ function refreshVideo(type, val) {
 	}
 }
 
-function getHLSList()
-{
-  $.ajax({
-    url: 'http://loongsky3.net:8088/api/getHLSList',
-	contentType: 'application/x-www-form-urlencoded; charset=utf-8', 
-    method: 'POST',
-    dataType: 'json',
-	cache: false,
-	async: false,
-    data: { },
-    success: function (json) {
-	  alert(JSON.stringify(json));
-    },
-	error:function(msg) {
-	  alert(JSON.stringify(msg));
-	}
+function videolistSetting() {
+  var flag = $('#vsetopt').attr('isset');
+  if(flag == 1) {
+    $('#vaddopt').addClass('disabled');
+    $('#vaddopt').addClass('hidden');
+    $('#vsetopt').removeAttr('isset');
+    $('#vsetopt i').removeClass('fa-remove');
+    $('#vsetopt i').addClass('fa-cog');
+
+    $('.videom3u8').each(function() {
+      var ainput = $(this).find('input');
+      $(this).html('<br><a id="' + ainput.attr('id') + '" href="' + ainput.attr('href') + '" class="product-description">' + ainput.val() + '</a>');
+    });
+  }
+  else {
+    $('#vaddopt').removeClass('disabled');
+    $('#vaddopt').removeClass('hidden');
+    $('#vsetopt').attr('isset', 1);
+    $('#vsetopt i').removeClass('fa-cog');
+    $('#vsetopt i').addClass('fa-remove');
+
+    $('.videom3u8').each(function() {
+      var vname = $(this).text();
+      var ahref = $(this).find('a');
+      $(this).html('<br><input id="' + ahref.attr('id') + '" href="' + ahref.attr('href') + '" onblur="javascript:edtCam(\'' + ahref.attr('id') + '\');" type="text" value="' + $.trim(vname) + '" style="border: 0; width: 85%;"><a href="javascript:delCam(\'' + ahref.attr('id') + '\');" class="pull-right" style="margin-left: 10px;"><i class="fa fa-trash-o"></i></a>');
+    });
+  }
+}
+
+function edtCam(id) {
+  $.post('/videoreal/camedt', { _token:'{{ csrf_token() }}', sn: id, name:$('#'+id).val() },
+    function(data, status) {
+      if(status != 'success') {
+	    alert("Status: " + status);
+      }
+      else {
+      }
   });
+}
+
+function delCam(id) {
+  if(confirm('是否删除该设备？')) {
+    $.post('/videoreal/camdel', { _token:'{{ csrf_token() }}', sn: id },
+      function(data, status) {
+        if(status != 'success') {
+	      alert("Status: " + status);
+        }
+        else if(data == 'OK'){
+          $('#vitem'+id).remove();
+          $('.products-list').append('<li class="item" style="height: 71px;"></li>');
+        }
+    });
+  }
 }
 </script>
 @endsection

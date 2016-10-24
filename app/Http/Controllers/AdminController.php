@@ -20,6 +20,7 @@ use App\Alarminfo;
 use App\Msgboard;
 use App\User;
 use App\Devtype;
+use App\Globalval;
 
 class AdminController extends Controller
 {
@@ -220,7 +221,59 @@ class AdminController extends Controller
 		}
 	}
 
-	public function videoReal(Request $request) {
+	public function videoReal(Request $request, $camopt = null) {
+
+		if($request->isMethod('post')) {
+			if($camopt == 'camedt') {
+				$device = Device::where('sn', $request->input('sn'))->first();
+				if($device != null) {
+					$device->name = $request->input('name');
+					$device->save();
+					return 'OK';
+				}
+
+				return 'FAIL';
+			}
+			else if($camopt == 'camdel') {
+				$device = Device::where('sn', $request->input('sn'))->first();
+				if($device != null) {
+					$device->delete();
+					DeviceController::delEasydarwinHLS($request->input('sn'));
+					return 'OK';
+				}
+
+				return 'FAIL';
+			}
+			else if($camopt == 'camadd') {
+				$sn = $request->input('sn');
+				$stream_type = $request->input('type');
+				$url = $request->input('url');
+				if($stream_type == 'rtsp') {
+					DeviceController::addEasydarwinHLS($sn, $url, 0);
+					return 'OK';
+				}
+				else if ($stream_type == 'hls') {
+					$data = ['protocol' => 'hls', 'url' => $url];
+
+					Device::create([
+							'sn' => $sn,
+							'name' => $sn,
+							'type' => 1,
+							'attr' => 3,
+							'data' => json_encode($data),
+					]);
+
+					return 'OK';
+				}
+
+				return 'FAIL';
+			}
+		}
+		else if($camopt == 'camadd') {
+			return $this->getViewWithMenus('videoreal.camadd', $request)
+						->with('page_title', '摄像头');
+		}
+
 		$gp = Input::get('page');	//From URL
 
 		$video_files = $this->getAllVideoNames();
@@ -342,31 +395,67 @@ class AdminController extends Controller
 
 	public function getAllVideoNames() {
 		$video_file_names = array();
+		$dbcams = Device::where('attr', 3);
 
-		$ret = file_get_contents('http://127.0.0.1:8088/api/getHLSList',
-				false,
-				stream_context_create([
-						'http' => [
-								'method'  => 'POST',
-								'header'  => 'Content-type: application/x-www-form-urlencoded',
-								'content' => http_build_query([])
-						]
-				])
-		);
-		
-		$edjson = json_decode($ret);
-		//dd($edjson);
-		foreach ($edjson->EasyDarwin->Body->Sessions as $session) {
-			$sessfile = explode('/', $session->url);
-			array_push($video_file_names, ['type' => 'm3u8',
-										  	'name' => end($sessfile),
-											'url' => $session->url]);
+		$edjson = json_decode(DeviceController::getEasydarwinHLSList());
+		if(isset($edjson->EasyDarwin->Body->Sessions)) {
+			//dd($edjson);
+			foreach ($edjson->EasyDarwin->Body->Sessions as $session) {
+				$sessfile = explode('/', $session->url);
+				$sn = $sessfile[count($sessfile)-2];
+				$name = $sn;
+				$data = [ 'protocol' => 'rtsp',
+						  'source' => $session->source,
+						  'url' => $session->url ];
+	
+				//Camera info match with DB
+				$camdev = Device::where('sn', $sn)->first();
+				if($camdev == null) {
+					Device::create([
+	        				'sn' => $sn,
+	        				'name' => $sn,
+	        				'type' => 1,
+	        				'attr' => 3,
+	        				'data' => json_encode($data),
+	        				'owner' => User::where('name', 'root')->first()->sn,
+	        		]);
+				}
+				else {
+					$dbcams = $dbcams->where('sn', '!=', $sn);
+	
+					$name = $camdev->name;
+	
+					$camdev->data = json_encode($data);
+					$camdev->save();
+				}
+	
+				array_push($video_file_names, [ 'id' => $sn,
+												'type' => 'm3u8',
+											  	'name' => $name,
+												'url' => $data['url'] ]);
+			}
+		}
+
+		foreach ($dbcams->get() as $dbcam) {
+			$data = json_decode($dbcam->data);
+			if(isset($data->protocol) && isset($data->url)) {
+				array_push($video_file_names, [ 'id' => $dbcam->sn,
+												'type' => 'm3u8',
+												'name' => $dbcam->name,
+												'url' => $data->url ]);
+
+				if($data->protocol == 'rtsp' && isset($data->source)) {
+					DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
+				}
+			}
 		}
 
 		$video_files = Storage::files('/public/video');
 		foreach ($video_files as $video_file) {
 			$video_file_path_array = explode('/', $video_file);
-			array_push($video_file_names, ['type' => 'mp4', 'name' => end($video_file_path_array)]);
+			$name = end($video_file_path_array);
+
+			array_push($video_file_names, ['id' => str_replace('.', '', $name), 'type' => 'mp4', 'name' => $name, 'url' => '/video/'.$name]);
 		}
 
 		return $video_file_names;

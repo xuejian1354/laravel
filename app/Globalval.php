@@ -12,6 +12,6 @@ class Globalval extends Model
     
     public static function getVal($name)
     {
-    	return Globalval::where('name', $name)->get()[0]->val;
+    	return Globalval::where('name', $name)->first()->val;
     }
 }

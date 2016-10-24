@@ -17,9 +17,9 @@
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/bootstrap/css/bootstrap.min.css') }}">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css') }}">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('//cdn.bootcss.com/ionicons/2.0.1/css/ionicons.min.css') }}">
   <!-- fullCalendar 2.2.5-->
   <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.min.css') }}">
   <link rel="stylesheet" href="{{ asset('/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.print.css') }}" media="print">

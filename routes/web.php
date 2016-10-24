@@ -21,7 +21,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 				'/curinfo/{curopt?}' => 'AdminController@curInfo',
 				'/areactrl/{areasn?}' => 'AdminController@areaCtrl',
 				'/devstats/{devopt?}' => 'AdminController@devStats',
-				'/videoreal' => 'AdminController@videoReal',
+				'/videoreal/{camopt?}' => 'AdminController@videoReal',
 				'/alarminfo' => 'AdminController@alarmInfo',
 		];
 

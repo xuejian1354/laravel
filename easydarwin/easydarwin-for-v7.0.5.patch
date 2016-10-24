@@ -1,0 +1,14 @@
+diff --git a/EasyDarwin/APIModules/QTSSAdminModule/QTSSAdminModule.cpp b/EasyDarwin/APIModules/QTSSAdminModule/QTSSAdminModule.cpp
+index 7997ae7..680065e 100644
+--- a/EasyDarwin/APIModules/QTSSAdminModule/QTSSAdminModule.cpp
++++ b/EasyDarwin/APIModules/QTSSAdminModule/QTSSAdminModule.cpp
+@@ -314,6 +314,9 @@ static int cookie_auth(struct mg_connection *conn) {
+ 	char ssid[100], calculated_ssid[100], name[100], expire[100];
+ 	if (strcmp(conn->uri, "/login.html") == 0||
+ 		strcmp(conn->uri, "/loginerror.html") == 0||
++		strcmp(conn->uri, "/api/getHLSList") == 0||
++		strcmp(conn->uri, "/api/addHLSList") == 0||
++		strcmp(conn->uri, "/api/StopHLS") == 0||
+ 		strstr(conn->uri,".js")!=NULL||
+ 		strstr(conn->uri,".css")!=NULL||
+ 		strstr(conn->uri,"images")!=NULL
