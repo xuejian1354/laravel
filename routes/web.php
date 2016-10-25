@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['domain' => 'loongsky3.net'], function () {
+//Route::group(['domain' => 'loongsky3.net'], function () {
 
 	// Web URL
 	Route::group(['middleware' => ['web', 'auth']], function () {
@@ -19,7 +19,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 		$url_requests = [
 				'/' => 'AdminController@index',
 				'/curinfo/{curopt?}' => 'AdminController@curInfo',
-				'/areactrl/{areasn?}' => 'AdminController@areaCtrl',
+				'/areactrl/{areasn?}/{areaopt?}' => 'AdminController@areaCtrl',
 				'/devstats/{devopt?}' => 'AdminController@devStats',
 				'/videoreal/{camopt?}' => 'AdminController@videoReal',
 				'/alarminfo' => 'AdminController@alarmInfo',
@@ -40,7 +40,7 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 	Route::get('/devdata', 'DevDataController@index');
 
 	Auth::routes();
-});
+//});
 
 
 /*Route::group(['domain' => '{account}.loongsky3.net'], function () {
@@ -53,8 +53,8 @@ Route::group(['domain' => 'loongsky3.net'], function () {
 });*/
 
 
-Route::any('{ret?}', function ($ret = null) {
+/*Route::any('{ret?}', function ($ret = null) {
 
 	//dd($ret);
 	return redirect('http://loongsky3.net/'.$ret);
-});
+});*/

@@ -40,7 +40,7 @@ class ConsoleMenu extends Model
     	isset($pmenu->pmenu)
     		&& isset($pmenu->action)
     		&& $pmenu->action = $pmenu->pmenu->action.'/'.$pmenu->action;
-    	
+
     	$pmenu->action == 'areactrl'
     		&& $this->getAreactrlMenus($pmenu, $request_path);
 
@@ -71,7 +71,7 @@ class ConsoleMenu extends Model
 	    	}
     	}
     }
-   
+
     //Add areas to menu
     private function getAreactrlMenus($pmenu, $request_path) {
 
@@ -86,7 +86,7 @@ class ConsoleMenu extends Model
     		$ele->inode = $area->sn;
     		$ele->img = ConsoleMenu::where('name', $area->type)->get()[0]->img;
 
-    		if ($ele->action == $request_path) {
+    		if (strstr($request_path, $ele->action) !== false) {
     			$ele->pmenu = $pmenu;
     			$ele->isactive = true;
     			$ele->pmenu->isactive = true;

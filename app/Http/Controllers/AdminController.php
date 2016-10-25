@@ -96,7 +96,32 @@ class AdminController extends Controller
 		}
 	}
 
-	public function areaCtrl(Request $request, $areasn = null) {
+	public function areaCtrl(Request $request, $areasn = null, $areaopt = null) {
+
+		if($areaopt == 'camadd') {
+			$area = Area::where('sn', $areasn)->first();
+
+			if($request->isMethod('post')) {
+				$carmera = Device::where('sn', $request->input('camerasn'))->first();
+				if($carmera != null && $area != null) {
+					$carmera->area = $area->sn;
+					$carmera->save();
+					return 'OK';
+				}
+				return 'FAIL';
+			}
+
+			if($area == null) {
+				$area = Area::query()->first();
+			}
+
+			$cameras = Device::where('type', 1)->get();
+
+			return $this->getViewWithMenus('areactrl.camadd', $request)
+							->with('page_title', '添加摄像头')
+							->with('area', $area)
+							->with('cameras', $cameras);
+		}
 
 		DeviceController::updateAreaboxDB($areasn);
 
@@ -119,12 +144,24 @@ class AdminController extends Controller
 			}
 		}
 
+		/* Video file */
+		$vcamnames = null;
+		$vcams = Device::where('type', 1)->where('area', $area->sn)->get();
+		if (count($vcams) > 0) {
+			$vcamnames = array();
+			foreach ($vcams as $vcam) {
+				array_push($vcamnames, $vcam->sn);
+			}
+		}
+
+		$video_file = $this->getRandVideoName($vcamnames);
+
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
 						->with('area', $area)
 						->with('areaboxes', $areaboxes)
 						->with($this->getDevicesWithPage($area->sn, 2))
-						->with('video_file', $this->getRandVideoName());
+						->with('video_file', $video_file);
 	}
 
 	public function devStats(Request $request, $devopt = null) {
@@ -393,7 +430,7 @@ class AdminController extends Controller
 		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
 	}
 
-	public function getAllVideoNames() {
+	public function getAllVideoNames($selnames = null) {
 		$video_file_names = array();
 		$dbcams = Device::where('attr', 3);
 
@@ -429,6 +466,21 @@ class AdminController extends Controller
 					$camdev->save();
 				}
 	
+				//Select by names
+				if($selnames != null && count($selnames) > 0) {
+					foreach ($selnames as $selname) {
+						if ($selname == $sn) {
+							array_push($video_file_names, [ 'id' => $sn,
+															'type' => 'm3u8',
+															'name' => $name,
+															'url' => $data['url'] ]);
+							break;
+						}
+					}
+
+					continue;
+				}
+
 				array_push($video_file_names, [ 'id' => $sn,
 												'type' => 'm3u8',
 											  	'name' => $name,
@@ -436,37 +488,40 @@ class AdminController extends Controller
 			}
 		}
 
-		foreach ($dbcams->get() as $dbcam) {
-			$data = json_decode($dbcam->data);
-			if(isset($data->protocol) && isset($data->url)) {
-				array_push($video_file_names, [ 'id' => $dbcam->sn,
-												'type' => 'm3u8',
-												'name' => $dbcam->name,
-												'url' => $data->url ]);
-
-				if($data->protocol == 'rtsp' && isset($data->source)) {
-					DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
+		if($selnames == null) {
+			foreach ($dbcams->get() as $dbcam) {
+				$data = json_decode($dbcam->data);
+				if(isset($data->protocol) && isset($data->url)) {
+					array_push($video_file_names, [ 'id' => $dbcam->sn,
+													'type' => 'm3u8',
+													'name' => $dbcam->name,
+													'url' => $data->url ]);
+	
+					if($data->protocol == 'rtsp' && isset($data->source)) {
+						DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
+					}
 				}
 			}
 		}
 
-		$video_files = Storage::files('/public/video');
-		foreach ($video_files as $video_file) {
-			$video_file_path_array = explode('/', $video_file);
-			$name = end($video_file_path_array);
-
-			array_push($video_file_names, ['id' => str_replace('.', '', $name), 'type' => 'mp4', 'name' => $name, 'url' => '/video/'.$name]);
+		if($selnames == null || count($video_file_names) == 0) {
+			$video_files = Storage::files('/public/video');
+			foreach ($video_files as $video_file) {
+				$video_file_path_array = explode('/', $video_file);
+				$name = end($video_file_path_array);
+	
+				array_push($video_file_names, ['id' => str_replace('.', '', $name), 'type' => 'mp4', 'name' => $name, 'url' => '/video/'.$name]);
+			}
 		}
 
 		return $video_file_names;
 	}
 
-	protected function getRandVideoName($video_file_names = null) {
-		if($video_file_names == null) {
-			$video_file_names = $this->getAllVideoNames();
-			if(count($video_file_names) == 0) {
-				return null;
-			}
+	protected function getRandVideoName($names = null) {
+
+		$video_file_names = $this->getAllVideoNames($names);
+		if(count($video_file_names) == 0) {
+			return null;
 		}
 
 		return $video_file_names[array_rand($video_file_names)];

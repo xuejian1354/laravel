@@ -184,7 +184,7 @@ function devDataRequest(sn, data, callback)
 
 	var options =
 	{
-		hostname : 'loongsky3.net',
+		hostname : '127.0.0.1',
 		port : 80,
 		method : 'GET',
 		path : '/devdata?sn='+sn+'&data='+data

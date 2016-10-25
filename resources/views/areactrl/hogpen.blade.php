@@ -39,15 +39,25 @@
     <div class="box box-success">
       <div class="box-header with-border">
         <h3 class="box-title">视频</h3>
+        <div class="box-tools pull-right">
+          <a id='vaddopt' href="/areactrl/{{ $area->sn }}/camadd" type="button" class="btn btn-box-tool"><i class="fa fa-plus"></i></a>
+        </div>
       </div>
       <!-- /.box-header -->
       <div class="box-body no-padding">
         <div class="pad">
-          <div class="embed-responsive embed-responsive-4by3">
-            <video class="embed-responsive-item" allowfullscreen controls loop>
-  			  <source src="{{ '/video/'.$video_file['name'] }}" type="video/mp4">
-			</video>
-          </div>
+          <div id="viewplace" class="embed-responsive embed-responsive-4by3">
+            @if($video_file['type'] == 'mp4')
+            <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
+  		      <source src="{{ $video_file['url'] }}" type="video/mp4">
+	        </video>
+	        @endif
+	        @if($video_file['type'] == 'm3u8')
+            <div id="hplay" class="embed-responsive-item">
+		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type={{ $video_file['type'] }}&videourl={{ $video_file['url'] }}&autostart=true&skin=vodWhite"></script>
+		    </div>
+		    @endif
+	      </div>
         </div>
       </div>
       <!-- /.box-body -->

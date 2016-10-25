@@ -90,7 +90,7 @@ function videolistSetting() {
 }
 
 function edtCam(id) {
-  $.post('/videoreal/camedt', { _token:'{{ csrf_token() }}', sn: id, name:$('#'+id).val() },
+  $.post('/videoreal/camedt', { _token:'{{ csrf_token() }}', sn:id, name:$('#'+id).val() },
     function(data, status) {
       if(status != 'success') {
 	    alert("Status: " + status);
@@ -102,7 +102,7 @@ function edtCam(id) {
 
 function delCam(id) {
   if(confirm('是否删除该设备？')) {
-    $.post('/videoreal/camdel', { _token:'{{ csrf_token() }}', sn: id },
+    $.post('/videoreal/camdel', { _token:'{{ csrf_token() }}', sn:id },
       function(data, status) {
         if(status != 'success') {
 	      alert("Status: " + status);
