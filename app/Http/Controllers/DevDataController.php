@@ -27,6 +27,7 @@ class DevDataController extends Controller
     					'type' => 0,
     					'attr' => 0,
     					'data' => Input::get('data'),
+    					'psn' => Input::get('psn'),
     					'owner' => User::where('name', 'root')->firstOrFail()->sn,
     			]);
 

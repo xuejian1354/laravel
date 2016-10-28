@@ -78,47 +78,6 @@
 <!-- SlimScroll 1.3.0 -->
 <script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 
-<script type="text/javascript">
-function devstaSwitch(devsn, data, at) {
-  if(data == '打开' || data == '关闭') {
-    $('#devsta'+devsn).removeClass('label-danger');
-    $('#devsta'+devsn).addClass('label-success');
-    $('#devsta'+devsn).text(data);
-    $('#devat'+devsn).text(at);
-  }
-  else {
-	$('#devsta'+devsn).addClass('label-danger');
-	$('#devsta'+devsn).removeClass('label-success');
-	$('#devsta'+devsn).text('离线');
-	}
-}
-
-function devCtrlPost(sw, devsn) {
-  $.post('/devctrl/'+devsn, { _token:'{{ csrf_token() }}', data:sw }, function(data, status) {
-	  if(status != 'success') {
-		alert("Status: " + status);
-	  }
-	  else {
-		devstaSwitch(devsn, data[0], data[1]);
-	  }
-  });
-}
-
-function updateDevListPost(hid, pg) {
-  $.post('/'+'{{ $request->path() }}',
-    { _token:'{{ csrf_token() }}', way:hid, page:pg },
-	function(data, status) {
-	  if(status != 'success') {
-		alert("Status: " + status);
-	  }
-	  else {
-		$('#'+hid).html(data);
-	  }
-    }
-  );
-}
-</script>
-
 <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
 <script>
 //Pusher.logToConsole = true;
@@ -137,7 +96,7 @@ channel.bind('update', function(devdata) {
     $('.devtr').each(function() {
       var devsn = $(this).find('.devsna').text();
       if(devsn == devdata.sn) {
-        devstaSwitch(devsn, devdata.data, devdata.updated_at);
+    	devstaChange(devsn, devdata.data, devdata.updated_at);
       }
     });
   }

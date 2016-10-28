@@ -55,8 +55,8 @@
           @if($device->attr == 2)
           <td><center>
             <div class="btn-group">
-              <button type="button" class="btn btn-xs btn-info" onClick="javascript:devCtrlPost(1, '{{ $device->sn }}');"><b>开</b></button>
-              <button type="button" class="btn btn-xs btn-default" onClick="javascript:devCtrlPost(0, '{{ $device->sn }}');"><b>关</b></button>
+              <button type="button" class="btn btn-xs btn-info" onClick="javascript:devCtrlPost('01', '{{ $device->sn }}', '{{ $device->psn }}');"><b>开</b></button>
+              <button type="button" class="btn btn-xs btn-default" onClick="javascript:devCtrlPost('00', '{{ $device->sn }}', '{{ $device->psn }}');"><b>关</b></button>
             </div>
           </center></td>
           @else

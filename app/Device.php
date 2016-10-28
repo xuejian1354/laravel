@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Device extends Model
 {
-	protected $fillable = ['sn', 'name', 'type', 'attr', 'data', 'area', 'owner'];
+	protected $fillable = ['sn', 'name', 'type', 'attr', 'data', 'psn', 'area', 'owner'];
 
     public function rel_type() {
     	return $this->hasOne('App\Devtype', 'id', 'type');

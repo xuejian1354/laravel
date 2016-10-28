@@ -8,7 +8,7 @@
       <div class="box-body">
         <div id="viewplace" class="embed-responsive embed-responsive-4by3">
           @if($video_rand['type'] == 'mp4')
-          <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
+          <video id="vplay" class="embed-responsive-item" preload="auto" loop allowfullscreen controls autoplay>
   		    <source src="{{ $video_rand['url'] }}" type="video/mp4">
 	      </video>
 	      @endif

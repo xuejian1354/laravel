@@ -99,7 +99,7 @@ wss.on('connection', function(ws) {
 					if(typeof(device.dev_sn) != "undefined"
 						&& typeof(device.dev_data) != "undefined")
 					{
-						devDataRequest(device.dev_sn, device.dev_data, function(info, msg){
+						devDataRequest(mobj.gw_sn, device.dev_sn, device.dev_data, function(info, msg){
 							ws.send(msg);
 						});
 					}
@@ -178,7 +178,7 @@ io.on('connection', function(socket){
 });
 io.listen(8033);
 
-function devDataRequest(sn, data, callback)
+function devDataRequest(psn, sn, data, callback)
 {
 	var http = require('http');
 
@@ -187,7 +187,7 @@ function devDataRequest(sn, data, callback)
 		hostname : '127.0.0.1',
 		port : 80,
 		method : 'GET',
-		path : '/devdata?sn='+sn+'&data='+data
+		path : '/devdata?psn='+psn+'&sn='+sn+'&data='+data
 	};
 
 	var req = http.request(options, function(res){

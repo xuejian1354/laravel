@@ -10,6 +10,7 @@ use App\Record;
 use App\Action;
 use App\Areaboxcontent;
 use App\Globalval;
+use App\User;
 
 class DeviceController extends Controller
 {
@@ -385,12 +386,12 @@ class DeviceController extends Controller
 	 */
 	public static function addDevCtrlRecord($device) {
 
-		$user = Auth::user();
+		$user = User::where('name', 'root')->first();
 		$action = Action::where('content', '控制')->first();
 
 		Record::create([
 				'sn' => Controller::getRandNum(),
-				'content' => '"'.$user->name.'" 控制 "'.$device->name.'" '.$device->data,
+				'content' => '控制 "'.$device->name.'" '.$device->data,
 				'usersn' => $user->sn,
 				'action' => $action->id,
 				'optnum' => Controller::getRandHex($user->email.$action->id.$device->sn.$device->data),
