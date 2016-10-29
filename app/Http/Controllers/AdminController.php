@@ -205,6 +205,7 @@ class AdminController extends Controller
 					if($device != null) {
 						$device->type = $request->input('value');
 						$device->name = $device->rel_type->name.substr($device->sn, 2);
+						$device->attr = $device->rel_type->attr;
 						$device->save();
 						return $device->updated_at;
 					}
