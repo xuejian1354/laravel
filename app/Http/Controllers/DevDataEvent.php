@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Device;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\AlarminfoController;
+use Illuminate\Support\Facades\Redis;
 
 class DevDataEvent
 {
@@ -37,18 +38,12 @@ class DevDataEvent
     		$value != null && $dataArray[$key] = $value;
     	}
 
-    	return $dataArray;
+    	return json_encode($dataArray);
     }
 
     public function updateToPusher() {
-    	$pusher = new \Pusher(
-    			env('PUSHER_KEY'),
-    			env('PUSHER_SECRET'),
-    			env('PUSHER_APP_ID'),
-    			['encrypted' => true]
-    	);
 
-    	$pusher->trigger('devdata-updating', 'update', $this->dataToArray());
+    	Redis::publish('devdata-updating', $this->dataToArray());
 
     	return $this->updated_at;
     } 

@@ -87,13 +87,10 @@
 <!-- SlimScroll 1.3.0 -->
 <script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 
-<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
 <script>
-//Pusher.logToConsole = true;
-var pusher = new Pusher("{{ env('PUSHER_KEY') }}", { encrypted: true});
-var channel = pusher.subscribe('devdata-updating');
-channel.bind('update', function(devdata) {
-  console.log(JSON.stringify(devdata));
+wsConnect('update', function(devdata) {
+  console.log(devdata);
+  devdata = JSON.parse(devdata);
   if(devdata.attr == 1) {
     for(x in devdata.areaboxcontents) {
       for (item in devdata.areaboxcontents[x]){

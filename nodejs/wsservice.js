@@ -14,6 +14,7 @@ var tocolres = "7";
 */
 var HashMap = require('hashmap');
 var gwlist = new HashMap();
+var clilist = new HashMap();
 
 /*
 * Date
@@ -44,7 +45,7 @@ Date.prototype.format =function(format)
 console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " WebSocket Server Start ...");
 
 /*
-* WebSocket Service
+* WebSocket for Gateway
 */
 var WebSocketServer = require('ws').Server, wss = new WebSocketServer({port: 8020});
 wss.on('connection', function(ws) {
@@ -156,27 +157,48 @@ wss.on('connection', function(ws) {
 });
 
 /*
-* Socket.IO Service
+* WebSocket for Client
 */
-var io = require('socket.io')();
-io.on('connection', function(socket){
-	socket.on('DevOpt', function(data) {
+cliserver = new WebSocketServer({port: 8021});
+cliserver.on('connection', function(cli) {
+
+	cli.on('close', function(code, message) {
+		if(typeof(this.clirand) != "undefined" && clilist.has(this.clirand) == true) {
+			clilist.remove(this.clirand);
+		}
+
+		console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " Websocket Close, clirand=" + this.clirand  + " ========>>>");
+	});
+
+	cli.on('message', function(data, flags) {
 		var optObj = JSON.parse(data);
-		var gw_sn = optObj[0].gw_sn;
-		if(typeof(gw_sn) != "undefined") {
-			var ws = gwlist.get(gw_sn);
+		
+		this.clirand = optObj.clirand;
+
+		this.gwsn = optObj.gwsn;
+		this.devsn = optObj.devsn;
+		this.data = optObj.data;
+
+		if(typeof(this.clirand) != "undefined") {
+			if(clilist.has(this.clirand) == false) {
+				clilist.set(this.clirand, cli);
+				console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " New Client Connection, clirand=" + this.clirand);
+			}
+		}
+		else if(typeof(this.gwsn) != "undefined"
+			&& typeof(this.devsn) != "undefined"
+			&& typeof(this.data) != "undefined") {
+			var ws = gwlist.get(this.gwsn);
 			if(typeof(ws) !== "undefined") {
-				var senData = JSON.stringify(optObj[0]);
-				console.log(senData);
-				ws.send(senData);
+				console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + ' Send ctrl messsage, devsn=' + this.devsn + ', data=' + this.data);
+				ws.send(controlToFrame(this.gwsn, this.devsn, this.data));
 			}
 			else {
-				console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + ' No client exist');
+				console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + ' No gateway found, gwsn=' + this.gwsn);
 			}
 		}
 	});
 });
-io.listen(8033);
 
 function devDataRequest(psn, sn, data, callback)
 {
@@ -207,9 +229,31 @@ function devDataRequest(psn, sn, data, callback)
 	req.end();
 }
 
+var redis = require('redis');
+var redisClient = redis.createClient();
+redisClient.subscribe('devdata-updating');
+
+redisClient.on("message", function(channel, message) {
+	console.log(message);
+	clilist.forEach(function (cli, clirand) {
+		cli.send(message);
+	});
+});
+
 /*
 * Handler Frame Operations
 */
+function controlToFrame(gwsn, devsn, data)
+{
+	var ret = '[{"action":"6", "gw_sn":"'
+				+ gwsn + '", "ctrls":[{"dev_sn":"'
+				+ devsn + '", "cmd":"'
+				+ data + '"}], "random":"'
+				+ String(Math.random()).substring(4, 8) + '"}]';
+
+	return ret;
+}
+
 function tocolresToFrame(action, random)
 {
 	var ret = '{"action":"' +

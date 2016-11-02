@@ -12,23 +12,39 @@ function devstaChange(devsn, data, at) {
   }
 }
 
-function devCtrlPost(sw, devsn, gwsn) {
-  /*$.post('/devctrl/'+devsn, { _token:'{{ csrf_token() }}', data:sw }, function(data, status) {
-	  if(status != 'success') {
-		alert("Status: " + status);
-	  }
-	  else {
-		devstaSwitch(devsn, data[0], data[1]);
-	  }
-  });*/
-  var key = '[{"action":"6", "gw_sn":"'
-		+ gwsn + '", "ctrls":[{"dev_sn":"'
-		+ devsn + '", "cmd":"'
-		+ sw + '"}], "random":"'
-		+ String(Math.random()).substring(4, 8) + '"}]';
+function setWs(ws) {
+	this.ws = ws;
+}
 
-  var url = 'http://' + window.location.host + ':8033';
-  io.connect(url).emit('DevOpt', key);
+function getWs() {
+	return this.ws;
+}
+
+function wsConnect(callback) {
+	var url = 'ws://' + window.location.host + ':8021';
+	var ws = new WebSocket(url);
+
+	ws.onopen = function(evt) {
+		var clirand = String(Math.random()).substring(2, 16);
+		ws.send('{"clirand":"' + clirand + '"}');
+		setWs(ws);
+	};
+
+	ws.onerror = function(evt) {
+	};
+
+	ws.onmessage = function(evt) {
+		callback(evt.data);
+	};
+
+	ws.onclose = function(evt) {
+		setTimeout(wsConnect(), 2000);
+	};
+}
+
+function devCtrlPost(sw, devsn, gwsn) {
+  ws = getWs();
+  ws.send('{ "gwsn":"' + gwsn + '", "devsn":"' + devsn + '", "data":"' + sw + '" }');
 }
 
 function updateDevListPost(hid, pg) {

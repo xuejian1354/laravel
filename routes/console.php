@@ -16,3 +16,7 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Artisan::command('redis:publish {channel} {message}', function ($channel, $message) {
+	Redis::publish($channel, $message);
+})->describe('Publish to a Redis channel');

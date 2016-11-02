@@ -86,21 +86,16 @@ function devSettingPost(devsn = null) {
 	  }
   });
 }
-</script>
 
-<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
-<script>
-//Pusher.logToConsole = true;
-var pusher = new Pusher("{{ env('PUSHER_KEY') }}", { encrypted: true});
-var channel = pusher.subscribe('devdata-updating');
-channel.bind('update', function(devdata) {
-	console.log(JSON.stringify(devdata));
-    $('.devtr').each(function() {
-      var devsn = $(this).find('.devsna').text();
-      if(devsn == devdata.sn) {
-    	  devstaChange(devsn, devdata.data, devdata.updated_at);
-      }
-    });
+wsConnect(function(devdata) {
+  console.log(devdata);
+  devdata = JSON.parse(devdata);
+  $('.devtr').each(function() {
+    var devsn = $(this).find('.devsna').text();
+    if(devsn == devdata.sn) {
+      devstaChange(devsn, devdata.data, devdata.updated_at);
+    }
+  });
 });
 </script>
 @endsection
