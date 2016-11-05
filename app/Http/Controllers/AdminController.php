@@ -32,6 +32,7 @@ class AdminController extends Controller
 	}
 
 	public function curInfo(Request $request, $curopt = null) {
+
 		if($curopt == null) {
 			$record = new \stdClass();
 			$record->data = Record::query()->orderBy('updated_at', 'desc')->get();
@@ -277,6 +278,7 @@ class AdminController extends Controller
 				if($device != null) {
 					$device->delete();
 					DeviceController::delEasydarwinHLS($request->input('sn'));
+					DeviceController::delEasydarwinRTSP($request->input('sn'));
 					return 'OK';
 				}
 
@@ -288,6 +290,7 @@ class AdminController extends Controller
 				$url = $request->input('url');
 				if($stream_type == 'rtsp') {
 					DeviceController::addEasydarwinHLS($sn, $url, 0);
+					DeviceController::addEasydarwinRTSP($sn, $url);
 					return 'OK';
 				}
 				else if ($stream_type == 'hls') {
@@ -431,7 +434,7 @@ class AdminController extends Controller
 		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
 	}
 
-	public function getAllVideoNames($selnames = null) {
+	public function getAllVideoNames($selnames = null, $edtype = 'm3u8') {
 		$video_file_names = array();
 		$dbcams = Device::where('attr', 3);
 
@@ -439,19 +442,24 @@ class AdminController extends Controller
 		if(isset($edjson->EasyDarwin->Body->Sessions)) {
 			//dd($edjson);
 			foreach ($edjson->EasyDarwin->Body->Sessions as $session) {
-				$sessfile = explode('/', $session->url);
-				$sn = $sessfile[count($sessfile)-2];
+				$sn = $session->name;
 				$name = $sn;
-				$data = [ 'protocol' => 'rtsp',
-						  'source' => $session->source,
-						  'url' => $session->url ];
 	
 				//Camera info match with DB
 				$camdev = Device::where('sn', $sn)->first();
 				if($camdev == null) {
+					$data = new \stdClass();
+					$data->protocol = 'rtsp';
+					$data->source = $session->source;
+
+					$reqarr = parse_url($session->url);
+					$data->host = $reqarr['host'];
+					$data->hls_port = $reqarr['port'];
+					$data->hls_path = $reqarr['path'];
+
 					Device::create([
 	        				'sn' => $sn,
-	        				'name' => $sn,
+	        				'name' => $name,
 	        				'type' => 1,
 	        				'attr' => 3,
 	        				'data' => json_encode($data),
@@ -462,44 +470,140 @@ class AdminController extends Controller
 					$dbcams = $dbcams->where('sn', '!=', $sn);
 	
 					$name = $camdev->name;
-	
+
+					$data = json_decode($camdev->data);
+					$data->protocol = 'rtsp';
+					$data->source = $session->source;
+
+					$reqarr = parse_url($session->url);
+					$data->host = $reqarr['host'];
+					$data->hls_port = $reqarr['port'];
+					$data->hls_path = $reqarr['path'];
+
 					$camdev->data = json_encode($data);
+
 					$camdev->save();
 				}
-	
-				//Select by names
-				if($selnames != null && count($selnames) > 0) {
-					foreach ($selnames as $selname) {
-						if ($selname == $sn) {
-							array_push($video_file_names, [ 'id' => $sn,
-															'type' => 'm3u8',
-															'name' => $name,
-															'url' => $data['url'] ]);
-							break;
-						}
-					}
 
-					continue;
+				if($edtype == 'm3u8') {
+					//Select by names
+					if($selnames != null && count($selnames) > 0) {
+						foreach ($selnames as $selname) {
+							if ($selname == $sn) {
+								array_push($video_file_names, [ 'id' => $sn,
+										'type' => 'm3u8',
+										'name' => $name,
+										'url' => 'http://'.$data->host.':'.$data->hls_port.$data->hls_path ]);
+								break;
+							}
+						}
+	
+						continue;
+					}
+	
+					array_push($video_file_names, [ 'id' => $sn,
+							'type' => 'm3u8',
+						  	'name' => $name,
+							'url' => 'http://'.$data->host.':'.$data->hls_port.$data->hls_path ]);
+				}
+			}
+		}
+
+		$rtjson = json_decode(DeviceController::getEasydarwinRTSPList());
+		if(isset($rtjson->EasyDarwin->Body->Sessions)) {
+			//dd($rtjson);
+			foreach ($rtjson->EasyDarwin->Body->Sessions as $session) {
+				$sn = $session->name;
+				$name = $sn;
+
+				//Camera info match with DB
+				$camdev = Device::where('sn', $sn)->first();
+				if($camdev == null) {
+					$data = new \stdClass();
+					$data->protocol = 'rtsp';
+
+					$reqarr = parse_url($session->url);
+					if($reqarr['host'] != '127.0.0.1') {
+						$data->host = $reqarr['host'];
+					}
+					$data->rtsp_port = $reqarr['port'];
+					$data->rtsp_path = $reqarr['path'];
+
+					Device::create([
+							'sn' => $sn,
+							'name' => $name,
+							'type' => 1,
+							'attr' => 3,
+							'data' => json_encode($data),
+							'owner' => User::where('name', 'root')->first()->sn,
+					]);
+				}
+				else {
+					$dbcams = $dbcams->where('sn', '!=', $sn);
+
+					$name = $camdev->name;
+
+					$data = json_decode($camdev->data);
+					$data->protocol = 'rtsp';
+
+					$reqarr = parse_url($session->url);
+					$data->rtsp_port = $reqarr['port'];
+					$data->rtsp_path = $reqarr['path'];
+
+					$camdev->data = json_encode($data);
+
+					$camdev->save();
 				}
 
-				array_push($video_file_names, [ 'id' => $sn,
-												'type' => 'm3u8',
-											  	'name' => $name,
-												'url' => $data['url'] ]);
+				if($edtype == 'sdp') {
+					//Select by names
+					if($selnames != null && count($selnames) > 0) {
+						foreach ($selnames as $selname) {
+							if ($selname == $sn) {
+								array_push($video_file_names, [ 'id' => $sn,
+										'type' => 'sdp',
+										'name' => $name,
+										'url' => 'rtsp://'.$data->host.':'.$data->rtsp_port.$data->rtsp_path ]);
+								break;
+							}
+						}
+
+						continue;
+					}
+
+					array_push($video_file_names, [ 'id' => $sn,
+							'type' => 'sdp',
+							'name' => $name,
+							'url' => 'rtsp://'.$data->host.':'.$data->rtsp_port.$data->rtsp_path ]);
+				}
 			}
 		}
 
 		if($selnames == null) {
 			foreach ($dbcams->get() as $dbcam) {
 				$data = json_decode($dbcam->data);
-				if(isset($data->protocol) && isset($data->url)) {
-					array_push($video_file_names, [ 'id' => $dbcam->sn,
-													'type' => 'm3u8',
-													'name' => $dbcam->name,
-													'url' => $data->url ]);
+				if(isset($data->protocol)) {
+					if($edtype == 'm3u8') {
+						array_push($video_file_names, [ 'id' => $dbcam->sn,
+								'type' => 'm3u8',
+								'name' => $dbcam->name,
+								'url' => 'http://'.$data->host.':'.$data->hls_port.$data->hls_path ]);
+					}
+					else if($edtype == 'sdp') {
+						array_push($video_file_names, [ 'id' => $dbcam->sn,
+								'type' => 'sdp',
+								'name' => $dbcam->name,
+								'url' => 'rtsp://'.$data->host.':'.$data->rtsp_port.$data->rtsp_path ]);
+					}
 	
 					if($data->protocol == 'rtsp' && isset($data->source)) {
-						DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
+						if(parse_url($data->source)['host'] == '127.0.0.1') {
+							$dbcam->delete();
+						}
+						else {
+							DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
+							DeviceController::addEasydarwinRTSP($dbcam->sn, $data->source);
+						}
 					}
 				}
 			}
@@ -510,7 +614,7 @@ class AdminController extends Controller
 			foreach ($video_files as $video_file) {
 				$video_file_path_array = explode('/', $video_file);
 				$name = end($video_file_path_array);
-	
+
 				array_push($video_file_names, ['id' => str_replace('.', '', $name), 'type' => 'mp4', 'name' => $name, 'url' => '/video/'.$name]);
 			}
 		}

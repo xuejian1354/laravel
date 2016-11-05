@@ -11,11 +11,19 @@
           <video id="vplay" class="embed-responsive-item" preload="auto" loop allowfullscreen controls autoplay>
   		    <source src="{{ $video_rand['url'] }}" type="video/mp4">
 	      </video>
-	      @endif
-	      @if($video_rand['type'] == 'm3u8')
+	      @elseif($video_rand['type'] == 'm3u8')
           <div id="hplay" class="embed-responsive-item">
-		    <script type="text/javascript" src="/sewise.player.min.js?server=vod&type={{ $video_rand['type'] }}&videourl={{ $video_rand['url'] }}&autostart=true&skin=vodWhite"></script>
+		    <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_rand['url'] }}&autostart=true&skin=vodWhite"></script>
 		  </div>
+		  @elseif($video_rand['type'] == 'sdp')
+          <object id="hplay" type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/">
+		    <param name='mrl' value="{{ $video_rand['url'] }}" />
+		    <param name='volume' value='50' />
+		    <param name='autoplay' value='true' />
+		    <param name='loop' value='false' />
+		    <param name='fullscreen' value='false' />
+		    <param name='controls' value='false' />
+		  </object>
 		  @endif
 	    </div>
 	  </div>

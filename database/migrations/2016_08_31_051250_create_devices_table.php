@@ -21,7 +21,7 @@ class CreateDevicesTable extends Migration
     		$table->integer('type');
     		$table->integer('attr');
     		$table->string('status')->nullable();
-    		$table->string('data')->nullable();
+    		$table->text('data')->nullable();
     		$table->string('psn')->nullable();
     		$table->string('area')->nullable();
     		$table->string('alarmthres')->nullable();

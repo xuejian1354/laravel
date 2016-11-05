@@ -17,6 +17,7 @@ class GlobalvalTableSeeder extends Seeder
         Globalval::create(['name' => 'httpsock_service', 'val' => 'http://127.0.0.1:8033']);
         Globalval::create(['name' => 'easydarwin_service', 'val' => 'http://127.0.0.1:8088']);
         Globalval::create(['name' => 'easydarwin_hlslist', 'val' => '/api/getHLSList']);
+        Globalval::create(['name' => 'easydarwin_rtsplist', 'val' => '/api/getRTSPList']);
         Globalval::create(['name' => 'easydarwin_addhls', 'val' => '/api/addHLSList']);
         Globalval::create(['name' => 'easydarwin_delhls', 'val' => '/api/StopHLS']);
     }

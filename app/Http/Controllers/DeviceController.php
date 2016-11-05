@@ -412,6 +412,19 @@ class DeviceController extends Controller
 				);
 	}
 
+	public static function getEasydarwinRTSPList() {
+		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_rtsplist'),
+				false,
+				stream_context_create([
+						'http' => [
+								'method'  => 'POST',
+								'header'  => 'Content-type: application/x-www-form-urlencoded',
+								'content' => http_build_query([])
+						]
+				])
+		);
+	}
+
 	public static function addEasydarwinHLS($name, $rtsp_url, $timeout) {
 		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_addhls'),
 						false,
@@ -427,6 +440,56 @@ class DeviceController extends Controller
 								]
 						])
 				);
+	}
+
+	public static function addEasydarwinRTSP($name, $rtsp_url) {
+
+		$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		$conn = socket_connect($sock, "127.0.0.1", 554);
+		if($conn) {
+			$optmsg = 'OPTIONS rtsp://127.0.0.1:554/EasyRelayModule?'.
+					'name='.$name.'&url="'.$rtsp_url.'" '."RTSP/1.0\r\n"
+					."CSeq: 2\r\n"
+					."User-Agent: LibVLC/2.2.4 (LIVE555 Streaming Media v2016.02.22)\r\n\r\n";
+			
+			$desmsg = 'DESCRIBE rtsp://127.0.0.1:554/EasyRelayModule?'.
+					'name='.$name.'&url="'.$rtsp_url.'" '."RTSP/1.0\r\n"
+					."CSeq: 3\r\n"
+					."User-Agent: LibVLC/2.2.4 (LIVE555 Streaming Media v2016.02.22)\r\n"
+					."Accept: application/sdp\r\n\r\n";
+
+			socket_write($sock, $optmsg);
+			$ret = socket_read($sock, 1024);
+			
+			socket_write($sock, $desmsg);
+			$ret = socket_read($sock, 1024);
+		}
+		socket_close($sock);
+	}
+
+	public static function delEasydarwinRTSP($name) {
+	
+		$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		$conn = socket_connect($sock, "127.0.0.1", 554);
+		if($conn) {
+			$optmsg = 'OPTIONS rtsp://127.0.0.1:554/EasyRelayModule?'.
+					'name='.$name."&cmd=stop RTSP/1.0\r\n"
+					."CSeq: 2\r\n"
+					."User-Agent: LibVLC/2.2.4 (LIVE555 Streaming Media v2016.02.22)\r\n\r\n";
+			
+			$desmsg = 'DESCRIBE rtsp://127.0.0.1:554/EasyRelayModule?'.
+					'name='.$name."&cmd=stop RTSP/1.0\r\n"
+					."CSeq: 3\r\n"
+					."User-Agent: LibVLC/2.2.4 (LIVE555 Streaming Media v2016.02.22)\r\n"
+					."Accept: application/sdp\r\n\r\n";
+
+			socket_write($sock, $optmsg);
+			$ret = socket_read($sock, 1024);
+			
+			socket_write($sock, $desmsg);
+			$ret = socket_read($sock, 1024);
+		}
+		socket_close($sock);
 	}
 
 	public static function delEasydarwinHLS($name) {

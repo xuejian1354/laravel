@@ -22,7 +22,7 @@
         </td>
       </tr>
       <tr>
-        <td class="pull-right">URL</td>
+        <td class="pull-right">URL 源</td>
         <td><input id="devurl" type="text" style="min-width: 300px;"></td>
       </tr>
       <tr>

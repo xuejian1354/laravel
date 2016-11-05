@@ -11,7 +11,7 @@
 |
 */
 
-//Route::group(['domain' => 'loongsky3.net'], function () {
+//Route::group(['domain' => 'classyun.com'], function () {
 
 	// Web URL
 	Route::group(['middleware' => ['web', 'auth']], function () {
@@ -43,7 +43,7 @@
 //});
 
 
-/*Route::group(['domain' => '{account}.loongsky3.net'], function () {
+/*Route::group(['domain' => '{account}.classyun.com'], function () {
 
 	Route::any('{ret?}', function ($account, $ret = null) {
 
@@ -56,5 +56,5 @@
 /*Route::any('{ret?}', function ($ret = null) {
 
 	//dd($ret);
-	return redirect('http://loongsky3.net/'.$ret);
+	return redirect('http://classyun.com/'.$ret);
 });*/
