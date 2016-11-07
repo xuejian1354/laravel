@@ -33,18 +33,30 @@
 
 @section('conscript')
 <script type="text/javascript">
-function selChangeCheck(sn, flag) {
-	var selflag = $('#nametype'+sn).attr('selflag');
-	if(selflag < 3) {
-	  selflag = parseInt(selflag) + parseInt(flag);
-	  $('#nametype'+sn).attr('selflag', selflag);
-	}
+function devNameTypeEdt(sn) {
+  var namestr = $('#nametype' + sn + ' option:selected').text();
+  var type = $('#nametype' + sn + ' option:selected').val();
 
-	if(selflag == 3) {
-	  $('#nametype'+sn).attr('selflag', selflag+1);
-	  $('#selopt'+sn).html('<button type="button" class="btn btn-xs bg-purple" onclick="javascript:devSettingPost(\'' + sn + '\');"><b>设置</b></button>');
-	  $('#devsettingall').removeClass('hidden');
-	}
+  devEdtPost(sn, 'nameedt', namestr);
+  devEdtPost(sn, 'typeedt', type);
+}
+
+function devAreaEdt(sn) {
+  devEdtPost(sn, 'areaedt', $('#devarea' + sn + ' option:selected').val());
+}
+
+function devEdtPost(sn, key, val) {
+  $.post('/devstats/device', {_token:'{{ csrf_token() }}', way:key, sn:sn, value:val},
+	function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+		if(data != 'FAIL') {
+          $('#devat'+sn).text(data.split(' ')[1]);
+		}
+	  }
+  });
 }
 
 function devSettingPost(devsn = null) {

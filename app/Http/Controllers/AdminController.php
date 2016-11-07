@@ -582,7 +582,7 @@ class AdminController extends Controller
 		if($selnames == null) {
 			foreach ($dbcams->get() as $dbcam) {
 				$data = json_decode($dbcam->data);
-				if(isset($data->protocol)) {
+				if(isset($data->protocol) && $data->protocol == 'rtsp') {
 					if($edtype == 'm3u8') {
 						array_push($video_file_names, [ 'id' => $dbcam->sn,
 								'type' => 'm3u8',
@@ -605,6 +605,12 @@ class AdminController extends Controller
 							DeviceController::addEasydarwinRTSP($dbcam->sn, $data->source);
 						}
 					}
+				}
+				if(isset($data->protocol) && $data->protocol == 'hls') {
+					array_push($video_file_names, [ 'id' => $dbcam->sn,
+													'type' => 'm3u8',
+													'name' => $dbcam->name,
+													'url' => $data->url ]);
 				}
 			}
 		}

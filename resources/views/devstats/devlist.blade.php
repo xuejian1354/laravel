@@ -25,7 +25,7 @@
             @if(isset($device->name))
             <span>&nbsp;&nbsp;{{ $device->name }}</span>
             @else
-            <select id="nametype{{ $device->sn }}" class="selnametype" selflag="0" onchange="javascript:selChangeCheck('{{ $device->sn }}', 1);" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
+            <select id="nametype{{ $device->sn }}" class="selnametype" selflag="0" onchange="javascript:devNameTypeEdt('{{ $device->sn }}');" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
               <option disabled selected hidden>未设置</option>
             @for($index=2; $index < count($devtypes); $index++)
               <option value="{{ $devtypes[$index]->id }}">{{ $devtypes[$index]->name.substr($device->sn, 2) }}</option>
@@ -37,7 +37,7 @@
           <td>{{ $device->rel_area->name }}</td>
           @else
           <td>
-            <select id="area{{ $device->sn }}" class="selarea" onchange="javascript:selChangeCheck('{{ $device->sn }}', 2);" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
+            <select id="devarea{{ $device->sn }}" class="selarea" onchange="javascript:devAreaEdt('{{ $device->sn }}');" style="appearance:none; -moz-appearance:none; -webkit-appearance:none; border:0;">
               <option disabled selected hidden>未设置</option>
             @foreach($areas as $area)
               <option value="{{ $area->sn }}">&nbsp;{{ $area->name }}&nbsp;</option>
