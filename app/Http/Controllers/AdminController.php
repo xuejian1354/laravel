@@ -293,8 +293,8 @@ class AdminController extends Controller
 					DeviceController::addEasydarwinRTSP($sn, $url);
 					return 'OK';
 				}
-				else if ($stream_type == 'hls') {
-					$data = ['protocol' => 'hls', 'url' => $url];
+				else if ($stream_type == 'hls' || $stream_type == 'rtmp') {
+					$data = ['protocol' => $stream_type, 'url' => $url];
 
 					Device::create([
 							'sn' => $sn,
@@ -609,6 +609,12 @@ class AdminController extends Controller
 				if(isset($data->protocol) && $data->protocol == 'hls') {
 					array_push($video_file_names, [ 'id' => $dbcam->sn,
 													'type' => 'm3u8',
+													'name' => $dbcam->name,
+													'url' => $data->url ]);
+				}
+				else if(isset($data->protocol) && $data->protocol == 'rtmp') {
+					array_push($video_file_names, [ 'id' => $dbcam->sn,
+													'type' => 'rtmp',
 													'name' => $dbcam->name,
 													'url' => $data->url ]);
 				}

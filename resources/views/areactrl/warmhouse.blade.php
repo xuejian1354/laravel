@@ -60,10 +60,13 @@
             <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
   		      <source src="{{ $video_file['url'] }}" type="video/mp4">
 	        </video>
-	        @endif
-	        @if($video_file['type'] == 'm3u8')
+	        @elseif($video_file['type'] == 'm3u8')
             <div id="hplay" class="embed-responsive-item">
-		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type={{ $video_file['type'] }}&videourl={{ $video_file['url'] }}&autostart=true&skin=vodWhite"></script>
+		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_file['url'] }}&autostart=true&skin=vodWhite"></script>
+		    </div>
+		    @elseif($video_rand['type'] == 'rtmp')
+            <div id="hplay" class="embed-responsive-item">
+		      <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_rand['url'] }}&autostart=true&skin=liveWhite"></script>
 		    </div>
 		    @endif
 	      </div>

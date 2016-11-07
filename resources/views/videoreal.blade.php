@@ -15,6 +15,10 @@
           <div id="hplay" class="embed-responsive-item">
 		    <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_rand['url'] }}&autostart=true&skin=vodWhite"></script>
 		  </div>
+		  @elseif($video_rand['type'] == 'rtmp')
+          <div id="hplay" class="embed-responsive-item">
+		    <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_rand['url'] }}&autostart=true&skin=liveWhite"></script>
+		  </div>
 		  @elseif($video_rand['type'] == 'sdp')
           <object id="hplay" type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/">
 		    <param name='mrl' value="{{ $video_rand['url'] }}" />
@@ -66,6 +70,9 @@ function refreshVideo(type, id, val) {
 	else if(type == 'm3u8') {
 	  $('#viewplace').html('<div id="hplay" class="embed-responsive-item"><script type="text/javascript" src="/sewise.player.min.js?server=vod&type=' + type + '&videourl=' + val + '&autostart=true&skin=vodWhite"><\/script><\/div>');
 	}
+	else if(type == 'rtmp') {
+	  $('#viewplace').html('<div id="hplay" class="embed-responsive-item"><script type="text/javascript" src="/sewise.player.min.js?server=live&type=' + type + '&streamurl=' + val + '&autostart=true&skin=liveWhite"><\/script><\/div>');
+	}
 }
 
 function videolistSetting() {
@@ -89,7 +96,7 @@ function videolistSetting() {
     $('#vsetopt i').removeClass('fa-cog');
     $('#vsetopt i').addClass('fa-remove');
 
-    $('.videom3u8').each(function() {
+    $('.videom3u8,.videortmp').each(function() {
       var vname = $(this).text();
       var ahref = $(this).find('a');
       $(this).html('<br><input id="' + ahref.attr('id') + '" href="' + ahref.attr('href') + '" onblur="javascript:edtCam(\'' + ahref.attr('id') + '\');" type="text" value="' + $.trim(vname) + '" style="border: 0; width: 85%;"><a href="javascript:delCam(\'' + ahref.attr('id') + '\');" class="pull-right" style="margin-left: 10px;"><i class="fa fa-trash-o"></i></a>');

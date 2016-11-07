@@ -245,11 +245,11 @@ redisClient.on("message", function(channel, message) {
 */
 function controlToFrame(gwsn, devsn, data)
 {
-	var ret = '[{"action":"6", "gw_sn":"'
+	var ret = '{"action":"6", "gw_sn":"'
 				+ gwsn + '", "ctrls":[{"dev_sn":"'
 				+ devsn + '", "cmd":"'
 				+ data + '"}], "random":"'
-				+ String(Math.random()).substring(4, 8) + '"}]';
+				+ String(Math.random()).substring(4, 8) + '"}';
 
 	return ret;
 }

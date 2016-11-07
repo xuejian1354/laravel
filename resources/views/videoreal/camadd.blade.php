@@ -17,6 +17,7 @@
         <td>
           <select id="devtype">
             <option value="rtsp">RTSP</option>
+            <option value="rtmp">RTMP</option>
             <option value="hls">HLS</option>
           </select>
         </td>
