@@ -62,11 +62,11 @@
 	        </video>
 	        @elseif($video_file['type'] == 'm3u8')
             <div id="hplay" class="embed-responsive-item">
-		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_file['url'] }}&autostart=true&skin=vodWhite"></script>
+		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_file['url'] }}&title={{ $video_file['name'] }}&autostart=true&skin=vodWhite"></script>
 		    </div>
-		    @elseif($video_rand['type'] == 'rtmp')
+		    @elseif($video_file['type'] == 'rtmp')
             <div id="hplay" class="embed-responsive-item">
-		      <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_rand['url'] }}&autostart=true&skin=liveWhite"></script>
+		      <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_file['url'] }}&title={{ $video_file['name'] }}&autostart=true&skin=liveWhite"></script>
 		    </div>
 		    @endif
 	      </div>
@@ -91,25 +91,27 @@
 <script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 
 <script>
-wsConnect('update', function(devdata) {
-  console.log(devdata);
-  devdata = JSON.parse(devdata);
-  if(devdata.attr == 1) {
-    for(x in devdata.areaboxcontents) {
-      for (item in devdata.areaboxcontents[x]){
-        $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
+$(function(){
+  wsConnect('update', function(devdata) {
+    console.log(devdata);
+    devdata = JSON.parse(devdata);
+    if(devdata.attr == 1) {
+      for(x in devdata.areaboxcontents) {
+        for (item in devdata.areaboxcontents[x]){
+          $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
+        }
       }
     }
-  }
-  else if(devdata.attr == 2) {
-    $('.devtr').each(function() {
-      var devsn = $(this).find('.devsna').text();
-      if(devsn == devdata.sn) {
-    	devstaChange(devsn, devdata.data, devdata.updated_at);
-      }
-    });
-  }
-});
+    else if(devdata.attr == 2) {
+      $('.devtr').each(function() {
+        var devsn = $(this).find('.devsna').text();
+        if(devsn == devdata.sn) {
+    	  devstaChange(devsn, devdata.data, devdata.updated_at);
+        }
+      });
+    }
+  });
+})
 </script>
 @endsection
 

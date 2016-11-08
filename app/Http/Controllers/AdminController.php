@@ -434,7 +434,10 @@ class AdminController extends Controller
 		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
 	}
 
-	public function getAllVideoNames($selnames = null, $edtype = 'm3u8') {
+	public function getAllVideoNames($selnames = null, $edtypes = 'm3u8|rtmp') {
+
+		$typesarr = explode('|', $edtypes);
+
 		$video_file_names = array();
 		$dbcams = Device::where('attr', 3);
 
@@ -485,7 +488,7 @@ class AdminController extends Controller
 					$camdev->save();
 				}
 
-				if($edtype == 'm3u8') {
+				if(array_search('m3u8', $typesarr) !== false) {
 					//Select by names
 					if($selnames != null && count($selnames) > 0) {
 						foreach ($selnames as $selname) {
@@ -555,7 +558,7 @@ class AdminController extends Controller
 					$camdev->save();
 				}
 
-				if($edtype == 'sdp') {
+				if(array_search('sdp', $typesarr) !== false) {
 					//Select by names
 					if($selnames != null && count($selnames) > 0) {
 						foreach ($selnames as $selname) {
@@ -583,13 +586,13 @@ class AdminController extends Controller
 			foreach ($dbcams->get() as $dbcam) {
 				$data = json_decode($dbcam->data);
 				if(isset($data->protocol) && $data->protocol == 'rtsp') {
-					if($edtype == 'm3u8') {
+					if(array_search('m3u8', $typesarr) !== false) {
 						array_push($video_file_names, [ 'id' => $dbcam->sn,
 								'type' => 'm3u8',
 								'name' => $dbcam->name,
 								'url' => 'http://'.$data->host.':'.$data->hls_port.$data->hls_path ]);
 					}
-					else if($edtype == 'sdp') {
+					else if(array_search('sdp', $typesarr) !== false) {
 						array_push($video_file_names, [ 'id' => $dbcam->sn,
 								'type' => 'sdp',
 								'name' => $dbcam->name,
@@ -613,6 +616,17 @@ class AdminController extends Controller
 													'url' => $data->url ]);
 				}
 				else if(isset($data->protocol) && $data->protocol == 'rtmp') {
+					array_push($video_file_names, [ 'id' => $dbcam->sn,
+													'type' => 'rtmp',
+													'name' => $dbcam->name,
+													'url' => $data->url ]);
+				}
+			}
+		}
+		elseif (array_search('rtmp', $typesarr) !== false) {
+			foreach ($dbcams->get() as $dbcam) {
+				$data = json_decode($dbcam->data);
+				if(isset($data->protocol) && $data->protocol == 'rtmp') {
 					array_push($video_file_names, [ 'id' => $dbcam->sn,
 													'type' => 'rtmp',
 													'name' => $dbcam->name,

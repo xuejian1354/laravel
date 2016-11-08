@@ -14,7 +14,6 @@ class GlobalvalTableSeeder extends Seeder
     {
         DB::table('globalvals')->delete();
         Globalval::create(['name' => 'title', 'val' => 'Cullive']);
-        Globalval::create(['name' => 'httpsock_service', 'val' => 'http://127.0.0.1:8033']);
         Globalval::create(['name' => 'easydarwin_service', 'val' => 'http://127.0.0.1:8088']);
         Globalval::create(['name' => 'easydarwin_hlslist', 'val' => '/api/getHLSList']);
         Globalval::create(['name' => 'easydarwin_rtsplist', 'val' => '/api/getRTSPList']);

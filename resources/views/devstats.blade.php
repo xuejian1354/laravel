@@ -99,16 +99,18 @@ function devSettingPost(devsn = null) {
   });
 }
 
-wsConnect(function(devdata) {
-  console.log(devdata);
-  devdata = JSON.parse(devdata);
-  $('.devtr').each(function() {
-    var devsn = $(this).find('.devsna').text();
-    if(devsn == devdata.sn) {
-      devstaChange(devsn, devdata.data, devdata.updated_at);
-    }
+$(function(){
+  wsConnect(function(devdata) {
+	  console.log(devdata);
+	  devdata = JSON.parse(devdata);
+	  $('.devtr').each(function() {
+	    var devsn = $(this).find('.devsna').text();
+	    if(devsn == devdata.sn) {
+	      devstaChange(devsn, devdata.data, devdata.updated_at);
+	    }
+	  });
   });
-});
+})
 </script>
 @endsection
 

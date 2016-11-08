@@ -172,14 +172,16 @@ cliserver.on('connection', function(cli) {
 
 	cli.on('message', function(data, flags) {
 		var optObj = JSON.parse(data);
-		
-		this.clirand = optObj.clirand;
+
+		if(typeof(this.clirand) == "undefined" && typeof(optObj.clirand) != "undefined") {
+			this.clirand = optObj.clirand;
+		}
 
 		this.gwsn = optObj.gwsn;
 		this.devsn = optObj.devsn;
 		this.data = optObj.data;
 
-		if(typeof(this.clirand) != "undefined") {
+		if(typeof(optObj.clirand) != "undefined") {
 			if(clilist.has(this.clirand) == false) {
 				clilist.set(this.clirand, cli);
 				console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " New Client Connection, clirand=" + this.clirand);

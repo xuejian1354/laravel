@@ -38,7 +38,7 @@ function wsConnect(callback) {
 	};
 
 	ws.onclose = function(evt) {
-		setTimeout(wsConnect(), 2000);
+		setTimeout(wsConnect(callback), 2000);
 	};
 }
 
