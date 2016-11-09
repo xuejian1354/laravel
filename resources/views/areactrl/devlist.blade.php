@@ -28,10 +28,7 @@
             @endif
             </td>
             <td>
-              <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-info" onClick="javascript:devCtrlPost('01', '{{ $device->sn }}', '{{ $device->psn }}');"><b>开</b></button>
-                <button type="button" class="btn btn-xs btn-default" onClick="javascript:devCtrlPost('00', '{{ $device->sn }}', '{{ $device->psn }}');"><b>关</b></button>
-              </div>
+              @include('devopt')
             </td>
             <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
           </tr>

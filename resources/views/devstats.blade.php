@@ -109,6 +109,10 @@ $(function(){
 	      devstaChange(devsn, devdata.data, devdata.updated_at);
 	    }
 	  });
+
+	  if(typeof devdata.value != "undefined") {
+		  $('#selopt'+devdata.sn).text(devdata.value);
+	  }
   });
 })
 </script>

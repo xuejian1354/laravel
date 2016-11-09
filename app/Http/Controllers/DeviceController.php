@@ -114,6 +114,21 @@ class DeviceController extends Controller
 		}
 	}
 
+	public static function getDevValueBySN($devsn) {
+		$device = Device::where('sn', $devsn)->first();
+		if ($device != null) {
+			switch ($device->type) {
+				case 2: return DeviceController::getWarmhouseHumiTempBySN($device->sn);
+				case 3: return DeviceController::getIllumiBySN($device->sn);
+				case 13: return DeviceController::getDioxideBySN($device->sn);
+				case 7: return DeviceController::getAmmoniaBySN($device->sn);
+				case 9:return DeviceController::getHydrothionBySN($device->sn);
+			}
+		}
+
+		return '---';
+	}
+
 	//大棚温湿度
 	public static function getWarmhouseHumiTempFromArea($areasn) {
 
@@ -132,6 +147,24 @@ class DeviceController extends Controller
 
 		$temp = DeviceController::getAverageVal($tempvals);
 		$humi = DeviceController::getAverageVal($humivals);
+
+		$temp = ($temp == null ? '未知' : $temp.' ℃');
+		$humi = ($humi == null ? '未知' : $humi.' %');
+
+		return $temp.'/'.$humi;
+	}
+
+	//大棚温湿度
+	public static function getWarmhouseHumiTempBySN($devsn) {
+
+		$dev = Device::where('sn', $devsn)->first();
+
+		$temp = null;
+		$humi = null;
+		if($dev) {
+			$temp = hexdec(substr($dev->data, 0, 4))/100;
+			$humi = hexdec(substr($dev->data, 4, 8))/100;
+		}
 
 		$temp = ($temp == null ? '未知' : $temp.' ℃');
 		$humi = ($humi == null ? '未知' : $humi.' %');
@@ -246,6 +279,18 @@ class DeviceController extends Controller
 		return $illumi === null ? '未知' : round($illumi).' Lux';
 	}
 
+	//光照
+	public static function getIllumiBySN($devsn) {
+		$illumi = null;
+	
+		$dev = Device::where('sn', $devsn)->first();
+		if ($dev) {
+			$illumi = hexdec(substr($dev->data, 0, 4));;
+		}
+
+		return $illumi === null ? '未知' : round($illumi).' Lux';
+	}
+
 	//C02浓度
 	public static function getDioxideFromArea($areasn) {
 		$devals = array();
@@ -260,6 +305,17 @@ class DeviceController extends Controller
 		}
 
 		$dioxide = DeviceController::getAverageVal($devals);		
+		return $dioxide === null ? '未知' : $dioxide.' ppm';
+	}
+
+	//C02浓度
+	public static function getDioxideBySN($devsn) {
+		$dioxide = null;
+		$dev = Device::where('sn', $devsn)->first();
+		if ($dev) {
+			$dioxide = hexdec(substr($dev->data, 0, 4));
+		}
+
 		return $dioxide === null ? '未知' : $dioxide.' ppm';
 	}
 
@@ -280,6 +336,17 @@ class DeviceController extends Controller
 		return $ammonia === null ? '未知' : $ammonia.' ppm';
 	}
 
+	//氨气
+	public static function getAmmoniaBySN($devsn) {
+		$ammonia = null;
+		$dev = Device::where('sn', $devsn)->first();
+		if ($dev) {
+			$ammonia = hexdec(substr($dev->data, 0, 4));
+		}
+	
+		return $ammonia === null ? '未知' : $ammonia.' ppm';
+	}
+
 	//硫化氢
 	public static function getHydrothionFromArea($areasn) {
 		$devals = array();
@@ -294,6 +361,17 @@ class DeviceController extends Controller
 		}
 
 		$dydrothion = DeviceController::getAverageVal($devals);		
+		return $dydrothion === null ? '未知' : $dydrothion.' ppm';
+	}
+
+	//硫化氢
+	public static function getHydrothionBySN($devsn) {
+		$dydrothion = null;
+		$dev = Device::where('sn', $devsn)->first();
+		if ($dev) {
+			$dydrothion = hexdec(substr($dev->data, 0, 4));
+		}
+	
 		return $dydrothion === null ? '未知' : $dydrothion.' ppm';
 	}
 

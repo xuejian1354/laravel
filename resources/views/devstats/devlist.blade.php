@@ -54,13 +54,10 @@
           </td>
           @if($device->attr == 2)
           <td><center>
-            <div class="btn-group">
-              <button type="button" class="btn btn-xs btn-info" onClick="javascript:devCtrlPost('01', '{{ $device->sn }}', '{{ $device->psn }}');"><b>开</b></button>
-              <button type="button" class="btn btn-xs btn-default" onClick="javascript:devCtrlPost('00', '{{ $device->sn }}', '{{ $device->psn }}');"><b>关</b></button>
-            </div>
+            @include('devopt')
           </center></td>
           @else
-          <td height="40"><center id="selopt{{ $device->sn }}">---</center></td>
+          <td height="40"><center id="selopt{{ $device->sn }}">{{ \App\Http\Controllers\DeviceController::getDevValueBySN($device->sn) }}</center></td>
           @endif
           <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
         </tr>

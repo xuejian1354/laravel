@@ -42,6 +42,35 @@ function wsConnect(callback) {
 	};
 }
 
+function devOptCtrl(devsn, gwsn, method, channel, index, data) {
+	if(method == 'trigger') {
+		ctrls = JSON.parse(data);
+
+		data = $('#devsta'+devsn).text();
+		darr = new Array(channel);
+		for(i=0; i<channel; i++) {
+			darr[i] = data.substr(i*ctrls.on.length, ctrls.on.length);
+		}
+
+		if(darr[index] == ctrls.off) {
+			darr[index] = ctrls.on;
+		}
+		else {
+			darr[index] = ctrls.off;
+		}
+
+		ctrldata = '';
+		for(i=0; i<channel; i++) {
+			ctrldata += darr[i];
+		}
+
+		devCtrlPost(ctrldata, devsn, gwsn);
+	}
+	else if(method == 'switch') {
+		devCtrlPost(data, devsn, gwsn);
+	}
+}
+
 function devCtrlPost(sw, devsn, gwsn) {
   ws = getWs();
   ws.send('{ "gwsn":"' + gwsn + '", "devsn":"' + devsn + '", "data":"' + sw + '" }');

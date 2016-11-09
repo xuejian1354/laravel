@@ -18,7 +18,7 @@ class CreateDevoptsTable extends Migration
 			$table->increments('id');
 			$table->integer('devtype');
 			$table->string('method');
-			$table->string('key');
+			$table->integer('channel');
 			$table->string('data');
 			$table->timestamps();
 		});

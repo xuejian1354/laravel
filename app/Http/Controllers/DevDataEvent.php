@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Redis;
 
 class DevDataEvent
 {
-    public $sn, $data, $attr, $areaboxcontents, $updated_at;
+    public $sn, $data, $value, $attr, $areaboxcontents, $updated_at;
 
     /**
      * Create a new event instance.
@@ -31,6 +31,7 @@ class DevDataEvent
 
     	foreach(['sn' => $this->sn,
     			'data' => $this->data,
+    			'value' => $this->value,
     			'attr' => $this->attr, 
     			'updated_at' => $this->updated_at,
     			'areaboxcontents' => $this->areaboxcontents] as $key => $value)
@@ -61,14 +62,17 @@ class DevDataEvent
     			switch ($device->type) {
     			case 2:
     				$contenttype = [1, 11, 12];	//温湿度
+    				$this->value = DeviceController::getWarmhouseHumiTempBySN($device->sn);
     				break;
 
     			case 3:
     				$contenttype = [2, 13];	//光照
+    				$this->value = DeviceController::getIllumiBySN($device->sn);
    					break;
 
    				case 13:
     				$contenttype = [3, 14];	//C02浓度
+    				$this->value = DeviceController::getDioxideBySN($device->sn);
     				break;
 
     			case 19:
@@ -97,10 +101,12 @@ class DevDataEvent
 
     			case 7:
     				$contenttype = [15];	//氨气
+    				$this->value = DeviceController::getAmmoniaBySN($device->sn);
     				break;
 
     			case 9:
     				$contenttype = [16];	//硫化氢
+    				$this->value = DeviceController::getHydrothionBySN($device->sn);
     				break;
     			}
 

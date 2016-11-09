@@ -13,13 +13,14 @@ class DevoptsTableSeeder extends Seeder
      */
     public function run()
     {
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw1', 'data' => '00']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw1', 'data' => '01']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw2', 'data' => '00']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw2', 'data' => '01']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw3', 'data' => '00']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw3', 'data' => '01']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw4', 'data' => '00']);
-    	Devopt::create(['devtype' => 26, 'method' => 'switch', 'key' => 'sw5', 'data' => '01']);
+    	DB::table('devopts')->delete();
+    	Devopt::create(['devtype' => 23, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 24, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 25, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 26, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 27, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 28, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 29, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 30, 'method' => 'switch', 'channel' => 1, 'data' => '{"正":"01", "停":"02", "反":"03"}']);
     }
 }

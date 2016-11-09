@@ -20,6 +20,10 @@ class Device extends Model
 		return $this->hasOne('App\Area', 'sn', 'area');
 	}
 
+	public function rel_devopt() {
+		return $this->hasOne('App\Devopt', 'devtype', 'type');
+	}
+
 	public function getAlarmThres() {
 		$alarmthres = json_decode($this->alarmthres);
 		if($alarmthres == null) {

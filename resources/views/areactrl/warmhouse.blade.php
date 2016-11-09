@@ -92,7 +92,7 @@
 
 <script>
 $(function(){
-  wsConnect('update', function(devdata) {
+  wsConnect(function(devdata) {
     console.log(devdata);
     devdata = JSON.parse(devdata);
     if(devdata.attr == 1) {
