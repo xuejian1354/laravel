@@ -123,7 +123,7 @@
 @endsection
 
 @section('conscript')
-<script src="{{ asset('/bower_components/AdminLTE/plugins/flot/jquery.flot.min.js') }}"></script>
+<script src="{{ asset('/adminlte/plugins/flot/jquery.flot.min.js') }}"></script>
 <script>
   $(function () {
     /*

@@ -84,12 +84,12 @@
 
 @section('conscript')
 <!-- Sparkline -->
-<script src="/bower_components/AdminLTE/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="/adminlte/plugins/sparkline/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
-<script src="/bower_components/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/bower_components/AdminLTE/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 <!-- SlimScroll 1.3.0 -->
-<script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 
 <script>
 $(function(){

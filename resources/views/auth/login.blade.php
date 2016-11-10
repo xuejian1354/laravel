@@ -11,15 +11,15 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   
   <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="/bower_components/AdminLTE/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/adminlte/bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/bower_components/AdminLTE/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/adminlte/dist/css/AdminLTE.min.css">
   <!-- iCheck -->
-  <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/iCheck/square/blue.css">
+  <link rel="stylesheet" href="/adminlte/plugins/iCheck/square/blue.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -90,11 +90,11 @@
 <!-- /.login-box -->
 
 <!-- jQuery 2.2.3 -->
-<script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <!-- Bootstrap 3.3.6 -->
-<script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+<script src="/adminlte/bootstrap/js/bootstrap.min.js"></script>
 <!-- iCheck -->
-<script src="/bower_components/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script>
   $(function () {
     $('input').iCheck({

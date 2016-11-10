@@ -287,7 +287,7 @@
             <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;"><div class="box-body chat" id="chat-box" style="overflow: hidden; width: auto; height: 250px;">
               <!-- chat item -->
               <div class="item">
-                <img src="/bower_components/AdminLTE/dist/img/user4-128x128.jpg" alt="user image" class="online">
+                <img src="/adminlte/dist/img/user4-128x128.jpg" alt="user image" class="online">
 
                 <p class="message">
                   <a href="#" class="name">
@@ -314,7 +314,7 @@
               <!-- /.item -->
               <!-- chat item -->
               <div class="item">
-                <img src="/bower_components/AdminLTE/dist/img/user3-128x128.jpg" alt="user image" class="offline">
+                <img src="/adminlte/dist/img/user3-128x128.jpg" alt="user image" class="offline">
 
                 <p class="message">
                   <a href="#" class="name">
@@ -329,7 +329,7 @@
               <!-- /.item -->
               <!-- chat item -->
               <div class="item">
-                <img src="/bower_components/AdminLTE/dist/img/user2-160x160.jpg" alt="user image" class="offline">
+                <img src="/adminlte/dist/img/user2-160x160.jpg" alt="user image" class="offline">
 
                 <p class="message">
                   <a href="#" class="name">
@@ -417,18 +417,18 @@
 
 @section('conscript')
 <!-- Sparkline -->
-<script src="/bower_components/AdminLTE/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="/adminlte/plugins/sparkline/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
-<script src="/bower_components/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/bower_components/AdminLTE/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 <!-- SlimScroll 1.3.0 -->
-<script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <!-- ChartJS 1.0.1 -->
-<script src="/bower_components/AdminLTE/plugins/chartjs/Chart.min.js"></script>
+<script src="/adminlte/plugins/chartjs/Chart.min.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="/bower_components/AdminLTE/dist/js/pages/dashboard2.js"></script>
+<script src="/adminlte/dist/js/pages/dashboard2.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="/bower_components/AdminLTE/dist/js/demo.js"></script>
+<script src="/adminlte/dist/js/demo.js"></script>
 @endsection
 
 @extends('admin.dashboard')

@@ -23,7 +23,7 @@
     <div class="box box-widget">
       <div class="box-header with-border"><h3 class="box-title">设备导航</h3></div>
       <div class="box-body" style="display: block;">
-        <img class="img-responsive pad" src="/bower_components/AdminLTE/dist/img/photo2.png" alt="Photo">
+        <img class="img-responsive pad" src="/adminlte/dist/img/photo2.png" alt="Photo">
         <p>I took this photo here. What do you guys think?</p>
       </div>
     </div>
