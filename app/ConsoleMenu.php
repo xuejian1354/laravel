@@ -21,6 +21,11 @@ class ConsoleMenu extends Model
     							->orderby('inode', 'asc')
     							->get();
 
+    	//Video not support
+    	if(Globalval::getVal('video_support') == false) {
+    		$pmenus = $pmenus->where('action', '!=', 'videoreal');
+    	}
+
     	foreach ($pmenus as $pmenu) {
     		$this->isChildPush($pmenu, $request_path);
     	}

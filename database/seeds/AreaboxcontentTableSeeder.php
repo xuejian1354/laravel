@@ -31,7 +31,7 @@ class AreaboxcontentTableSeeder extends Seeder
 
         		Areaboxcontent::create(['box_id' => 4, 'type' => 10, 'area_sn' => $area->sn, 'val' => '43']);
         	}
-        	elseif ($area->type == '养猪场') {
+        	elseif ($area->type == '养猪厂') {
         		Areaboxcontent::create(['box_id' => 5, 'type' => 11, 'area_sn' => $area->sn, 'key' => '温度', 'val' => '23℃']);
         		Areaboxcontent::create(['box_id' => 5, 'type' => 12, 'area_sn' => $area->sn, 'key' => '湿度', 'val' => '68%']);
 

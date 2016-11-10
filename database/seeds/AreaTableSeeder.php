@@ -24,7 +24,7 @@ class AreaTableSeeder extends Seeder
 	        		'user' => 'root', 'owner' => 'root', 'remarks' => null]);
 	
 	        Area::create(['sn' => Controller::getRandNum(),
-	        		'name' => '养猪场', 'type' => '养猪场', 'addr' => '', 'status' => '正使用',
+	        		'name' => '养猪厂', 'type' => '养猪厂', 'addr' => '', 'status' => '正使用',
 	        		'user' => 'root', 'owner' => 'root', 'remarks' => null]);
         }
     }

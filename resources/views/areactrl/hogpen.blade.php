@@ -35,6 +35,7 @@
   <!-- /.col -->
 
   <div class="col-md-4">
+    @if(App\Globalval::getVal('video_support'))
     <!-- MAP & BOX PANE -->
     <div class="box box-success">
       <div class="box-header with-border">
@@ -66,6 +67,15 @@
       <!-- /.box-body -->
     </div>
     <!-- /.box -->
+    @else
+    <div class="box box-widget">
+      <div class="box-header with-border"><h3 class="box-title">养猪厂介绍</h3></div>
+      <div class="box-body" style="display: block;">
+        <img class="img-responsive pad" src="/img/hogpen.jpg" alt="Photo">
+        <p>I took this photo here. What do you guys think?</p>
+      </div>
+    </div>
+    @endif
   </div>
   <!-- /.col -->
 </div>

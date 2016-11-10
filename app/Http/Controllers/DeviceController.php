@@ -62,27 +62,27 @@ class DeviceController extends Controller
 					$areaboxcontent->val = DeviceController::getWarmhouseDeviceNumsFromArea($areasn);
 					break;
 
-				case 11: //养猪场温度
+				case 11: //养猪厂温度
 					$areaboxcontent->val = DeviceController::getHogpenTempFromArea($areasn);
 					break;
 
-				case 12: //养猪场湿度
+				case 12: //养猪厂湿度
 					$areaboxcontent->val = DeviceController::getHogpenHumiFromArea($areasn);
 					break;
 
-				case 13: //养猪场光照
+				case 13: //养猪厂光照
 					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn);
 					break;
 
-				case 14: //养猪场C02浓度
+				case 14: //养猪厂C02浓度
 					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn);
 					break;
 
-				case 15: //养猪场氨气
+				case 15: //养猪厂氨气
 					$areaboxcontent->val = DeviceController::getAmmoniaFromArea($areasn);
 					break;
 
-				case 16: //养猪场硫化氢
+				case 16: //养猪厂硫化氢
 					$areaboxcontent->val = DeviceController::getHydrothionFromArea($areasn);
 					break;
 			}
@@ -227,7 +227,7 @@ class DeviceController extends Controller
 		return Device::where('area', $areasn)->where('attr', '!=', 3)->count();
 	}
 
-	//养猪场温度
+	//养猪厂温度
 	public static function getHogpenTempFromArea($areasn) {
 		$tempvals = array();
 		$devs = Device::where('area', $areasn)->where('type', 2)->get();
@@ -244,7 +244,7 @@ class DeviceController extends Controller
 		return $temp == null ? '未知' : $temp.' ℃';
 	}
 
-	//养猪场湿度
+	//养猪厂湿度
 	public static function getHogpenHumiFromArea($areasn) {
 		$humivals = array();
 		$devs = Device::where('area', $areasn)->where('type', 2)->get();

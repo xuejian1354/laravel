@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Devopt;
 use App\Http\Controllers\Controller;
 
-class DevoptsTableSeeder extends Seeder
+class DevoptTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

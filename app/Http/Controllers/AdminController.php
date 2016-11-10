@@ -99,7 +99,7 @@ class AdminController extends Controller
 
 	public function areaCtrl(Request $request, $areasn = null, $areaopt = null) {
 
-		if($areaopt == 'camadd') {
+		if($areaopt == 'camadd' && Globalval::getVal('video_support')) {
 			$area = Area::where('sn', $areasn)->first();
 
 			if($request->isMethod('post')) {
@@ -176,7 +176,7 @@ class AdminController extends Controller
 							->with($this->getDevicesWithPage());
 				}
 			}
-	
+
 			return $this->getViewWithMenus('devstats', $request)
 							->with('devtypes', Devtype::all())
 							->with('areas', Area::all())
@@ -261,6 +261,10 @@ class AdminController extends Controller
 	}
 
 	public function videoReal(Request $request, $camopt = null) {
+
+		if(Globalval::getVal('video_support') == false) {
+			return '<h3>Video not Support !</h3><p>Please setting "video_support" on Database.</p>';
+		}
 
 		if($request->isMethod('post')) {
 			if($camopt == 'camedt') {
@@ -435,6 +439,10 @@ class AdminController extends Controller
 	}
 
 	public function getAllVideoNames($selnames = null, $edtypes = 'm3u8|rtmp') {
+
+		if(Globalval::getVal('video_support') == false) {
+			return null;
+		}
 
 		$typesarr = explode('|', $edtypes);
 
@@ -649,6 +657,10 @@ class AdminController extends Controller
 	}
 
 	protected function getRandVideoName($names = null) {
+
+		if(Globalval::getVal('video_support') == false) {
+			return null;
+		}
 
 		$video_file_names = $this->getAllVideoNames($names);
 		if(count($video_file_names) == 0) {

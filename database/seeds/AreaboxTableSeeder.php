@@ -51,7 +51,7 @@ class AreaboxTableSeeder extends Seeder
 
         Areabox::create([
         		'id' => 5,
-        		'area_type' => '养猪场',
+        		'area_type' => '养猪厂',
         		'title' => '温湿度',
         		'column' => 3,
         		'icon_class' => 'fa-tint',
@@ -60,7 +60,7 @@ class AreaboxTableSeeder extends Seeder
 
         Areabox::create([
         		'id' => 6,
-        		'area_type' => '养猪场',
+        		'area_type' => '养猪厂',
         		'title' => '光照',
         		'column' => 3,
         		'icon_class' => 'fa-sun-o',
@@ -69,7 +69,7 @@ class AreaboxTableSeeder extends Seeder
 
         Areabox::create([
         		'id' => 7,
-        		'area_type' => '养猪场',
+        		'area_type' => '养猪厂',
         		'title' => '空气质量',
         		'column' => 3,
         		'icon_class' => 'fa-cloud',

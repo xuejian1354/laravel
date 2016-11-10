@@ -24,7 +24,7 @@ class ConsoleMenuTableSeeder extends Seeder
         //Type support
         ConsoleMenu::create(['name' => '大棚', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-th-large']);
         ConsoleMenu::create(['name' => '鱼塘', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-align-center']);
-        ConsoleMenu::create(['name' => '养鸡场', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-toggle-up']);
-        ConsoleMenu::create(['name' => '养猪场', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-pause']);
+        ConsoleMenu::create(['name' => '养鸡厂', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-toggle-up']);
+        ConsoleMenu::create(['name' => '养猪厂', 'pnode' => 0, 'inode' => 0, 'haschild' => false, 'img' => 'fa fa-pause']);
     }
 }
