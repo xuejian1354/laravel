@@ -72,6 +72,46 @@
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- Page specific script -->
 <script>
+function delDevsCheck() {
+	var achs = new Array();
+	$('.alarmcheck:checked').each(function() {
+		achs.push($(this).attr('sn'));
+	});
+
+	if(achs.length == 0) {
+		alert('没有选中删除项');
+		return;
+	}
+
+	if(!confirm("确定要删除所选提示信息？")) {
+		return;
+	}
+
+	$.post('/alarminfo',
+      { _token:'{{ csrf_token() }}', way:'msgdel', infos:JSON.stringify(achs) },
+	  function(data, status) {
+	    if(status != 'success') {
+		  alert("Status: " + status);
+	    }
+	    else {
+		  $('#alarmlist').html(data);
+	    }
+      }
+    );
+}
+
+function checkAllAlarminfos() {
+    if ($(".checkbox-toggle .fa").hasClass('fa-check-square-o')) {
+        //Uncheck all checkboxes
+        $('.alarmcheck').prop("checked", false);
+        $(".checkbox-toggle .fa").removeClass("fa-check-square-o").addClass('fa-square-o');
+    } else {
+        //Check all checkboxes
+        $('.alarmcheck').prop("checked", true);
+        $(".checkbox-toggle .fa").removeClass("fa-square-o").addClass('fa-check-square-o');
+    }
+}
+
   $(function () {
     /* initialize the external events
      -----------------------------------------------------------------*/

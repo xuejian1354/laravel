@@ -351,6 +351,17 @@ class AdminController extends Controller
 						->with('request', $request)
 						->with($this->getAlarminfosWithPage());
 			}
+			else if($request->input('way') == 'msgdel') {
+				$delinfos = json_decode($request->input('infos'));
+				foreach ($delinfos as $delinfo) {
+					$alarminfo = Alarminfo::where('sn', $delinfo)->first();
+					$alarminfo->delete();
+				}
+
+				return view('alarminfo.alarmlist')
+						->with('request', $request)
+						->with($this->getAlarminfosWithPage());
+			}
 			else if($request->input('way') == 'msgadd') {
 				$color = $request->input('color');
 				$content = $request->input('content');
