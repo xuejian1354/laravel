@@ -41,20 +41,6 @@
 
 @section('conscript')
 <script>
-function updateDevListPost(hid, pg) {
-  $.post('/'+'{{ $request->path() }}',
-    { _token:'{{ csrf_token() }}', way:hid, page:pg },
-	function(data, status) {
-	  if(status != 'success') {
-		alert("Status: " + status);
-	  }
-	  else {
-		$('#'+hid).html(data);
-	  }
-    }
-  );
-}
-
 function refreshVideo(type, id, val) {
 	var name = $.trim($('#'+id).text());
 	if(name.length == 0) {

@@ -1,9 +1,9 @@
 @section('content')
 <div class="row">
-@foreach($areaboxes as $areabox)
+@foreach($areaboxes as $pos => $areabox)
   <div class="col-md-4 col-sm-4 col-xs-12">
     <div class="info-box">
-      <span class="info-box-icon {{ $areabox->color_class }}"><i class="fa {{ $areabox->icon_class }}"></i></span>
+      <a href="" class="info-box-icon {{ $areabox->color_class }}" data-target="#myCarousel" data-slide-to="{{ $pos+1 }}"><i class="fa {{ $areabox->icon_class }}"></i></a>
       <div class="info-box-content">
         <span class="info-box-number">{{ $areabox->title }}</span>
         <p class="info-box-text">
@@ -30,7 +30,29 @@
 <div class="row">
   <!-- Left col -->
   <div class="col-md-8">
-  @include('areactrl.devlist')
+    <div class="box box-info">
+      <div class="box-header with-border">
+        <span class="box-title">控制设备</span>
+        <div class="box-tools pull-right">
+          <div class="btn-group">
+            <a type="button" class="btn btn-default btn-sm" href="#myCarousel" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+            <a type="button" class="btn btn-default btn-sm" href="#myCarousel" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+        <div class="carousel-inner" role="listbox">
+          <div class="item active">
+          @include('areactrl.devlist')
+          </div>
+          @foreach($areaboxes as $areabox)
+          <div class="item">
+            <p>{{ $areabox->title }}</p>
+          </div>
+          @endforeach
+        </div>
+      </div>
+    </div>
   </div>
   <!-- /.col -->
 

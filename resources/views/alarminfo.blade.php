@@ -68,21 +68,6 @@
 @endsection
 
 @section('conscript')
-<script>
-function updateDevListPost(hid, pg) {
-  $.post('/'+'{{ $request->path() }}',
-    { _token:'{{ csrf_token() }}', way:hid, page:pg },
-	function(data, status) {
-	  if(status != 'success') {
-		alert("Status: " + status);
-	  }
-	  else {
-		$('#'+hid).html(data);
-	  }
-    }
-  );
-}
-</script>
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- Page specific script -->

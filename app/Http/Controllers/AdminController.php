@@ -141,6 +141,7 @@ class AdminController extends Controller
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'devlist') {
 				return view('areactrl.devlist')
+						->with('request', $request)
 						->with($this->getDevicesWithPage($area->sn, 2));
 			}
 		}
@@ -171,6 +172,7 @@ class AdminController extends Controller
 			if($request->isMethod('post')) {
 				if($request->input('way') == 'devlist') {
 					return view('devstats.devlist')
+							->with('request', $request)
 							->with('devtypes', Devtype::all())
 							->with('areas', Area::all())
 							->with($this->getDevicesWithPage());
@@ -329,6 +331,7 @@ class AdminController extends Controller
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'videolist') {
 				return view('videoreal.videolist')
+						->with('request', $request)
 						->with('pagetag', $pagetag)
 						->with('video_files', $video_files);
 			}
@@ -345,6 +348,7 @@ class AdminController extends Controller
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'alarmlist') {
 				return view('alarminfo.alarmlist')
+						->with('request', $request)
 						->with($this->getAlarminfosWithPage());
 			}
 			else if($request->input('way') == 'msgadd') {

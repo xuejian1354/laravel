@@ -76,9 +76,9 @@ function devCtrlPost(sw, devsn, gwsn) {
   ws.send('{ "gwsn":"' + gwsn + '", "devsn":"' + devsn + '", "data":"' + sw + '" }');
 }
 
-function updateDevListPost(hid, pg) {
-  $.post('/'+'{{ $request->path() }}',
-    { _token:'{{ csrf_token() }}', way:hid, page:pg },
+function updateDevListPost(path, hid, pg, token) {
+  $.post('/'+path,
+    { _token:token, way:hid, page:pg },
 	function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);

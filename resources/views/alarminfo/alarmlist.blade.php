@@ -49,8 +49,8 @@
         <div class="pull-right">
           <span>{{ $pagetag->col_start.'-'.$pagetag->col_end.'/'.$pagetag->getAllcols() }}</span>
           <div class="btn-group">
-            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()<=1?'#':'javascript:updateDevListPost(\'alarmlist\', \''.($pagetag->getPage()-1).'\')' }}"><i class="fa fa-chevron-left"></i></a>
-            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()>=$pagetag->getPageSize()?'#':'javascript:updateDevListPost(\'alarmlist\', \''.($pagetag->getPage()+1).'\')' }}"><i class="fa fa-chevron-right"></i></a>
+            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()<=1?'#':'javascript:updateDevListPost(\''.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()-1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-left"></i></a>
+            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()>=$pagetag->getPageSize()?'#':'javascript:updateDevListPost(\''.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()+1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-right"></i></a>
           </div>
         </div>
       </div>
