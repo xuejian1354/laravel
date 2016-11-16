@@ -43,7 +43,7 @@ class AreaboxTableSeeder extends Seeder
         Areabox::create([
         		'id' => 4,
         		'area_type' => '大棚',
-        		'title' => '设备',
+        		'title' => '控制设备',
         		'column' => 4,
         		'icon_class' => 'fa-support',
         		'color_class' => 'bg-yellow',

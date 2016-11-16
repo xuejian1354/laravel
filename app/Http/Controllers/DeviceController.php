@@ -232,14 +232,14 @@ class DeviceController extends Controller
 
 	//大棚控制设备数
 	public static function getWarmhouseDeviceNumsFromArea($areasn) {
-		return Device::where('area', $areasn)->where('attr', '!=', 3)->count();
+		return Device::where('area', $areasn)->where('attr', 2)->count();
 	}
 
 	//养猪厂温度
 	public static function getHogpenTempFromArea($areasn, $type) {
 		$tempvals = array();
 		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
-		
+
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
 				continue;
@@ -261,12 +261,12 @@ class DeviceController extends Controller
 			if($dev->data == null) {
 				continue;
 			}
-	
+
 			array_push($humivals, hexdec(substr($dev->data, 4, 8))/100);
 		}
-	
+
 		$humi = DeviceController::getAverageVal($humivals);
-	
+
 		return $humi == null ? '未知' : $humi.' %';
 	}
 
@@ -290,7 +290,7 @@ class DeviceController extends Controller
 	//光照
 	public static function getIllumiBySN($devsn) {
 		$illumi = null;
-	
+
 		$dev = Device::where('sn', $devsn)->first();
 		if ($dev) {
 			$illumi = hexdec(substr($dev->data, 0, 4));;
@@ -351,7 +351,7 @@ class DeviceController extends Controller
 		if ($dev) {
 			$ammonia = hexdec(substr($dev->data, 0, 4));
 		}
-	
+
 		return $ammonia === null ? '未知' : $ammonia.' ppm';
 	}
 
@@ -379,7 +379,7 @@ class DeviceController extends Controller
 		if ($dev) {
 			$dydrothion = hexdec(substr($dev->data, 0, 4));
 		}
-	
+
 		return $dydrothion === null ? '未知' : $dydrothion.' ppm';
 	}
 

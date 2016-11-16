@@ -3,7 +3,7 @@
 @foreach($areaboxes as $pos => $areabox)
   <div class="col-md-4 col-sm-4 col-xs-12">
     <div class="info-box">
-      <a href="" class="info-box-icon {{ $areabox->color_class }}" data-target="#myCarousel" data-slide-to="{{ $pos+1 }}"><i class="fa {{ $areabox->icon_class }}"></i></a>
+      <button class="btn btn-link info-box-icon {{ $areabox->color_class }}" onclick="javascript:$('#box-title').text('{{ $areabox->title }}');" data-target="#myCarousel" data-slide-to="{{ $pos+1 }}"><i class="fa {{ $areabox->icon_class }}"></i></button>
       <div class="info-box-content">
         <span class="info-box-number">{{ $areabox->title }}</span>
         <p class="info-box-text">
@@ -32,21 +32,21 @@
   <div class="col-md-8">
     <div class="box box-info">
       <div class="box-header with-border">
-        <span class="box-title">控制设备</span>
+        <span id="box-title" class="box-title">控制设备</span>
         <div class="box-tools pull-right">
           <div class="btn-group">
-            <a type="button" class="btn btn-default btn-sm" href="#myCarousel" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
-            <a type="button" class="btn btn-default btn-sm" href="#myCarousel" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+            <button class="btn btn-default btn-sm" onclick="javascript:boxTitleUpdate('prev');" data-target="#myCarousel" data-slide="prev"><i class="fa fa-chevron-left"></i></button>
+            <button class="btn btn-default btn-sm" onclick="javascript:boxTitleUpdate('next');" data-target="#myCarousel" data-slide="next"><i class="fa fa-chevron-right"></i></button>
           </div>
         </div>
       </div>
       <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
         <div class="carousel-inner" role="listbox">
-          <div class="item active">
+          <div class="item active" boxtitle="控制设备">
             @include('areactrl.devlist')
           </div>
           @foreach($areaboxes as $areabox)
-          <div class="item">
+          <div class="item" boxtitle="{{ $areabox->title }}">
             @include('areactrl.devlist', ['listid' => $areabox->id, 'pagetag' => $areabox->pagetag, 'devices' => $areabox->devices])
           </div>
           @endforeach
@@ -103,42 +103,3 @@
 </div>
 <!-- /.row -->
 @endsection
-
-@section('conscript')
-<!-- Sparkline -->
-<script src="/adminlte/plugins/sparkline/jquery.sparkline.min.js"></script>
-<!-- jvectormap -->
-<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/adminlte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<!-- SlimScroll 1.3.0 -->
-<script src="/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-
-<script>
-$(function(){
-  wsConnect(function(devdata) {
-    console.log(devdata);
-    devdata = JSON.parse(devdata);
-
-    for(x in devdata.areaboxcontents) {
-      for (item in devdata.areaboxcontents[x]){
-        $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
-      }
-    }
-
-    $('.devtr').each(function() {
-      var devsn = $(this).find('.devsna').text();
-      if(devsn == devdata.sn) {
-    	devstaChange(devsn, devdata.data, devdata.updated_at);
-      }
-    });
-
-	if(typeof devdata.value != "undefined") {
-		$('#selopt'+devdata.sn).text(devdata.value);
-	}
-
-  });
-})
-</script>
-@endsection
-
-@extends('admin.dashboard')

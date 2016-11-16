@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Storage;
 use App\Area;
 use App\Record;
 use App\Device;
-use Illuminate\Support\Facades\Storage;
 use App\Areabox;
 use App\Areaboxcontent;
 use App\Alarminfo;
@@ -44,7 +44,7 @@ class AdminController extends Controller
 			}
 
 			return $this->getViewWithMenus('curinfo', $request)
-							->with('page_description', '智能农业控制平台')
+							->with('page_description', '智能农业监控平台')
 							->with('record', $record);
 		}
 		elseif($curopt == 'user') {
@@ -297,7 +297,9 @@ class AdminController extends Controller
 	public function videoReal(Request $request, $camopt = null) {
 
 		if(Globalval::getVal('video_support') == false) {
-			return '<h3>Video not Support !</h3><p>Please setting "video_support" on Database.</p>';
+			return '<h3>Video not Support !</h3>'
+				   .'<p>Please setting "video_support" enable on Database.<br>'
+				   .'<b>Warning:</b> You can excute "<i>php artisan video:support enable</i>" on cmdline!</p>';
 		}
 
 		if($request->isMethod('post')) {
