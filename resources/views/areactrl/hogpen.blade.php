@@ -43,11 +43,11 @@
       <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
         <div class="carousel-inner" role="listbox">
           <div class="item active">
-          @include('areactrl.devlist')
+            @include('areactrl.devlist')
           </div>
           @foreach($areaboxes as $areabox)
           <div class="item">
-            <p>{{ $areabox->title }}</p>
+            @include('areactrl.devlist', ['listid' => $areabox->id, 'pagetag' => $areabox->pagetag, 'devices' => $areabox->devices])
           </div>
           @endforeach
         </div>
@@ -118,21 +118,24 @@ $(function(){
   wsConnect(function(devdata) {
     console.log(devdata);
     devdata = JSON.parse(devdata);
-    if(devdata.attr == 1) {
-      for(x in devdata.areaboxcontents) {
-        for (item in devdata.areaboxcontents[x]){
-          $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
-        }
+
+    for(x in devdata.areaboxcontents) {
+      for (item in devdata.areaboxcontents[x]){
+        $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
       }
     }
-    else if(devdata.attr == 2) {
-      $('.devtr').each(function() {
-        var devsn = $(this).find('.devsna').text();
-        if(devsn == devdata.sn) {
-    	  devstaChange(devsn, devdata.data, devdata.updated_at);
-        }
-      });
-    }
+
+    $('.devtr').each(function() {
+      var devsn = $(this).find('.devsna').text();
+      if(devsn == devdata.sn) {
+    	devstaChange(devsn, devdata.data, devdata.updated_at);
+      }
+    });
+
+	if(typeof devdata.value != "undefined") {
+		$('#selopt'+devdata.sn).text(devdata.value);
+	}
+
   });
 })
 </script>

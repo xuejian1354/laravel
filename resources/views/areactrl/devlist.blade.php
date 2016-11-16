@@ -1,4 +1,4 @@
-<div id="devlist">
+<div id="devlist{{ $listid }}">
   <div class="box-body">
     <div class="table-responsive">
       <table class="table no-margin">
@@ -13,29 +13,31 @@
         </tr>
       </thead>
       <tbody>
-      @foreach($devices as $index => $device)
+      @for($index=0; $index < count($devices); $index++)
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td><a class="devsna" href="#">{{ $device->sn }}</a></td>
-          <td><i class="{{ $device->rel_type->img }}"><span>&nbsp;&nbsp;{{ $device->name }}</span></td>
+          <td><a class="devsna" href="#">{{ $devices[$index]->sn }}</a></td>
+          <td><i class="{{ $devices[$index]->rel_type->img }}"><span>&nbsp;&nbsp;{{ $devices[$index]->name }}</span></td>
           <td>
-          @if($device->data == null)
-            <span id="devsta{{ $device->sn }}" class="label label-danger">离线</span>
+          @if($devices[$index]->data == null)
+            <span id="devsta{{ $devices[$index]->sn }}" class="label label-danger">离线</span>
           @else
-            <span id="devsta{{ $device->sn }}" class="label label-success">{{ $device->data }}</span>
+            <span id="devsta{{ $devices[$index]->sn }}" class="label label-success">{{ $devices[$index]->data }}</span>
           @endif
           </td>
+          @if($devices[$index]->attr == 2)
           <td>
-            @include('devopt')
+            @include('devopt', ['device' => $devices[$index]])
           </td>
-          <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
+          @else
+          <td height="40"><span id="selopt{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\DeviceController::getDevValueBySN($devices[$index]->sn) }}</span></td>
+          @endif
+          <td id="devat{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($devices[$index]->updated_at) }}</td>
         </tr>
-      @endforeach
-      @if(isset($index))
-      @while(++$index < $pagetag->getRow())
+      @endfor
+      @while($index++ < $pagetag->getRow())
         <tr><td height="40"></td></tr>
       @endwhile
-      @endif
       </tbody>
       </table>
     </div>
@@ -48,7 +50,7 @@
     @else
       <li>
     @endif
-        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
     @for($index=$pagetag->start; $index < $pagetag->end; $index++)
       @if($pagetag->getPage() == $index)
@@ -56,7 +58,7 @@
       @else
       <li>
       @endif
-        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
+        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
       </li>
     @endfor
     @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -64,9 +66,11 @@
     @else
       <li>
     @endif
-        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
+  @else
+    <div style="height: 35px;"></div>
   @endif
   </div>
 </div>

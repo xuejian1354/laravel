@@ -18,44 +18,52 @@ class DeviceController extends Controller
 
 	}
 
+	public static function getDevtypeFromBoxtype($type) {
+		$arr = [1 => 2, 2 => 3, 3 => 13, 4 => 19, 5 => 20, 6 => 22,
+		        7 => 5, 8 => 6, 9 => 4, 10 => null, 11 => 2, 12 => 2, 13 => 3,
+		        14 => 13, 15 => 7, 16 => 9];
+
+		return $arr[$type];
+	}
+
 	private static function updateAreaboxDBByContentType($areasn, $type) {
 		$areaboxcontent = Areaboxcontent::where('area_sn', $areasn)->where('type', $type)->first();
 		if($areaboxcontent != null) {
 			switch ($type) {
 				case 1: //大棚温湿度
-					$areaboxcontent->val = DeviceController::getWarmhouseHumiTempFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseHumiTempFromArea($areasn, $type);
 					break;
 
 				case 2: //大棚光照
-					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn, $type);
 					break;
 
 				case 3: //大棚C02浓度
-					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn, $type);
 					break;
 
 				case 4: //大棚土壤温度
-					$areaboxcontent->val = DeviceController::getWarmhouseSoilTempFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseSoilTempFromArea($areasn, $type);
 					break;
 
 				case 5: //大棚土壤水分
-					$areaboxcontent->val = DeviceController::getWarmhouseSoilMoistureFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseSoilMoistureFromArea($areasn, $type);
 					break;
 
 				case 6: //大棚土壤PH值
-					$areaboxcontent->val = DeviceController::getWarmhouseSoilPHFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseSoilPHFromArea($areasn, $type);
 					break;
 
 				case 7: //大棚气象风速
-					$areaboxcontent->val = DeviceController::getWarmhouseAirSpeedFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseAirSpeedFromArea($areasn, $type);
 					break;
 
 				case 8: //大棚气象风向
-					$areaboxcontent->val = DeviceController::getWarmhouseAirDirectionFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseAirDirectionFromArea($areasn, $type);
 					break;
 
 				case 9: //大棚气象降雨量
-					$areaboxcontent->val = DeviceController::getWarmhouseRainfallFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getWarmhouseRainfallFromArea($areasn, $type);
 					break;
 
 				case 10: //大棚控制设备数
@@ -63,27 +71,27 @@ class DeviceController extends Controller
 					break;
 
 				case 11: //养猪厂温度
-					$areaboxcontent->val = DeviceController::getHogpenTempFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getHogpenTempFromArea($areasn, $type);
 					break;
 
 				case 12: //养猪厂湿度
-					$areaboxcontent->val = DeviceController::getHogpenHumiFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getHogpenHumiFromArea($areasn, $type);
 					break;
 
 				case 13: //养猪厂光照
-					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getIllumiFromArea($areasn, $type);
 					break;
 
 				case 14: //养猪厂C02浓度
-					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getDioxideFromArea($areasn, $type);
 					break;
 
 				case 15: //养猪厂氨气
-					$areaboxcontent->val = DeviceController::getAmmoniaFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getAmmoniaFromArea($areasn, $type);
 					break;
 
 				case 16: //养猪厂硫化氢
-					$areaboxcontent->val = DeviceController::getHydrothionFromArea($areasn);
+					$areaboxcontent->val = DeviceController::getHydrothionFromArea($areasn, $type);
 					break;
 			}
 
@@ -130,11 +138,11 @@ class DeviceController extends Controller
 	}
 
 	//大棚温湿度
-	public static function getWarmhouseHumiTempFromArea($areasn) {
+	public static function getWarmhouseHumiTempFromArea($areasn, $type) {
 
 		$tempvals = array();
 		$humivals = array();
-		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
@@ -173,26 +181,26 @@ class DeviceController extends Controller
 	}
 
 	//大棚土壤温度
-	public static function getWarmhouseSoilTempFromArea($areasn) {
-		$soiltemp = DeviceController::getDevAverageFromArea($areasn, 19);
+	public static function getWarmhouseSoilTempFromArea($areasn, $type) {
+		$soiltemp = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type));
 		return $soiltemp == null ? '未知' : $soiltemp.'℃';
 	}
 
 	//大棚土壤水分
-	public static function getWarmhouseSoilMoistureFromArea($areasn) {
-		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, 20, 'float');
+	public static function getWarmhouseSoilMoistureFromArea($areasn, $type) {
+		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type), 'float');
 		return $soilmoisture == null ? '未知' : $soilmoisture;
 	}
 
 	//大棚土壤PH值
-	public static function getWarmhouseSoilPHFromArea($areasn) {
-		$soilph = DeviceController::getDevAverageFromArea($areasn, 22, 'float');
+	public static function getWarmhouseSoilPHFromArea($areasn, $type) {
+		$soilph = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type), 'float');
 		return $soilph == null ? '未知' : $soilph;
 	}
 
 	//大棚气象风速
-	public static function getWarmhouseAirSpeedFromArea($areasn) {
-		$speed = DeviceController::getDevAverageFromArea($areasn, 5, 'float');
+	public static function getWarmhouseAirSpeedFromArea($areasn, $type) {
+		$speed = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type), 'float');
 		if($speed == null) {
 			return '未知';
 		}
@@ -206,8 +214,8 @@ class DeviceController extends Controller
 	}
 
 	//大棚气象风向
-	public static function getWarmhouseAirDirectionFromArea($areasn) {
-		$dev = Device::where('area', $areasn)->where('type', 6)->first();
+	public static function getWarmhouseAirDirectionFromArea($areasn, $type) {
+		$dev = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->first();
 		if($dev == null || $dev->data == null) {
 			return '未知';
 		}
@@ -217,8 +225,8 @@ class DeviceController extends Controller
 	}
 
 	//大棚气象降雨量
-	public static function getWarmhouseRainfallFromArea($areasn) {
-		$rainfall = DeviceController::getDevAverageFromArea($areasn, 4);
+	public static function getWarmhouseRainfallFromArea($areasn, $type) {
+		$rainfall = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type));
 		return $rainfall == null ? '未知' : $rainfall.'mm';
 	}
 
@@ -228,9 +236,9 @@ class DeviceController extends Controller
 	}
 
 	//养猪厂温度
-	public static function getHogpenTempFromArea($areasn) {
+	public static function getHogpenTempFromArea($areasn, $type) {
 		$tempvals = array();
-		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
@@ -245,9 +253,9 @@ class DeviceController extends Controller
 	}
 
 	//养猪厂湿度
-	public static function getHogpenHumiFromArea($areasn) {
+	public static function getHogpenHumiFromArea($areasn, $type) {
 		$humivals = array();
-		$devs = Device::where('area', $areasn)->where('type', 2)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 	
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
@@ -263,10 +271,10 @@ class DeviceController extends Controller
 	}
 
 	//光照
-	public static function getIllumiFromArea($areasn) {
+	public static function getIllumiFromArea($areasn, $type) {
 		$devals = array();
 
-		$devs = Device::where('area', $areasn)->where('type', 3)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
 				continue;
@@ -292,10 +300,10 @@ class DeviceController extends Controller
 	}
 
 	//C02浓度
-	public static function getDioxideFromArea($areasn) {
+	public static function getDioxideFromArea($areasn, $type) {
 		$devals = array();
 
-		$devs = Device::where('area', $areasn)->where('type', 13)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
 				continue;
@@ -320,10 +328,10 @@ class DeviceController extends Controller
 	}
 
 	//氨气
-	public static function getAmmoniaFromArea($areasn) {
+	public static function getAmmoniaFromArea($areasn, $type) {
 		$devals = array();
 
-		$devs = Device::where('area', $areasn)->where('type', 7)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
 				continue;
@@ -348,10 +356,10 @@ class DeviceController extends Controller
 	}
 
 	//硫化氢
-	public static function getHydrothionFromArea($areasn) {
+	public static function getHydrothionFromArea($areasn, $type) {
 		$devals = array();
 
-		$devs = Device::where('area', $areasn)->where('type', 9)->get();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
 		foreach ($devs as $dev) {
 			if($dev->data == null) {
 				continue;

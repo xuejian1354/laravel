@@ -135,14 +135,45 @@ class AdminController extends Controller
 		/* Box & Content */
 		$areaboxes = Areabox::where('area_type', $area->type)->get();
 		foreach ($areaboxes as $areabox) {
+			$devtypes = array();
+			$brel_contents = $areabox->rel_contents;
+			foreach ($brel_contents as $brel_content) {
+				$devtype = DeviceController::getDevtypeFromBoxtype($brel_content->type);
+				array_push($devtypes, $devtype);
+			}
+			$devtypes = array_unique($devtypes);
+
 			$areabox->contents = Areaboxcontent::where('area_sn', $area->sn)->where('box_id', $areabox->id)->get();
+
+			$pagewithdevs = $this->getDevicesWithPage(null,
+													  null,
+					                                  0,
+													  Device::where('area', $area->sn)
+																->whereIn('type', $devtypes));
+
+			$areabox->pagetag = $pagewithdevs['pagetag'];
+			$areabox->devices = $pagewithdevs['devices'];
 		}
 
 		if($request->isMethod('post')) {
-			if($request->input('way') == 'devlist') {
+			$waystr = $request->input('way');
+			if(strstr($waystr, 'devlist') !== false) {
+				$listid = substr($waystr, 7);
+				if($listid == 0) {	//ctrl devices
+					$pagewithdevs = $this->getDevicesWithPage($area->sn, 2);
+				}
+				else {
+					foreach ($areaboxes as $areabox) {
+						if($listid ==$areabox->id) {
+							$pagewithdevs = ['pagetag' => $areabox->pagetag, 'devices' => $areabox->devices];
+						}
+					}
+				}
+
 				return view('areactrl.devlist')
+						->with('listid', $listid)
 						->with('request', $request)
-						->with($this->getDevicesWithPage($area->sn, 2));
+						->with($pagewithdevs);
 			}
 		}
 
@@ -160,6 +191,7 @@ class AdminController extends Controller
 
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
+						->with('listid', 0)
 						->with('area', $area)
 						->with('areaboxes', $areaboxes)
 						->with($this->getDevicesWithPage($area->sn, 2))
@@ -186,7 +218,7 @@ class AdminController extends Controller
 		}
 		else if ($devopt == 'device') {
 			$device = Device::where('sn', $request->get('sn'))->first();
-			
+
 			if($request->isMethod('post')) {
 				if ($request->input('way') == 'del') {
 					if($device != null) {
@@ -417,11 +449,17 @@ class AdminController extends Controller
 				->with('console_menus', $console_menus);
 	}
 
-	protected function getDevicesWithPage($area = null, $attr = null) {
+	protected function getDevicesWithPage($area = null, $attr = null, $page = null, $devices = null) {
 		/* Device lists from page */
 		$gp = Input::get('page');	//From URL
+		if($page) {
+			$gp = $page;
+		}
 
-		$devices = Device::where('attr', '!=', 3);	//All devices, except camera
+		if($devices == null) {
+			$devices = Device::where('attr', '!=', 3);	//All devices, except camera
+		}
+
 		if($area != null) {
 			$devices = $devices->where('area', $area);
 		}
