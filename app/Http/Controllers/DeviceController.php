@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use App\Device;
-use App\Record;
+use App\Ctrlrecord;
 use App\Action;
 use App\Areaboxcontent;
 use App\Globalval;
@@ -475,7 +475,7 @@ class DeviceController extends Controller
 		$user = User::where('name', 'root')->first();
 		$action = Action::where('content', '控制')->first();
 
-		Record::create([
+		Ctrlrecord::create([
 				'sn' => Controller::getRandNum(),
 				'content' => '控制 "'.$device->name.'" '.$device->data,
 				'usersn' => $user->sn,

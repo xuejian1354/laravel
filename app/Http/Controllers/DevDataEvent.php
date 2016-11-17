@@ -6,6 +6,7 @@ use App\Device;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\AlarminfoController;
 use Illuminate\Support\Facades\Redis;
+use App\Record;
 
 class DevDataEvent
 {
@@ -44,7 +45,10 @@ class DevDataEvent
 
     public function updateToPusher() {
 
-    	Redis::publish('devdata-updating', $this->dataToArray());
+    	$record = $this->dataToArray();
+
+    	Record::create(['sn' => $this->sn, 'type' => 'dev', 'data' => $record]);
+    	Redis::publish('devdata-updating', $record);
 
     	return $this->updated_at;
     } 

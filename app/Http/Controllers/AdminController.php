@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Storage;
+use Auth;
 use App\Area;
-use App\Record;
+use App\Ctrlrecord;
 use App\Device;
 use App\Areabox;
 use App\Areaboxcontent;
@@ -21,6 +22,7 @@ use App\Msgboard;
 use App\User;
 use App\Devtype;
 use App\Globalval;
+use App\Record;
 
 class AdminController extends Controller
 {
@@ -35,7 +37,7 @@ class AdminController extends Controller
 
 		if($curopt == null) {
 			$record = new \stdClass();
-			$record->data = Record::query()->orderBy('updated_at', 'desc')->get();
+			$record->data = Ctrlrecord::query()->orderBy('updated_at', 'desc')->get();
 			$record->hasmore = false;
 
 			if(count($record->data) > 5) {
@@ -53,6 +55,8 @@ class AdminController extends Controller
 				$usersns = json_decode($request->input('usersns'));
 				foreach ($usersns as $usersn) {
 					$user = User::where('sn', $usersn)->first();
+					Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'delete']);
+
 					$user->delete();
 				}
 			}
@@ -65,9 +69,9 @@ class AdminController extends Controller
 			$users = $users->orderBy('updated_at', 'desc')
 							->paginate($pagetag->getRow());
 
-			$recordcount = Record::query()->count();
+			$recordcount = Ctrlrecord::query()->count();
 			foreach ($users as $user) {
-				$user->actcount = round(Record::where('usersn', $user->sn)->count() / $recordcount * 100, 2);
+				$user->actcount = round(Ctrlrecord::where('usersn', $user->sn)->count() / $recordcount * 100, 2);
 			}
 
 			if($request->isMethod('post')) {
@@ -82,6 +86,8 @@ class AdminController extends Controller
 					if($user != null) {
 						$user->active = true;
 						$user->save();
+
+						Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'active']);
 						return 1;
 					}
 					else {
@@ -103,10 +109,12 @@ class AdminController extends Controller
 			$area = Area::where('sn', $areasn)->first();
 
 			if($request->isMethod('post')) {
-				$carmera = Device::where('sn', $request->input('camerasn'))->first();
-				if($carmera != null && $area != null) {
-					$carmera->area = $area->sn;
-					$carmera->save();
+				$camera = Device::where('sn', $request->input('camerasn'))->first();
+				if($camera != null && $area != null) {
+					$camera->area = $area->sn;
+					$camera->save();
+
+					Record::create(['sn' => $camera->sn, 'type' => 'dev', 'data' => '{"action":"camtoarea", "area":"'.$camera->area.'"}']);
 					return 'OK';
 				}
 				return 'FAIL';
@@ -222,6 +230,7 @@ class AdminController extends Controller
 			if($request->isMethod('post')) {
 				if ($request->input('way') == 'del') {
 					if($device != null) {
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => 'delete']);
 						$device->delete();
 						return 'OK';
 					}
@@ -230,6 +239,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'nameedt') {
 					if($device != null) {
 						$device->name = $request->input('value');
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"nameedt", "name":"'.$device->name.'"}']);
 						$device->save();
 
 						return $device->updated_at;
@@ -241,6 +251,7 @@ class AdminController extends Controller
 						$device->type = $request->input('value');
 						$device->name = $device->rel_type->name.substr($device->sn, 2);
 						$device->attr = $device->rel_type->attr;
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"typeedt", "type":"'.$device->type.'"}']);
 						$device->save();
 						return $device->updated_at;
 					}
@@ -249,6 +260,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'areaedt') {
 					if($device != null) {
 						$device->area = $request->input('value');
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"areaedt", "area":"'.$device->area.'"}']);
 						$device->save();
 						return $device->updated_at;
 					}
@@ -257,6 +269,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'dataedt') {
 					if($device != null) {
 						$device->data = $request->input('value');
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"dataedt", "data":"'.$device->data.'"}']);
 						$device->save();
 						return $device->updated_at;
 					}
@@ -265,6 +278,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'alarmedt') {
 					if($device != null) {
 						$device->alarmthres = $request->input('value');
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"alarmedt", "alarm":'.$device->alarmthres.'}']);
 						$device->save();
 						return $device->updated_at;
 					}
@@ -273,6 +287,7 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'owneredt') {
 					if($device != null) {
 						$device->owner = $request->input('value');
+						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"owneredt", "owner":"'.$device->owner.'"}']);
 						$device->save();
 						return $device->updated_at;
 					}
@@ -307,6 +322,7 @@ class AdminController extends Controller
 				$device = Device::where('sn', $request->input('sn'))->first();
 				if($device != null) {
 					$device->name = $request->input('name');
+					Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"nameedt", "name":"'.$device->name.'"}']);
 					$device->save();
 					return 'OK';
 				}
@@ -316,6 +332,7 @@ class AdminController extends Controller
 			else if($camopt == 'camdel') {
 				$device = Device::where('sn', $request->input('sn'))->first();
 				if($device != null) {
+					Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => 'delete']);
 					$device->delete();
 					DeviceController::delEasydarwinHLS($request->input('sn'));
 					DeviceController::delEasydarwinRTSP($request->input('sn'));
@@ -343,6 +360,7 @@ class AdminController extends Controller
 							'attr' => 3,
 							'data' => json_encode($data),
 					]);
+					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
 
 					return 'OK';
 				}
@@ -401,6 +419,9 @@ class AdminController extends Controller
 				$content = $request->input('content');
 				if(trim($content) == '') {
 					$content = '<br>';
+				}
+				else {
+					Record::create(['sn' =>  Auth::user()->sn, 'type' => 'user', 'data' => '{"action":"msgadd", "content":"'.$content.'"}']);
 				}
 
 				$msgboards = Msgboard::orderBy('updated_at', 'asc');
@@ -531,6 +552,7 @@ class AdminController extends Controller
 	        				'data' => json_encode($data),
 	        				'owner' => User::where('name', 'root')->first()->sn,
 	        		]);
+					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
 				}
 				else {
 					$dbcams = $dbcams->where('sn', '!=', $sn);
@@ -603,6 +625,7 @@ class AdminController extends Controller
 							'data' => json_encode($data),
 							'owner' => User::where('name', 'root')->first()->sn,
 					]);
+					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
 				}
 				else {
 					$dbcams = $dbcams->where('sn', '!=', $sn);

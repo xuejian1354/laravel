@@ -7,8 +7,9 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Action;
-use App\Record;
+use App\Ctrlrecord;
 use App\Globalval;
+use App\Record;
 
 class LoginController extends Controller
 {
@@ -87,25 +88,31 @@ class LoginController extends Controller
 
     	if($method == 'login') {
 	    	$action = Action::where('content', '登录')->first();
-	    	Record::create([
-	    			'sn' => Controller::getRandNum(),
+	    	$sn = Controller::getRandNum();
+	    	Ctrlrecord::create([
+	    			'sn' => $sn,
 	    			'content' => '"'.$user->name.'" 登录到 "'.Globalval::getVal('title').'"',
 	    			'usersn' => $user->sn,
 	    			'action' => $action->id,
 	    			'optnum' => Controller::getRandHex($user->email.$action->id),
 	    			'data' => null,
 	    	]);
+
+	    	Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'login']);
     	}
     	elseif($method == 'logout') {
     		$action = Action::where('content', '退出')->first();
-    		Record::create([
-    				'sn' => Controller::getRandNum(),
+    		$sn = Controller::getRandNum();
+    		Ctrlrecord::create([
+    				'sn' => $sn,
     				'content' => '"'.$user->name.'" 从 "'.Globalval::getVal('title').'" 退出',
     				'usersn' => $user->sn,
     				'action' => $action->id,
     				'optnum' => Controller::getRandHex($user->email.$action->id),
     				'data' => null,
     		]);
+
+    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'logout']);
     	}
     }
 }

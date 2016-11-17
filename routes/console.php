@@ -38,4 +38,7 @@ Artisan::command('video:support {action}', function ($action) {
 			print_r("video support disable\n");
 		}
 	}
+	else {
+		print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
+	}
 })->describe('Video support enable|disable');

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Action;
 use App\Globalval;
+use App\Ctrlrecord;
 use App\Record;
 
 class RegisterController extends Controller
@@ -101,14 +102,17 @@ class RegisterController extends Controller
     
     	if($method == 'register') {
     		$action = Action::where('content', '注册')->first();
-    		Record::create([
-    				'sn' => Controller::getRandNum(),
+    		$sn = Controller::getRandNum();
+    		Ctrlrecord::create([
+    				'sn' => $sn,
     				'content' => '注册 "'.$user->name.'" 到 "'.Globalval::getVal('title').'"',
     				'usersn' => $user->sn,
     				'action' => $action->id,
     				'optnum' => Controller::getRandHex($user->email.$action->id),
     				'data' => null,
     		]);
+
+    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'register']);
     	}
     }
 }

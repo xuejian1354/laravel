@@ -8,6 +8,7 @@ use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
 use App\Device;
 use App\User;
+use App\Record;
 
 class DevDataController extends Controller
 {
@@ -30,6 +31,8 @@ class DevDataController extends Controller
     					'psn' => Input::get('psn'),
     					'owner' => User::where('name', 'root')->firstOrFail()->sn,
     			]);
+
+    			Record::create(['sn' => Input::get('sn'), 'type' => 'dev', 'data' => 'add']);
 
     			return '<h2>Success</h2>'
     					.'<span>Create new device!</span><br><br>'
