@@ -7,6 +7,7 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\AlarminfoController;
 use Illuminate\Support\Facades\Redis;
 use App\Record;
+use App\Globalval;
 
 class DevDataEvent
 {
@@ -47,7 +48,9 @@ class DevDataEvent
 
     	$record = $this->dataToArray();
 
-    	Record::create(['sn' => $this->sn, 'type' => 'dev', 'data' => $record]);
+    	if(Globalval::getVal('record_support') == true) {
+    		Record::create(['sn' => $this->sn, 'type' => 'dev', 'data' => $record]);
+    	}
     	Redis::publish('devdata-updating', $record);
 
     	return $this->updated_at;

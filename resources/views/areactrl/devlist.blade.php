@@ -16,7 +16,13 @@
       @for($index=0; $index < count($devices); $index++)
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td><a class="devsna" href="{{ '/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a></td>
+          <td>
+            @if(App\Globalval::getVal('record_support') == true && $devices[$index]->attr == 1)
+            <a class="devsna" href="{{ '/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a>
+            @else
+            <a class="devsna">{{ $devices[$index]->sn }}</a>
+            @endif
+          </td>
           <td><i class="{{ $devices[$index]->rel_type->img }}"><span>&nbsp;&nbsp;{{ $devices[$index]->name }}</span></td>
           <td>
           @if($devices[$index]->data == null)

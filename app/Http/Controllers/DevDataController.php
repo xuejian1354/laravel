@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Input;
 use App\Device;
 use App\User;
 use App\Record;
+use App\Globalval;
 
 class DevDataController extends Controller
 {
@@ -32,7 +33,9 @@ class DevDataController extends Controller
     					'owner' => User::where('name', 'root')->firstOrFail()->sn,
     			]);
 
-    			Record::create(['sn' => Input::get('sn'), 'type' => 'dev', 'data' => 'add']);
+    			if(Globalval::getVal('record_support') == true) {
+    				Record::create(['sn' => Input::get('sn'), 'type' => 'dev', 'data' => 'add']);
+    			}
 
     			return '<h2>Success</h2>'
     					.'<span>Create new device!</span><br><br>'

@@ -56,7 +56,9 @@ class AdminController extends Controller
 				$usersns = json_decode($request->input('usersns'));
 				foreach ($usersns as $usersn) {
 					$user = User::where('sn', $usersn)->first();
-					Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'delete']);
+					if(Globalval::getVal('record_support') == true) {
+						Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'delete']);
+					}
 
 					$user->delete();
 				}
@@ -88,7 +90,9 @@ class AdminController extends Controller
 						$user->active = true;
 						$user->save();
 
-						Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'active']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'active']);
+						}
 						return 1;
 					}
 					else {
@@ -115,7 +119,13 @@ class AdminController extends Controller
 					$camera->area = $area->sn;
 					$camera->save();
 
-					Record::create(['sn' => $camera->sn, 'type' => 'dev', 'data' => '{"action":"camtoarea", "area":"'.$camera->area.'"}']);
+					if(Globalval::getVal('record_support') == true) {
+						Record::create([
+								'sn' => $camera->sn,
+								'type' => 'dev',
+								'data' => '{"action":"camtoarea", "area":"'.$camera->area.'"}'
+						]);
+					}
 					return 'OK';
 				}
 				return 'FAIL';
@@ -132,7 +142,7 @@ class AdminController extends Controller
 							->with('area', $area)
 							->with('cameras', $cameras);
 		}
-		else if($areaopt == 'record') {
+		else if(Globalval::getVal('record_support') == true && $areaopt == 'record') {
 			if($request->isMethod('post')) {
 				return $this->getDeviceRecord($request);
 			}
@@ -225,29 +235,15 @@ class AdminController extends Controller
 
 	public function devStats(Request $request, $devopt = null) {
 
-		if($devopt == null) {
-			if($request->isMethod('post')) {
-				if($request->input('way') == 'devlist') {
-					return view('devstats.devlist')
-							->with('request', $request)
-							->with('devtypes', Devtype::all())
-							->with('areas', Area::all())
-							->with($this->getDevicesWithPage());
-				}
-			}
-
-			return $this->getViewWithMenus('devstats', $request)
-							->with('devtypes', Devtype::all())
-							->with('areas', Area::all())
-							->with($this->getDevicesWithPage());
-		}
-		else if ($devopt == 'device') {
+		if ($devopt == 'device') {
 			$device = Device::where('sn', $request->get('sn'))->first();
 
 			if($request->isMethod('post')) {
 				if ($request->input('way') == 'del') {
 					if($device != null) {
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => 'delete']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => 'delete']);
+						}
 						$device->delete();
 						return 'OK';
 					}
@@ -256,7 +252,13 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'nameedt') {
 					if($device != null) {
 						$device->name = $request->input('value');
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"nameedt", "name":"'.$device->name.'"}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"nameedt", "name":"'.$device->name.'"}'
+							]);
+						}
 						$device->save();
 
 						return $device->updated_at;
@@ -268,7 +270,13 @@ class AdminController extends Controller
 						$device->type = $request->input('value');
 						$device->name = $device->rel_type->name.substr($device->sn, 2);
 						$device->attr = $device->rel_type->attr;
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"typeedt", "type":"'.$device->type.'"}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"typeedt", "type":"'.$device->type.'"}'
+							]);
+						}
 						$device->save();
 						return $device->updated_at;
 					}
@@ -277,7 +285,13 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'areaedt') {
 					if($device != null) {
 						$device->area = $request->input('value');
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"areaedt", "area":"'.$device->area.'"}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"areaedt", "area":"'.$device->area.'"}'
+							]);
+						}
 						$device->save();
 						return $device->updated_at;
 					}
@@ -286,7 +300,13 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'dataedt') {
 					if($device != null) {
 						$device->data = $request->input('value');
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"dataedt", "data":"'.$device->data.'"}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"dataedt", "data":"'.$device->data.'"}'
+							]);
+						}
 						$device->save();
 						return $device->updated_at;
 					}
@@ -295,7 +315,13 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'alarmedt') {
 					if($device != null) {
 						$device->alarmthres = $request->input('value');
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"alarmedt", "alarm":'.$device->alarmthres.'}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"alarmedt", "alarm":'.$device->alarmthres.'}'
+							]);
+						}
 						$device->save();
 						return $device->updated_at;
 					}
@@ -304,7 +330,13 @@ class AdminController extends Controller
 				else if ($request->input('way') == 'owneredt') {
 					if($device != null) {
 						$device->owner = $request->input('value');
-						Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"owneredt", "owner":"'.$device->owner.'"}']);
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $device->sn,
+									'type' => 'dev',
+									'data' => '{"action":"owneredt", "owner":"'.$device->owner.'"}'
+							]);
+						}
 						$device->save();
 						return $device->updated_at;
 					}
@@ -324,7 +356,7 @@ class AdminController extends Controller
 							->with('areas', Area::all())
 							->with('users', User::all());
 		}
-		else if ($devopt == 'record') {
+		else if (Globalval::getVal('record_support') == true && $devopt == 'record') {
 			if($request->isMethod('post')) {
 				return $this->getDeviceRecord($request);
 			}
@@ -340,6 +372,21 @@ class AdminController extends Controller
 								->with('device', $device);
 			}
 		}
+
+		if($request->isMethod('post')) {
+			if($request->input('way') == 'devlist') {
+				return view('devstats.devlist')
+				->with('request', $request)
+				->with('devtypes', Devtype::all())
+				->with('areas', Area::all())
+				->with($this->getDevicesWithPage());
+			}
+		}
+
+		return $this->getViewWithMenus('devstats', $request)
+						->with('devtypes', Devtype::all())
+						->with('areas', Area::all())
+						->with($this->getDevicesWithPage());
 	}
 
 	public function videoReal(Request $request, $camopt = null) {
@@ -355,7 +402,13 @@ class AdminController extends Controller
 				$device = Device::where('sn', $request->input('sn'))->first();
 				if($device != null) {
 					$device->name = $request->input('name');
-					Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => '{"action":"nameedt", "name":"'.$device->name.'"}']);
+					if(Globalval::getVal('record_support') == true) {
+						Record::create([
+								'sn' => $device->sn,
+								'type' => 'dev',
+								'data' => '{"action":"nameedt", "name":"'.$device->name.'"}'
+						]);
+					}
 					$device->save();
 					return 'OK';
 				}
@@ -365,7 +418,13 @@ class AdminController extends Controller
 			else if($camopt == 'camdel') {
 				$device = Device::where('sn', $request->input('sn'))->first();
 				if($device != null) {
-					Record::create(['sn' => $device->sn, 'type' => 'dev', 'data' => 'delete']);
+					if(Globalval::getVal('record_support') == true) {
+						Record::create([
+								'sn' => $device->sn,
+								'type' => 'dev',
+								'data' => 'delete'
+						]);
+					}
 					$device->delete();
 					DeviceController::delEasydarwinHLS($request->input('sn'));
 					DeviceController::delEasydarwinRTSP($request->input('sn'));
@@ -393,7 +452,13 @@ class AdminController extends Controller
 							'attr' => 3,
 							'data' => json_encode($data),
 					]);
-					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+					if(Globalval::getVal('record_support') == true) {
+						Record::create([
+								'sn' => $sn,
+								'type' => 'dev',
+								'data' => 'add'
+						]);
+					}
 
 					return 'OK';
 				}
@@ -453,8 +518,12 @@ class AdminController extends Controller
 				if(trim($content) == '') {
 					$content = '<br>';
 				}
-				else {
-					Record::create(['sn' =>  Auth::user()->sn, 'type' => 'user', 'data' => '{"action":"msgadd", "content":"'.$content.'"}']);
+				else if(Globalval::getVal('record_support') == true) {
+					Record::create([
+							'sn' =>  Auth::user()->sn,
+							'type' => 'user',
+							'data' => '{"action":"msgadd", "content":"'.$content.'"}'
+					]);
 				}
 
 				$msgboards = Msgboard::orderBy('updated_at', 'asc');
@@ -686,7 +755,10 @@ class AdminController extends Controller
 	        				'data' => json_encode($data),
 	        				'owner' => User::where('name', 'root')->first()->sn,
 	        		]);
-					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+
+					if(Globalval::getVal('record_support') == true) {
+						Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+					}
 				}
 				else {
 					$dbcams = $dbcams->where('sn', '!=', $sn);
@@ -759,7 +831,10 @@ class AdminController extends Controller
 							'data' => json_encode($data),
 							'owner' => User::where('name', 'root')->first()->sn,
 					]);
-					Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+
+					if(Globalval::getVal('record_support') == true) {
+						Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+					}
 				}
 				else {
 					$dbcams = $dbcams->where('sn', '!=', $sn);

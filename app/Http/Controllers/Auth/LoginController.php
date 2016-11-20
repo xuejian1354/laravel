@@ -98,7 +98,9 @@ class LoginController extends Controller
 	    			'data' => null,
 	    	]);
 
-	    	Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'login']);
+	    	if(Globalval::getVal('record_support') == true) {
+	    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'login']);
+	    	}
     	}
     	elseif($method == 'logout') {
     		$action = Action::where('content', '退出')->first();
@@ -112,7 +114,9 @@ class LoginController extends Controller
     				'data' => null,
     		]);
 
-    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'logout']);
+    		if(Globalval::getVal('record_support') == true) {
+    			Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'logout']);
+    		}
     	}
     }
 }

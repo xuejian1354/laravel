@@ -112,7 +112,9 @@ class RegisterController extends Controller
     				'data' => null,
     		]);
 
-    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'register']);
+    		if(Globalval::getVal('record_support') == true) {
+    			Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'register']);
+    		}
     	}
     }
 }

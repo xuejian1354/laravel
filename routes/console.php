@@ -42,3 +42,25 @@ Artisan::command('video:support {action}', function ($action) {
 		print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
 	}
 })->describe('Video support enable|disable');
+
+Artisan::command('record:support {action}', function ($action) {
+	if($action == 'enable') {
+		$vd = App\Globalval::where('name', 'record_support')->first();
+		if($vd) {
+			$vd->val = true;
+			$vd->save();
+			print_r("record support enable\n");
+		}
+	}
+	else if($action == 'disable') {
+		$vd = App\Globalval::where('name', 'record_support')->first();
+		if($vd) {
+			$vd->val = false;
+			$vd->save();
+			print_r("video support disable\n");
+		}
+	}
+	else {
+		print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
+	}
+})->describe('Record support enable|disable');
