@@ -23,6 +23,7 @@ use App\User;
 use App\Devtype;
 use App\Globalval;
 use App\Record;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -130,6 +131,22 @@ class AdminController extends Controller
 							->with('page_title', '添加摄像头')
 							->with('area', $area)
 							->with('cameras', $cameras);
+		}
+		else if($areaopt == 'record') {
+			if($request->isMethod('post')) {
+				return $this->getDeviceRecord($request);
+			}
+			else {
+				$device = Device::where('sn', $request->get('sn'))->first();
+				if($device == null) {
+					return redirect('areactrl/'.$areasn);
+				}
+
+				return $this->getViewWithMenus('devstats.record', $request)
+								->with('page_description', $device->name)
+								->with('page_title', '设备')
+								->with('device', $device);
+			}
 		}
 
 		DeviceController::updateAreaboxDB($areasn);
@@ -307,6 +324,22 @@ class AdminController extends Controller
 							->with('areas', Area::all())
 							->with('users', User::all());
 		}
+		else if ($devopt == 'record') {
+			if($request->isMethod('post')) {
+				return $this->getDeviceRecord($request);
+			}
+			else {
+				$device = Device::where('sn', $request->get('sn'))->first();
+				if($device == null) {
+					return redirect('devstats');
+				}
+
+				return $this->getViewWithMenus('devstats.record', $request)
+								->with('page_description', $device->name)
+								->with('page_title', '设备')
+								->with('device', $device);
+			}
+		}
 	}
 
 	public function videoReal(Request $request, $camopt = null) {
@@ -426,10 +459,7 @@ class AdminController extends Controller
 
 				$msgboards = Msgboard::orderBy('updated_at', 'asc');
 				if(count($msgboards->get()) < 6) {
-					Msgboard::create([
-							'bgcolor' => $color,
-							'content' => $content,
-					]);
+					Msgboard::create(['bgcolor' => $color, 'content' => $content]);
 				}
 				else {
 					$addmsg = $msgboards->first();
@@ -512,6 +542,110 @@ class AdminController extends Controller
 		$pagetag->col_end = $pagetag->col_start + $alarminfos->count()-1;
 
 		return ['pagetag' => $pagetag, 'alarminfos' => $alarminfos];
+	}
+
+	private function getDeviceRecord($request, $samnum = 20, $start_time = null, $end_time = null) {
+		$sn = $request->get('sn');
+		$device = Device::where('sn', $sn)->first();
+		if($device == null) {
+			return null;
+		}
+
+		$before_start = $start_time;
+		$before_end = $end_time;
+
+		$carbon_now = Carbon::now(); //new Carbon('2016-11-21 11:59:59');
+		$now_day = date('Y-m-d', strtotime($carbon_now));
+		$now_time = date('H:i:s', strtotime($carbon_now));
+
+		($start_time == null) && $start_time = new Carbon($now_day.' 00:00:00');
+		($end_time == null) && $end_time = $carbon_now;
+
+		if ($before_start == null) {
+			if ($before_end != null) {
+				$carbon_now = new Carbon($end_time);
+			}
+
+			if ($now_time < '12:00:00') {
+				$carbon_before = $carbon_now->subDay();
+				$before_day = date('Y-m-d', strtotime($carbon_before));
+
+				$start_time = new Carbon($before_day.' 00:00:00');
+				$end_time = new Carbon($before_day.' 23:59:59');
+			}
+		}
+
+		$records = Record::where('sn', $sn)
+							->where('type', 'dev')
+							->whereBetween('updated_at', [$start_time, $end_time])
+							->orderBy('updated_at', 'desc')
+							->get();
+
+		$disnum = (int)round($records->count()/$samnum);
+		($disnum < 1) && $disnum = 1;
+
+		$chartdata = array();
+		$charttitle = array();
+		for ($index=0; $index<$records->count(); $index+=$disnum) {
+			$record = $records[$index];
+
+			$xydata = $this->getRecordData($device, $record);
+			if($xydata) {
+				foreach ($xydata['y'] as $yk => $yv) {
+					if(!isset($chartdata[$yk])) {
+						$chartdata[$yk] = array();
+						$charttitle[$yk] = $xydata['ytitle'][$yk];
+					}
+					array_push($chartdata[$yk], ['x' => $xydata['x'], 'y' => $yv]);
+				}
+			}
+		}
+
+		if(!count($chartdata)) {
+			return null;
+		}
+
+		return json_encode(['data' => $chartdata, 'title' => $charttitle]);
+	}
+
+	public function getRecordData($device, $record) {
+		switch ($device->type) {
+		case 2: //温湿度
+			$jd = json_decode($record->data);
+			if(isset($jd->value)) {
+				$jv = explode('/', $jd->value);
+				return [
+					'x' => date($record->updated_at),
+					'y' => ['Temp' => $jv[0], 'Humi' => $jv[1]],
+					'ytitle' => ['Temp' => '温度 / ℃', 'Humi' => '湿度 / %']
+				];
+			}
+			break;
+
+		case 7: //氨气
+			$jd = json_decode($record->data);
+			if(isset($jd->value)) {
+				return [
+					'x' => date($record->updated_at),
+					'y' => ['Ammonia' => $jd->value],
+					'ytitle' => ['Ammonia' => '氨气 / ppm']
+				];
+			}
+			break;
+
+		case 13: //CO2
+			$jd = json_decode($record->data);
+			if(isset($jd->value)) {
+				return [
+					'x' => date($record->updated_at),
+					'y' => ['CO2' => $jd->value],
+					'ytitle' => ['CO2' => 'CO2 / ppm']
+				];
+			}
+			break;
+		}
+
+		return null;
 	}
 
 	public function getAllVideoNames($selnames = null, $edtypes = 'm3u8|rtmp') {

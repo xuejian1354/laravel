@@ -24,6 +24,8 @@
   <!-- fullCalendar 2.2.5-->
   <link rel="stylesheet" href="{{ asset('/adminlte/plugins/fullcalendar/fullcalendar.min.css') }}">
   <link rel="stylesheet" href="{{ asset('/adminlte/plugins/fullcalendar/fullcalendar.print.css') }}" media="print">
+  <!-- Morris charts -->
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/morris/morris.css') }}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('/adminlte/dist/css/AdminLTE.min.css') }}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter

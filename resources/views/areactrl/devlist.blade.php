@@ -16,7 +16,7 @@
       @for($index=0; $index < count($devices); $index++)
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td><a class="devsna" href="#">{{ $devices[$index]->sn }}</a></td>
+          <td><a class="devsna" href="{{ '/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a></td>
           <td><i class="{{ $devices[$index]->rel_type->img }}"><span>&nbsp;&nbsp;{{ $devices[$index]->name }}</span></td>
           <td>
           @if($devices[$index]->data == null)
