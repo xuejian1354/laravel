@@ -615,6 +615,29 @@ class AdminController extends Controller
 
 	private function getDeviceRecord($request, $samnum = 20, $start_time = null, $end_time = null) {
 		$sn = $request->get('sn');
+		$num = $request->get('num');
+		if ($num) {
+			$samnum = $num;
+		}
+
+		$jstart = $request->get('start_time');
+		if ($jstart) {
+			$start_time = $jstart;
+		}
+
+		$jend = $request->get('end_time');
+		if ($jend) {
+			$end_time = $jend;
+
+			$end_only_day = date('Y-m-d', strtotime($end_time));
+			$end_only_time = date('H:i:s', strtotime($end_time));
+
+			if (strstr($end_time, $end_only_day) === false
+				&& strstr($end_time, date('H:i', strtotime($end_time))) !== false) {
+				$end_time = date('Y-m-d', strtotime($start_time)).' '.$end_only_time;
+			}
+		}
+
 		$device = Device::where('sn', $sn)->first();
 		if($device == null) {
 			return null;
@@ -674,7 +697,15 @@ class AdminController extends Controller
 			return null;
 		}
 
-		return json_encode(['data' => $chartdata, 'title' => $charttitle]);
+		return json_encode([
+					'data' => $chartdata,
+					'title' => $charttitle,
+					'count' => ['samnum' => $samnum, 'totalnum' => $records->count()],
+					'timeline' => [
+							'start' => date('Y-m-d H:i:s', strtotime($start_time)),
+							'end' => date('Y-m-d H:i:s', strtotime($end_time))
+					]
+				]);
 	}
 
 	public function getRecordData($device, $record) {

@@ -26,6 +26,8 @@
   <link rel="stylesheet" href="{{ asset('/adminlte/plugins/fullcalendar/fullcalendar.print.css') }}" media="print">
   <!-- Morris charts -->
   <link rel="stylesheet" href="{{ asset('/adminlte/plugins/morris/morris.css') }}">
+  <!-- bootstrap slider -->
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/bootstrap-slider/slider.css') }}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('/adminlte/dist/css/AdminLTE.min.css') }}">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
