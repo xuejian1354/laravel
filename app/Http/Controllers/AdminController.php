@@ -722,6 +722,17 @@ class AdminController extends Controller
 			}
 			break;
 
+		case 3: //光照
+			$jd = json_decode($record->data);
+			if(isset($jd->value)) {
+				return [
+						'x' => date($record->updated_at),
+						'y' => ['Illumi' => $jd->value],
+						'ytitle' => ['Illumi' => '光照 / lux']
+				];
+			}
+			break;
+
 		case 7: //氨气
 			$jd = json_decode($record->data);
 			if(isset($jd->value)) {
@@ -729,6 +740,17 @@ class AdminController extends Controller
 					'x' => date($record->updated_at),
 					'y' => ['Ammonia' => $jd->value],
 					'ytitle' => ['Ammonia' => '氨气 / ppm']
+				];
+			}
+			break;
+
+		case 9: //硫化氢
+			$jd = json_decode($record->data);
+			if(isset($jd->value)) {
+				return [
+						'x' => date($record->updated_at),
+						'y' => ['Hydrothion' => $jd->value],
+						'ytitle' => ['Hydrothion' => '硫化氢 / ppm']
 				];
 			}
 			break;
@@ -778,13 +800,18 @@ class AdminController extends Controller
 					$data->hls_port = $reqarr['port'];
 					$data->hls_path = $reqarr['path'];
 
+					$user = User::where('name', 'root')->first();
+					if (!$user) {
+						$user = User::query()->first();
+					}
+
 					Device::create([
 	        				'sn' => $sn,
 	        				'name' => $name,
 	        				'type' => 1,
 	        				'attr' => 3,
 	        				'data' => json_encode($data),
-	        				'owner' => User::where('name', 'root')->first()->sn,
+	        				'owner' => $user->sn,
 	        		]);
 
 					if(Globalval::getVal('record_support') == true) {
@@ -854,13 +881,18 @@ class AdminController extends Controller
 					$data->rtsp_port = $reqarr['port'];
 					$data->rtsp_path = $reqarr['path'];
 
+					$user = User::where('name', 'root')->first();
+					if (!$user) {
+						$user = User::query()->first();
+					}
+
 					Device::create([
 							'sn' => $sn,
 							'name' => $name,
 							'type' => 1,
 							'attr' => 3,
 							'data' => json_encode($data),
-							'owner' => User::where('name', 'root')->first()->sn,
+							'owner' => $user->sn,
 					]);
 
 					if(Globalval::getVal('record_support') == true) {

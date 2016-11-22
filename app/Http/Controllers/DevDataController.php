@@ -24,13 +24,18 @@ class DevDataController extends Controller
 	    				.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
     		}
     		else {
+    			$user = User::where('name', 'root')->first();
+    			if (!$user) {
+    				$user = User::query()->first();
+    			}
+
     			Device::create([
     					'sn' => Input::get('sn'),
     					'type' => 0,
     					'attr' => 0,
     					'data' => Input::get('data'),
     					'psn' => Input::get('psn'),
-    					'owner' => User::where('name', 'root')->firstOrFail()->sn,
+    					'owner' => $user->sn,
     			]);
 
     			if(Globalval::getVal('record_support') == true) {

@@ -473,6 +473,10 @@ class DeviceController extends Controller
 	public static function addDevCtrlRecord($device) {
 
 		$user = User::where('name', 'root')->first();
+    	if (!$user) {
+    		$user = User::query()->first();
+    	}
+
 		$action = Action::where('content', '控制')->first();
 
 		Ctrlrecord::create([

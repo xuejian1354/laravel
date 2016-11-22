@@ -6,9 +6,9 @@
   </div>
   <div class="row" style="margin-bottom: 10px;">
     <div class="col-sm-6 col-xs-6">
-      <input id="countval" onblur="javascript:countValSet();" type="text" style="width: 24px; border:none; float: right;"/>
+      <input id="countval" onblur="javascript:countValSet();" type="text" style="width: 36px; border:none; float: right;"/>
       <span style="float: right;">采样个数：</span>
-      <div style="margin-right: 100px;"><input id="countslider" data-slider-id="red" type="text" hidden/></div>
+      <div style="margin-right: 122px;"><input id="countslider" data-slider-id="red" type="text" hidden/></div>
     </div>
     <div class="col-sm-6 col-xs-6">
       <input id="timeline" onblur="javascript:timeValSet();" class="pull-right" style="width: 250px; border:none;"/>
