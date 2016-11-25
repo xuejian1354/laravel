@@ -16,10 +16,12 @@ class GlobalvalTableSeeder extends Seeder
         Globalval::create(['name' => 'title', 'val' => 'Cullive']);
         Globalval::create(['name' => 'video_support', 'val' => '0']);
         Globalval::create(['name' => 'record_support', 'val' => '0']);
+        Globalval::create(['name' => 'node_service', 'val' => 'http://127.0.0.1:8081']);
         Globalval::create(['name' => 'easydarwin_service', 'val' => 'http://127.0.0.1:8088']);
         Globalval::create(['name' => 'easydarwin_hlslist', 'val' => '/api/getHLSList']);
         Globalval::create(['name' => 'easydarwin_rtsplist', 'val' => '/api/getRTSPList']);
         Globalval::create(['name' => 'easydarwin_addhls', 'val' => '/api/addHLSList']);
         Globalval::create(['name' => 'easydarwin_delhls', 'val' => '/api/StopHLS']);
+        Globalval::create(['name' => 'node_ffrtmplist', 'val' => '/getffrtmplist']);
     }
 }

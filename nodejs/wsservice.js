@@ -15,6 +15,7 @@ var tocolres = "7";
 var HashMap = require('hashmap');
 var gwlist = new HashMap();
 var clilist = new HashMap();
+var camlist = new HashMap();
 
 /*
 * Date
@@ -202,6 +203,40 @@ cliserver.on('connection', function(cli) {
 	});
 });
 
+/*
+* Http server
+*/
+var express = require('express');
+var app = express();
+
+app.post('/getffrtmplist', function (req, res) {
+
+	var camobjs = new Array();
+	camlist.forEach(function (cam, camrand) {
+		var camobj = {
+			name: cam.name,
+			protocol: 'rtsp',
+			source: cam.url,
+			host: 'localhost',
+			rtmp_port: 1935,
+			rtmp_path: '/ffrtmp/' + cam.name
+		};
+
+		camobjs.push(camobj);
+	});
+
+	if(camobjs.length > 0) {
+		var jpcams = JSON.stringify(camobjs);
+		res.send(jpcams);
+	}
+	else {
+		res.send('');
+	}
+});
+
+app.listen(8081);
+
+
 function devDataRequest(psn, sn, data, callback)
 {
 	var http = require('http');
@@ -234,12 +269,72 @@ function devDataRequest(psn, sn, data, callback)
 var redis = require('redis');
 var redisClient = redis.createClient();
 redisClient.subscribe('devdata-updating');
+redisClient.subscribe('ffmpeg-rtmp');
 
 redisClient.on("message", function(channel, message) {
 	console.log(message);
-	clilist.forEach(function (cli, clirand) {
-		cli.send(message);
-	});
+
+	if(channel == 'devdata-updating') {
+		clilist.forEach(function (cli, clirand) {
+			cli.send(message);
+		});
+	}
+	else if(channel == 'ffmpeg-rtmp') {
+		var mobj = JSON.parse(message);
+
+		if(typeof(mobj.opt) == "undefined") {
+			return;
+		}
+
+		if(mobj.opt == 'add'
+			&& typeof(mobj.name) != "undefined"
+			&& typeof(mobj.url) != "undefined") {
+
+			var inputPath = mobj.url;
+			var outputPath = 'rtmp://localhost:1935/ffrtmp/' + mobj.name;
+
+			var ffmpeg = require('fluent-ffmpeg');
+			var mypeg = ffmpeg(inputPath);
+			mypeg.isset = false;
+			mypeg.name = mobj.name;
+			mypeg.url = mobj.url;
+			mypeg.outurl = outputPath;
+
+			mypeg.on('start', function(commandLine) {
+				console.log('Spawned FFmpeg with command: ' + commandLine);
+			})
+			.on('progress', function(progress) {
+				if(this.isset != true && camlist.has(this.name) == false) {
+					this.isset == true;
+					camlist.set(this.name, this);
+					console.log('Camera add for ffmpeg handle, name: ' + this.name + ', url: ' + this.url);
+				}
+			})
+			.on('error', function(err, stdout, stderr) {
+				console.log(err.message);
+				//console.log('stdout: ' + stdout);
+				//console.log('stderr: ' + stderr);
+			})
+			.on('end', function() {
+				console.log('Processing finished !');
+			})
+			.addOptions([
+				'-vcodec copy',
+				'-an'
+			])
+			.format('flv')
+			.pipe(outputPath, { end: true });
+		}
+		else if(mobj.opt == 'del' && typeof(mobj.name) != "undefined") {
+			var mcam = camlist.get(mobj.name);
+			if(mcam) {
+				mcam.isset = false;
+				mcam.kill();
+			}
+			camlist.remove(mobj.name);
+			console.log('Camera del from list, name: ' + mobj.name);
+		}
+	}
 });
 
 /*

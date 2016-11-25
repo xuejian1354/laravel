@@ -11,6 +11,7 @@ use App\Action;
 use App\Areaboxcontent;
 use App\Globalval;
 use App\User;
+use Illuminate\Support\Facades\Redis;
 
 class DeviceController extends Controller
 {
@@ -513,6 +514,34 @@ class DeviceController extends Controller
 						]
 				])
 		);
+	}
+
+	public static function getFFmpegList() {
+		return file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmplist'),
+						false,
+						stream_context_create([
+								'http' => [
+									'method'  => 'POST',
+									'header'  => 'Content-type: application/x-www-form-urlencoded',
+									'content' => http_build_query(['opt' => 'list'])
+								]
+						])
+				);
+	}
+
+	public static function addFFmpegRTMP($name, $rtsp_url) {
+		Redis::publish('ffmpeg-rtmp', json_encode([
+											'name' => $name,
+											'opt' => 'add',
+											'url' => $rtsp_url,
+										]));
+	}
+
+	public static function delFFmpegRTMP($name) {
+		Redis::publish('ffmpeg-rtmp', json_encode([
+											'name' => $name,
+											'opt' => 'del',
+										]));
 	}
 
 	public static function addEasydarwinHLS($name, $rtsp_url, $timeout) {
