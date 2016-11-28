@@ -49,15 +49,30 @@ function refreshVideo(type, id, val) {
 	$('#vtitle').text(name);
 
 	if(type == 'mp4') {
-	  $('#viewplace').html('<video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay><source src="' + val + '" type="video/mp4"><\/video>');
+	  $('#viewplace').html(
+			  '<video id="vplay" class="embed-responsive-item" '
+				  + 'allowfullscreen controls autoplay>'
+				  + '<source src="' + val + '" type="video/mp4"><\/video>');
 	  $('#vplay source').attr('src', val);
 	  $('#vplay').load();
 	}
 	else if(type == 'm3u8') {
-	  $('#viewplace').html('<div id="hplay" class="embed-responsive-item"><script type="text/javascript" src="/sewise.player.min.js?server=vod&type=' + type + '&videourl=' + val + '&autostart=true&skin=vodWhite"><\/script><\/div>');
+	  $('#viewplace').html(
+			  '<div id="hplay" class="embed-responsive-item">'
+			  + '<script type="text/javascript" '
+			  	+ 'src="/sewise.player.min.js?'
+			  	+ 'server=vod&type=' + type
+			  	+ '&videourl=' + val
+			  	+ '&autostart=true&skin=vodWhite"><\/script><\/div>');
 	}
 	else if(type == 'rtmp') {
-	  $('#viewplace').html('<div id="hplay" class="embed-responsive-item"><script type="text/javascript" src="/sewise.player.min.js?server=live&type=' + type + '&streamurl=' + val + '&autostart=true&skin=liveWhite"><\/script><\/div>');
+	  $('#viewplace').html(
+			  '<div id="hplay" class="embed-responsive-item">'
+			  + '<script type="text/javascript" '
+			  	+ 'src="/sewise.player.min.js?'
+			  	+ 'server=live&type=' + type
+			  	+ '&streamurl=' + val
+			  	+ '&autostart=true&skin=liveWhite"><\/script><\/div>');
 	}
 }
 
@@ -67,25 +82,101 @@ function videolistSetting() {
     $('#vaddopt').addClass('disabled');
     $('#vaddopt').addClass('hidden');
     $('#vsetopt').removeAttr('isset');
+    $('#vsetopt').attr('title', '设置');
     $('#vsetopt i').removeClass('fa-remove');
     $('#vsetopt i').addClass('fa-cog');
 
-    $('.videom3u8').each(function() {
+    $('.videom3u8,.videortmp,.videonone').each(function() {
       var ainput = $(this).find('input');
-      $(this).html('<br><a id="' + ainput.attr('id') + '" href="' + ainput.attr('href') + '" class="product-description">' + ainput.val() + '</a>');
+      $(this).html(
+    	      '<a id="' + ainput.attr('id') + '" '
+    	      + 'href="' + ainput.attr('href') + '" '
+    	      + 'class="product-description" style="margin: 15px 0;">' + ainput.val() + '</a>');
     });
   }
   else {
-    $('#vaddopt').removeClass('disabled');
-    $('#vaddopt').removeClass('hidden');
-    $('#vsetopt').attr('isset', 1);
-    $('#vsetopt i').removeClass('fa-cog');
-    $('#vsetopt i').addClass('fa-remove');
+    var videodev = new Array();
+    $('.videom3u8,.videortmp,.videonone').each(function() {
+      videodev.push($(this).find('a').attr('id'));
+    });
 
-    $('.videom3u8,.videortmp').each(function() {
-      var vname = $(this).text();
-      var ahref = $(this).find('a');
-      $(this).html('<br><input id="' + ahref.attr('id') + '" href="' + ahref.attr('href') + '" onblur="javascript:edtCam(\'' + ahref.attr('id') + '\');" type="text" value="' + $.trim(vname) + '" style="border: 0; width: 85%;"><a href="javascript:delCam(\'' + ahref.attr('id') + '\');" class="pull-right" style="margin-left: 10px;"><i class="fa fa-trash-o"></i></a>');
+    $.post('/videoreal/camattr', { _token:'{{ csrf_token() }}', sns:JSON.stringify(videodev) },
+      function(data, status) {
+        if(status != 'success') {
+          alert("Status: " + status);
+        }
+        else {
+          var camattrs = JSON.parse(data);
+
+          $('#vaddopt').removeClass('disabled');
+          $('#vaddopt').removeClass('hidden');
+          $('#vsetopt').attr('isset', 1);
+          $('#vsetopt').attr('title', '取消');
+          $('#vsetopt i').removeClass('fa-cog');
+          $('#vsetopt i').addClass('fa-remove');
+
+          $('.videom3u8,.videortmp,.videonone').each(function() {
+              var vname = $.trim($(this).text());
+              var ahref = $(this).find('a');
+
+              var vahref = ahref.attr('href');
+              var vaid = ahref.attr('id');
+
+              if(camattrs[vaid].rtmp_enable == 'true') {
+              	camattrs[vaid].rtmp_checked = 'checked="checked" ';
+              }
+              else {
+              	camattrs[vaid].rtmp_checked = '';
+              }
+
+              if(camattrs[vaid].hls_enable == 'true') {
+              	camattrs[vaid].hls_checked = 'checked="checked" ';
+              }
+              else {
+              	camattrs[vaid].hls_checked = '';
+              }
+
+              if(camattrs[vaid].rtsp_enable == 'true') {
+              	camattrs[vaid].rtsp_checked = 'checked="checked" ';
+              }
+              else {
+              	camattrs[vaid].rtsp_checked = '';
+              }
+
+              if(camattrs[vaid].storage_enable == 'true') {
+              	camattrs[vaid].storage_checked = 'checked="checked" ';
+              }
+              else {
+              	camattrs[vaid].storage_checked = '';
+              }
+
+              $(this).html(
+            	      '<input id="' + vaid
+            	      	+ '" href="' + vahref
+            	      	+ '" onblur="javascript:edtCam(\'' + vaid + '\');" '
+            	      	+ 'type="text" value="' + vname + '" style="width: 50px; margin: 12px 0;">'
+            	      + '<div class="pull-right" style="margin: 14px 0;">'
+            	      	+ '<input id="rtmpcheck' + vaid + '" type="checkbox" '
+            	      	  + camattrs[vaid].rtmp_checked
+            	      	  + 'onclick="javascript:videoStreamCheck(\'rtmp\', \'' + vaid + '\');">'
+            	      	+ '<span style="margin-left: 1px;">rtmp</span>'
+            	      	+ '<input id="hlscheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
+          	      	      + camattrs[vaid].hls_checked
+          	      	      + 'onclick="javascript:videoStreamCheck(\'hls\', \'' + vaid + '\');" disabled>'
+            	      	+ '<span style="margin-left: 1px;">hls</span>'
+            	      	+ '<input id="rtspcheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
+          	      	      + camattrs[vaid].rtsp_checked
+        	      	      + 'onclick="javascript:videoStreamCheck(\'rtsp\', \'' + vaid + '\');" disabled>'
+            	      	+ '<span style="margin-left: 1px;">rtsp</span>'
+            	      	+ '<input id="storagecheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
+            	      	  + camattrs[vaid].storage_checked
+        	      	      + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\');">'
+            	      	+ '<span style="margin-left: 1px;">录制</span>'
+            	      	+ '<a href="javascript:delCam(\'' + vaid + '\');" '
+            	      	  + 'class="pull-right" style="margin-left: 4px;">'
+            	      	  + '<i class="fa fa-trash-o"></i></a></div>');
+            });
+        }
     });
   }
 }
@@ -114,6 +205,28 @@ function delCam(id) {
         }
     });
   }
+}
+
+function videoStreamCheck(action, id) {
+  var ele = $('#' + action + 'check' +id);
+  var checkval = ele.prop('checked');
+  if(checkval) {
+    ele.prop('checked', false);
+  }
+  else {
+    ele.prop('checked', true);
+  }
+
+  $.post('/videoreal/camset',
+    { _token:'{{ csrf_token() }}', action:action, sn:id, check:checkval },
+    function(data, status) {
+      if(status != 'success') {
+        alert("Status: " + status);
+      }
+      else {
+        ele.prop('checked', checkval);
+      }
+  });
 }
 </script>
 @endsection

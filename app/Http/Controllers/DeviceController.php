@@ -516,7 +516,7 @@ class DeviceController extends Controller
 		);
 	}
 
-	public static function getFFmpegList() {
+	public static function getFFmpegRTMPList() {
 		return file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmplist'),
 						false,
 						stream_context_create([
@@ -529,6 +529,19 @@ class DeviceController extends Controller
 				);
 	}
 
+	public static function getFFmpegStorageList() {
+		return file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffstoragelist'),
+				false,
+				stream_context_create([
+						'http' => [
+								'method'  => 'POST',
+								'header'  => 'Content-type: application/x-www-form-urlencoded',
+								'content' => http_build_query(['opt' => 'list'])
+						]
+				])
+		);
+	}
+
 	public static function addFFmpegRTMP($name, $rtsp_url) {
 		Redis::publish('ffmpeg-rtmp', json_encode([
 											'name' => $name,
@@ -537,11 +550,26 @@ class DeviceController extends Controller
 										]));
 	}
 
+	public static function addFFmpegStorage($name, $rtsp_url) {
+		Redis::publish('ffmpeg-storage', json_encode([
+												'name' => $name,
+												'opt' => 'storage',
+												'url' => $rtsp_url,
+											]));
+	}
+
 	public static function delFFmpegRTMP($name) {
 		Redis::publish('ffmpeg-rtmp', json_encode([
 											'name' => $name,
 											'opt' => 'del',
 										]));
+	}
+
+	public static function delFFmpegStorage($name) {
+		Redis::publish('ffmpeg-storage', json_encode([
+												'name' => $name,
+												'opt' => 'del',
+											]));
 	}
 
 	public static function addEasydarwinHLS($name, $rtsp_url, $timeout) {

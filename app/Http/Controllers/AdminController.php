@@ -24,6 +24,7 @@ use App\Devtype;
 use App\Globalval;
 use App\Record;
 use Carbon\Carbon;
+use PhpParser\Node\Stmt\Global_;
 
 class AdminController extends Controller
 {
@@ -425,10 +426,25 @@ class AdminController extends Controller
 								'data' => 'delete'
 						]);
 					}
+
+					$data = json_decode($device->data);
+					if(isset($data->hls_enable) && $data->hls_enable == 'true') {
+						DeviceController::delEasydarwinHLS($request->input('sn'));
+					}
+
+					if(isset($data->rtsp_enable) && $data->rtsp_enable == 'true') {
+						DeviceController::delEasydarwinRTSP($request->input('sn'));
+					}
+
+					if(isset($data->storage_enable) && $data->storage_enable == 'true') {
+						DeviceController::delFFmpegStorage($request->input('sn'));
+					}
+
+					if(isset($data->rtmp_enable) && $data->rtmp_enable == 'true') {
+						DeviceController::delFFmpegRTMP($request->input('sn'));
+					}
+					
 					$device->delete();
-					DeviceController::delEasydarwinHLS($request->input('sn'));
-					DeviceController::delEasydarwinRTSP($request->input('sn'));
-					DeviceController::delFFmpegRTMP($request->input('sn'));
 					return 'OK';
 				}
 
@@ -439,9 +455,22 @@ class AdminController extends Controller
 				$stream_type = $request->input('type');
 				$url = $request->input('url');
 				if($stream_type == 'rtsp') {
-					DeviceController::addFFmpegRTMP($sn, $url);
-					DeviceController::addEasydarwinHLS($sn, $url, 0);
-					DeviceController::addEasydarwinRTSP($sn, $url);
+					if (Globalval::getVal('video_rtmp_default_enable') == 'true') {
+						DeviceController::addFFmpegRTMP($sn, $url);
+					}
+
+					if (Globalval::getVal('video_storage_default_enable') == 'true') {
+						DeviceController::addFFmpegStorage($sn, $url);
+					}
+
+					if (Globalval::getVal('video_hls_default_enable') == 'true') {
+						DeviceController::addEasydarwinHLS($sn, $url, 0);
+					}
+
+					if (Globalval::getVal('video_rtsp_default_enable') == 'true') {
+						DeviceController::addEasydarwinRTSP($sn, $url);
+					}
+
 					return 'OK';
 				}
 				else if ($stream_type == 'hls' || $stream_type == 'rtmp') {
@@ -466,6 +495,72 @@ class AdminController extends Controller
 				}
 
 				return 'FAIL';
+			}
+			else if($camopt == 'camset') {
+				$action = $request->input('action');
+				$sn = $request->input('sn');
+				$check = $request->input('check');
+
+				$camdev = Device::where('sn', $sn)->first();
+				if ($camdev) {
+					$data = json_decode($camdev->data);
+					switch($action) {
+					case 'rtmp':
+						$data->rtmp_enable = $check;
+						if ($data->rtmp_enable == 'true') {
+							DeviceController::addFFmpegRTMP($camdev->sn, $data->source);
+						}
+						else {
+							DeviceController::delFFmpegRTMP($camdev->sn);
+						}
+
+						$camdev->data = json_encode($data);
+						$camdev->save();
+						break;
+
+					case 'hls':
+						$data->hls_enable = $check;
+						$camdev->data = json_encode($data);
+						$camdev->save();
+						break;
+
+					case 'rtsp':
+						$data->rtsp_enable = $check;
+						$camdev->data = json_encode($data);
+						$camdev->save();
+						break;
+
+					case 'storage':
+						$data->storage_enable = $check;
+						if ($data->storage_enable == 'true') {
+							DeviceController::addFFmpegStorage($camdev->sn, $data->source);
+						}
+						else {
+							DeviceController::delFFmpegStorage($camdev->sn);
+						}
+
+						$camdev->data = json_encode($data);
+						$camdev->save();
+						break;
+					}
+				}
+
+				return json_encode([
+						'action' => $action,
+						'sn' => $sn,
+						'check' => $check,
+				]);
+			}
+			else if($camopt == 'camattr') {
+				$sns = json_decode($request->input('sns'));
+				$camdevs = Device::whereIn('sn', $sns)->get();
+				$camdatas = [];
+				foreach ($camdevs as $camdev) {
+					$data = json_decode($camdev->data);
+					$camdatas[$camdev->sn] = $data;
+				}
+
+				return json_encode($camdatas);
 			}
 		}
 		else if($camopt == 'camadd') {
@@ -786,6 +881,7 @@ class AdminController extends Controller
 		$video_file_names = array();
 		$dbcams = Device::where('attr', 3);
 
+		//Using by easydarwin
 		$getpos = array_search('m3u8', $typesarr);
 		$checkpos = array_search('rtmp', $typesarr);
 		if( $getpos !== false) {
@@ -807,6 +903,7 @@ class AdminController extends Controller
 						$data->host = $reqarr['host'];
 						$data->hls_port = $reqarr['port'];
 						$data->hls_path = $reqarr['path'];
+						$data->hls_enable = Globalval::getVal('video_hls_default_enable');
 
 						$user = User::where('name', 'root')->first();
 						if (!$user) {
@@ -885,6 +982,7 @@ class AdminController extends Controller
 			}
 		}
 
+		//Using by easydarwin
 		$getpos = array_search('sdp', $typesarr);
 		if($getpos !== false) {
 			$rtjson = json_decode(DeviceController::getEasydarwinRTSPList());
@@ -906,6 +1004,7 @@ class AdminController extends Controller
 						}
 						$data->rtsp_port = $reqarr['port'];
 						$data->rtsp_path = $reqarr['path'];
+						$data->rtsp_enable = Globalval::getVal('video_rtsp_default_enable');
 	
 						$user = User::where('name', 'root')->first();
 						if (!$user) {
@@ -970,10 +1069,12 @@ class AdminController extends Controller
 			}
 		}
 
+		//Using by nodejs
 		$getpos = array_search('rtmp', $typesarr);
 		$checkpos = array_search('m3u8', $typesarr);
 		if($getpos !== false) {
-			$ffjson = json_decode(DeviceController::getFFmpegList());
+			$ffjson = json_decode(DeviceController::getFFmpegRTMPList());
+			$sdjson = json_decode(DeviceController::getFFmpegStorageList());
 			if($ffjson) {
 				foreach ($ffjson as $ffcam) {
 					$sn = $ffcam->name;
@@ -985,9 +1086,11 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = 'rtsp';
 						$data->source = $ffcam->source;
-						$data->host = $ffcam->host;
+						$data->host = Globalval::getVal('hostaddr');
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
+						$data->rtmp_enable = 'true';
+						$data->storage_enable = Globalval::getVal('video_storage_default_enable');
 
 						$user = User::where('name', 'root')->first();
 						if (!$user) {
@@ -1013,6 +1116,7 @@ class AdminController extends Controller
 						$data = json_decode($camdev->data);
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
+						$data->rtmp_enable = 'true';
 
 						$camdev->data = json_encode($data);
 						$camdev->save();
@@ -1051,6 +1155,60 @@ class AdminController extends Controller
 			}
 		}
 
+		$sdjson = json_decode(DeviceController::getFFmpegStorageList());
+		if($sdjson) {
+			foreach ($sdjson as $sdm4) {
+				$sn = $sdm4->name;
+				$name = $sn;
+
+				$camdev = Device::where('sn', $sn)->first();
+				if($camdev == null) {
+					$data = new \stdClass();
+					$data->protocol = $sdm4->protocol;
+					$data->source = $sdm4->source;
+					$data->host = Globalval::getVal('hostaddr');
+					$data->storage_path = $sdm4->storage_path;
+					$data->storage_enable = 'true';
+
+					$user = User::where('name', 'root')->first();
+					if (!$user) {
+						$user = User::query()->first();
+					}
+
+					Device::create([
+							'sn' => $sn,
+							'name' => $name,
+							'type' => 1,
+							'attr' => 3,
+							'data' => json_encode($data),
+							'owner' => $user->sn,
+					]);
+				}
+				else {
+					$name = $camdev->name;
+
+					$data = json_decode($camdev->data);
+					$data->source = $sdm4->source;
+					$data->storage_path = $sdm4->storage_path;
+					$data->storage_enable = 'true';
+
+					$camdev->data = json_encode($data);
+					$camdev->save();
+
+					$dbcams = $dbcams->where('sn', '!=', $sn);
+				}
+
+				if (!isset($video_file_names[$sn])) {
+					$video_file_names[$sn] = [
+							'id' => $sn,
+							'type' => 'none',
+							'name' => $name,
+							'url' => ''
+					];
+				}
+			}
+		}
+
 		if($selnames == null) {
 			foreach ($dbcams->get() as $dbcam) {
 				$data = json_decode($dbcam->data);
@@ -1061,7 +1219,7 @@ class AdminController extends Controller
 					}
 					else {
 						foreach ($typesarr as $ti) {
-							if($ti == 'm3u8') {
+							if($ti == 'm3u8' && $data->hls_enable == 'true') {
 								DeviceController::addEasydarwinHLS($dbcam->sn, $data->source, 0);
 
 								if(isset($data->host)
@@ -1080,7 +1238,7 @@ class AdminController extends Controller
 									];
 								}
 							}
-							else if($ti == 'sdp') {
+							else if($ti == 'sdp' && $data->rtsp_enable == 'true') {
 								DeviceController::addEasydarwinRTSP($dbcam->sn, $data->source);
 
 								if(isset($data->host)
@@ -1100,22 +1258,36 @@ class AdminController extends Controller
 								}
 							}
 							else if($ti == 'rtmp') {
-								DeviceController::addFFmpegRTMP($dbcam->sn, $data->source);
-
-								if(isset($data->host)
-									&& isset($data->rtsp_port)
-									&& isset($data->rtsp_path)) {
-
+								if($data->rtmp_enable == 'true') {
+									DeviceController::addFFmpegRTMP($dbcam->sn, $data->source);
+	
+									if(isset($data->host)
+										&& isset($data->rtsp_port)
+										&& isset($data->rtsp_path)) {
+	
+										$video_file_names[$dbcam->sn] = [
+												'id' => $dbcam->sn,
+												'type' => 'rtmp',
+												'name' => $dbcam->name,
+												'url' => 'rtmp://'
+															.$data->host
+															.':'
+															.$data->rtmp_port
+															.$data->rtmp_path
+										];
+									}
+								}
+								else {
 									$video_file_names[$dbcam->sn] = [
 											'id' => $dbcam->sn,
-											'type' => 'rtmp',
+											'type' => 'none',
 											'name' => $dbcam->name,
-											'url' => 'rtmp://'
-														.$data->host
-														.':'
-														.$data->rtmp_port
-														.$data->rtmp_path
+											'url' => ''
 									];
+								}
+
+								if($data->storage_enable == 'true') {
+									DeviceController::addFFmpegStorage($dbcam->sn, $data->source);
 								}
 							}
 						}
@@ -1162,6 +1334,10 @@ class AdminController extends Controller
 		}
 
 		return $outvideos;
+	}
+
+	public function getStorageVideoNames($selnames = null) {
+		
 	}
 
 	protected function getRandVideoName($names = null) {

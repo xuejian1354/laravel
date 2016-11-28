@@ -16,6 +16,7 @@ var HashMap = require('hashmap');
 var gwlist = new HashMap();
 var clilist = new HashMap();
 var camlist = new HashMap();
+var storagecamlist = new HashMap();
 
 /*
 * Date
@@ -234,6 +235,29 @@ app.post('/getffrtmplist', function (req, res) {
 	}
 });
 
+app.post('/getffstoragelist', function (req, res) {
+
+	var camobjs = new Array();
+	storagecamlist.forEach(function (cam, camrand) {
+		var camobj = {
+			name: cam.name,
+			protocol: 'rtsp',
+			source: cam.url,
+			storage_path: cam.name + '.mp4'
+		};
+
+		camobjs.push(camobj);
+	});
+
+	if(camobjs.length > 0) {
+		var jpcams = JSON.stringify(camobjs);
+		res.send(jpcams);
+	}
+	else {
+		res.send('');
+	}
+});
+
 app.listen(8081);
 
 
@@ -270,6 +294,7 @@ var redis = require('redis');
 var redisClient = redis.createClient();
 redisClient.subscribe('devdata-updating');
 redisClient.subscribe('ffmpeg-rtmp');
+redisClient.subscribe('ffmpeg-storage');
 
 redisClient.on("message", function(channel, message) {
 	console.log(message);
@@ -290,24 +315,42 @@ redisClient.on("message", function(channel, message) {
 			&& typeof(mobj.name) != "undefined"
 			&& typeof(mobj.url) != "undefined") {
 
+			if(camlist.has(mobj.name)) {
+				return;
+			}
+
 			var inputPath = mobj.url;
 			var outputPath = 'rtmp://localhost:1935/ffrtmp/' + mobj.name;
 
 			var ffmpeg = require('fluent-ffmpeg');
 			var mypeg = ffmpeg(inputPath);
-			mypeg.isset = false;
+			mypeg.isset = 'init';
 			mypeg.name = mobj.name;
 			mypeg.url = mobj.url;
 			mypeg.outurl = outputPath;
 
 			mypeg.on('start', function(commandLine) {
 				console.log('Spawned FFmpeg with command: ' + commandLine);
+				if(this.isset == 'init') {
+					if(camlist.has(this.name)) {
+						this.kill();
+					}
+				}
 			})
 			.on('progress', function(progress) {
-				if(this.isset != true && camlist.has(this.name) == false) {
-					this.isset == true;
-					camlist.set(this.name, this);
-					console.log('Camera add for ffmpeg handle, name: ' + this.name + ', url: ' + this.url);
+				if(this.isset == 'init') {
+					if(camlist.has(this.name)) {
+						console.log('reaction, no progress camstream, name: ' + this.name);
+					}
+					else {
+						this.isset = 'work';
+						camlist.set(this.name, this);
+						console.log('Camera add for ffmpeg handle, name: ' + this.name + ', url: ' + this.url);
+					}
+				}
+				else if(this.isset == 'work') {}
+				else if(this.isset == 'end') {
+					console.log('Camera no progressing');
 				}
 			})
 			.on('error', function(err, stdout, stderr) {
@@ -328,11 +371,87 @@ redisClient.on("message", function(channel, message) {
 		else if(mobj.opt == 'del' && typeof(mobj.name) != "undefined") {
 			var mcam = camlist.get(mobj.name);
 			if(mcam) {
-				mcam.isset = false;
+				mcam.isset = 'end';
 				mcam.kill();
 			}
 			camlist.remove(mobj.name);
 			console.log('Camera del from list, name: ' + mobj.name);
+		}
+	}
+	else if(channel == 'ffmpeg-storage') {
+		var mobj = JSON.parse(message);
+
+		if(typeof(mobj.opt) == "undefined") {
+			return;
+		}
+
+		if(mobj.opt == 'storage'
+			&& typeof(mobj.name) != "undefined"
+			&& typeof(mobj.url) != "undefined") {
+
+			if(storagecamlist.has(mobj.name)) {
+				return;
+			}
+
+			var inputPath = mobj.url;
+			var outputPath = mobj.name + '.mp4';
+
+			var ffmpeg = require('fluent-ffmpeg');
+			var mypeg = ffmpeg(inputPath);
+			mypeg.isset = 'init';
+			mypeg.name = mobj.name;
+			mypeg.url = mobj.url;
+			mypeg.outurl = outputPath;
+
+			mypeg.on('start', function(commandLine) {
+				console.log('Spawned FFmpeg with command: ' + commandLine);
+			})
+			.on('progress', function(progress) {
+				if(this.isset == 'init') {
+					this.isset = 'work';
+					if(storagecamlist.has(this.name) == false) {
+						storagecamlist.set(this.name, this);
+						console.log('Camera storage for ffmpeg handle, name: ' + this.name + ', url: ' + this.url);
+					}
+					else {
+						var obcam = storagecamlist.get(this.name);
+						obcam.kill();
+						storagecamlist.remove(this.name);
+
+						storagecamlist.set(this.name, this);
+						console.log('reaction, no progress storage, name: ' + this.name);
+					}
+				}
+				else if(this.isset == 'work') {}
+				else if(this.isset == 'end') {
+					if(storagecamlist.has(this.name)) {
+						storagecamlist.remove(this.name);
+						console.log('Progress storage, del cam from list, name: ' + this.name);
+					}
+				}
+			})
+			.on('error', function(err, stdout, stderr) {
+				console.log(err.message);
+				//console.log('stdout: ' + stdout);
+				//console.log('stderr: ' + stderr);
+			})
+			.on('end', function() {
+				console.log('Processing finished !');
+			})
+			.addOptions([
+				'-vcodec copy',
+				'-an'
+			])
+			.save(outputPath);
+		}
+		else if(mobj.opt == 'del' && typeof(mobj.name) != "undefined") {
+			var mcam = storagecamlist.get(mobj.name);
+			if(mcam) {
+				mcam.isset = 'end';
+				mcam.kill('SIGINT');
+			}
+			//storagecamlist.remove(mobj.name);
+			console.log('Camera storage del from list, name: ' + mobj.name);
 		}
 	}
 });

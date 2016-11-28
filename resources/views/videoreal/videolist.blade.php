@@ -3,8 +3,9 @@
     <div class="box-header with-border">
       <h3 class="box-title">视频列表</h3>
       <div class="box-tools pull-right">
-        <a id='vaddopt' href="/videoreal/camadd" type="button" class="btn btn-box-tool hidden"><i class="fa fa-plus"></i></a>
-        <button id='vsetopt' type="button" class="btn btn-box-tool" onclick="javascript:videolistSetting();"><i class="fa fa-cog"></i></button>
+        <button id='vhistory' type="button" title="记录" class="btn btn-box-tool" onclick="javascript:void();"><i class="fa fa-history"></i></button>
+        <a id='vaddopt' href="/videoreal/camadd" title="添加" type="button" class="btn btn-box-tool hidden"><i class="fa fa-plus"></i></a>
+        <button id='vsetopt' type="button" title="设置" class="btn btn-box-tool" onclick="javascript:videolistSetting();"><i class="fa fa-cog"></i></button>
       </div>
     </div>
     <div class="box-body">
@@ -14,8 +15,8 @@
           <div class="product-img">
             <a href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')"><img src="/adminlte/dist/img/default-50x50.gif" alt="Product Image"></a>
           </div>
-          <div class="product-info video{{ $video_file['type'] }}">
-            <br><a id="{{ $video_file['id'] }}" href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')" class="product-description">{{ $video_file['name'] }}</a>
+          <div id="video{{ $video_file['id'] }}" class="product-info video{{ $video_file['type'] }}">
+            <a id="{{ $video_file['id'] }}" href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')" class="product-description" style="margin: 15px 0;">{{ $video_file['name'] }}</a>
           </div>
         </li>
       @endforeach
