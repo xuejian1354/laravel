@@ -243,7 +243,7 @@ app.post('/getffstoragelist', function (req, res) {
 			name: cam.name,
 			protocol: 'rtsp',
 			source: cam.url,
-			storage_path: cam.name + '.mp4'
+			storage_path: cam.outurl
 		};
 
 		camobjs.push(camobj);
@@ -363,7 +363,7 @@ redisClient.on("message", function(channel, message) {
 			})
 			.addOptions([
 				'-vcodec copy',
-				'-an'
+				'-acodec aac'
 			])
 			.format('flv')
 			.pipe(outputPath, { end: true });
@@ -394,13 +394,17 @@ redisClient.on("message", function(channel, message) {
 			}
 
 			var inputPath = mobj.url;
-			var outputPath = mobj.name + '.mp4';
+			var savePath = mobj.path_dir + '/' + mobj.name + '.mp4';
+			var outputPath = mobj.path_dir + '/' + mobj.name + '_' + new Date().format('yyMMddhhmmss') + '.mp4';
 
 			var ffmpeg = require('fluent-ffmpeg');
 			var mypeg = ffmpeg(inputPath);
 			mypeg.isset = 'init';
 			mypeg.name = mobj.name;
+			mypeg.path_dir = mobj.path_dir;
+			mypeg.timelong = mobj.timelong;	//mins
 			mypeg.url = mobj.url;
+			mypeg.saveurl = savePath;
 			mypeg.outurl = outputPath;
 
 			mypeg.on('start', function(commandLine) {
@@ -411,6 +415,15 @@ redisClient.on("message", function(channel, message) {
 					this.isset = 'work';
 					if(storagecamlist.has(this.name) == false) {
 						storagecamlist.set(this.name, this);
+
+						var timefunc = function(cam) {
+							return function() {
+								cam.isset = 'rework';
+								cam.kill('SIGINT');
+							}
+						};
+						setTimeout(timefunc(this), this.timelong*60000-1000);
+
 						console.log('Camera storage for ffmpeg handle, name: ' + this.name + ', url: ' + this.url);
 					}
 					else {
@@ -423,6 +436,32 @@ redisClient.on("message", function(channel, message) {
 					}
 				}
 				else if(this.isset == 'work') {}
+				else if(this.isset == 'rework') {
+					var reworkfunc = function(cam) {
+						return function() {
+							var fs =  require("fs");
+							fs.rename(cam.saveurl, cam.outurl);
+							cam.outurl = cam.path_dir
+											+ '/' + cam.name
+											+ '_' + new Date().format('yyMMddhhmmss')
+											+ '.mp4';
+
+							cam.isset = 'work';
+							cam.run();
+
+							var timefunc = function(cam) {
+							return function() {
+									cam.isset = 'rework';
+									cam.kill('SIGINT');
+								}
+							};
+							setTimeout(timefunc(cam), cam.timelong * 60000);
+
+							console.log('Camera storage rework, name: ' + cam.name);
+						}
+					};
+					setTimeout(reworkfunc(this), 500);
+				}
 				else if(this.isset == 'end') {
 					if(storagecamlist.has(this.name)) {
 						storagecamlist.remove(this.name);
@@ -440,17 +479,26 @@ redisClient.on("message", function(channel, message) {
 			})
 			.addOptions([
 				'-vcodec copy',
-				'-an'
+				'-acodec aac',
+				'-metadata title=' + mobj.name,
 			])
-			.save(outputPath);
+			.save(savePath);
 		}
 		else if(mobj.opt == 'del' && typeof(mobj.name) != "undefined") {
 			var mcam = storagecamlist.get(mobj.name);
 			if(mcam) {
 				mcam.isset = 'end';
 				mcam.kill('SIGINT');
+
+				var fs =  require("fs");
+				fs.rename(mcam.saveurl, mcam.outurl);
+
+				if(storagecamlist.has(mcam.name)) {
+					storagecamlist.remove(mcam.name);
+					console.log('Progress storage, del cam from list, name: ' + mcam.name);
+				}
 			}
-			//storagecamlist.remove(mobj.name);
+
 			console.log('Camera storage del from list, name: ' + mobj.name);
 		}
 	}

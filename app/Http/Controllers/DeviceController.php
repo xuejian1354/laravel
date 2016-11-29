@@ -555,6 +555,8 @@ class DeviceController extends Controller
 												'name' => $name,
 												'opt' => 'storage',
 												'url' => $rtsp_url,
+												'timelong' => Globalval::getVal('video_storage_timelong'),  //mins
+												'path_dir' => Globalval::getVal('video_storage_path'),
 											]));
 	}
 

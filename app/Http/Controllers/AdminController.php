@@ -1077,7 +1077,6 @@ class AdminController extends Controller
 		$checkpos = array_search('m3u8', $typesarr);
 		if($getpos !== false) {
 			$ffjson = json_decode(DeviceController::getFFmpegRTMPList());
-			$sdjson = json_decode(DeviceController::getFFmpegStorageList());
 			if($ffjson) {
 				foreach ($ffjson as $ffcam) {
 					$sn = $ffcam->name;
