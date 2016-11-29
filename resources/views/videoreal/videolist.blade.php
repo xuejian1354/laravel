@@ -13,7 +13,7 @@
       @foreach($video_files as $index => $video_file)
         <li id="vitem{{ $video_file['id'] }}" class="item">
           <div class="product-img">
-            <a href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')"><img src="/adminlte/dist/img/default-50x50.gif" alt="Product Image"></a>
+            <a id="proimg{{ $video_file['id'] }}" href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')"><img src="/adminlte/dist/img/default-50x50.gif" alt="Product Image"></a>
           </div>
           <div id="video{{ $video_file['id'] }}" class="product-info video{{ $video_file['type'] }}">
             <a id="{{ $video_file['id'] }}" href="javascript:refreshVideo('{{ $video_file['type'] }}', '{{ $video_file['id'] }}', '{{ $video_file['url'] }}')" class="product-description" style="margin: 15px 0;">{{ $video_file['name'] }}</a>
