@@ -18,6 +18,7 @@ use App\Msgboard;
 use App\Record;
 use App\User;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -573,24 +574,30 @@ class AdminController extends Controller
 
 		$gp = Input::get('page');	//From URL
 
-		$video_files = $this->getAllVideoNames();
-		$pagetag = new PageTag(6, 3, count($video_files), $gp?$gp:1);
+		$edtypes = $request->input('edtypes');
+		if($edtypes) {
+			$vedfiles = $this->getAllVideoNames(null, $edtypes);
+		}
+		else {
+			$vedfiles = $this->getAllVideoNames();
+		}
 
-		$video_files = array_slice($video_files, ($pagetag->getPage()-1)*6, 6);
+		$pagetag = new PageTag(6, 5, count($vedfiles['video_files']), $gp?$gp:1);
+		$vedfiles['video_files'] = array_slice($vedfiles['video_files'], ($pagetag->getPage()-1)*6, 6);
 
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'videolist') {
 				return view('videoreal.videolist')
 						->with('request', $request)
 						->with('pagetag', $pagetag)
-						->with('video_files', $video_files);
+						->with($vedfiles);
 			}
 		}
 
 		return $this->getViewWithMenus('videoreal', $request)
 						->with('pagetag', $pagetag)
-						->with('video_files', $video_files)
-						->with('video_rand', $this->getRandVideoName());
+						->with('video_rand', $this->getRandVideoName())
+						->with($vedfiles);
 	}
 
 	public function alarmInfo(Request $request) {
@@ -1323,17 +1330,8 @@ class AdminController extends Controller
 
 		$getpos = array_search('mp4', $typesarr);
 		if($getpos !== false && ($selnames == null || count($video_file_names) == 0)) {
-			$video_files = Storage::files('/public/video');
-			foreach ($video_files as $video_file) {
-				$video_file_path_array = explode('/', $video_file);
-				$name = end($video_file_path_array);
-
-				array_push($video_file_names, [
-						'id' => str_replace('.', '', $name),
-						'type' => 'mp4',
-						'name' => $name,
-						'url' => '/video/'.$name
-				]);
+			foreach ($this->getStorageVideoNames($selnames) as $storagevideo) {
+				array_push($video_file_names, $storagevideo);
 			}
 		}
 
@@ -1342,11 +1340,43 @@ class AdminController extends Controller
 			array_push($outvideos, $video_file_name);
 		}
 
-		return $outvideos;
+		return ['video_files' => $outvideos, 'edtypes' => $edtypes];
 	}
 
 	public function getStorageVideoNames($selnames = null) {
-		
+		$video_file_names = array();
+		$camvideos = array();
+
+		$camsns = DB::table('devices')->where('type', 1)->select('sn')->get();
+		foreach ($camsns as $camsn) {
+			array_push($camvideos, $camsn->sn.'.mp4');
+		}
+
+		$video_files = Storage::files('/public/video');
+		$video_ktfiles = [];
+		foreach ($video_files as $video_file) {
+			$video_ktfiles[Storage::lastModified($video_file)] = $video_file;
+		}
+		krsort($video_ktfiles);
+
+		foreach ($video_ktfiles as $video_file) {
+			$video_file_path_array = explode('/', $video_file);
+			$name = end($video_file_path_array);
+
+			if (array_search($name, $camvideos) !== false
+				|| ($selnames && array_search($name, $selnames) === false)) {
+				continue;
+			}
+
+			array_push($video_file_names, [
+					'id' => str_replace('.', '', $name),
+					'type' => 'mp4',
+					'name' => $name,
+					'url' => '/video/'.$name
+			]);
+		}
+
+		return $video_file_names;
 	}
 
 	protected function getRandVideoName($names = null) {
@@ -1356,6 +1386,7 @@ class AdminController extends Controller
 		}
 
 		$video_file_names = $this->getAllVideoNames($names, 'rtmp');
+		$video_file_names = $video_file_names['video_files'];
 		if(count($video_file_names) == 0) {
 			return null;
 		}

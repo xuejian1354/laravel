@@ -439,8 +439,13 @@ redisClient.on("message", function(channel, message) {
 				else if(this.isset == 'rework') {
 					var reworkfunc = function(cam) {
 						return function() {
-							var fs =  require("fs");
-							fs.rename(cam.saveurl, cam.outurl);
+							try {
+								var fs =  require("fs");
+								fs.rename(cam.saveurl, cam.outurl);
+							} catch (err) {
+								console.log(err);
+							}
+
 							cam.outurl = cam.path_dir
 											+ '/' + cam.name
 											+ '_' + new Date().format('yyMMddhhmmss')
@@ -490,8 +495,12 @@ redisClient.on("message", function(channel, message) {
 				mcam.isset = 'end';
 				mcam.kill('SIGINT');
 
-				var fs =  require("fs");
-				fs.rename(mcam.saveurl, mcam.outurl);
+				try {
+					var fs =  require("fs");
+					fs.rename(mcam.saveurl, mcam.outurl);
+				} catch (err) {
+					console.log(err);
+				}
 
 				if(storagecamlist.has(mcam.name)) {
 					storagecamlist.remove(mcam.name);

@@ -3,8 +3,12 @@
     <div class="box-header with-border">
       <h3 class="box-title">视频列表</h3>
       <div class="box-tools pull-right">
-        <button id='vhistory' type="button" title="记录" class="btn btn-box-tool" onclick="javascript:void();"><i class="fa fa-history"></i></button>
         <a id='vaddopt' href="/videoreal/camadd" title="添加" type="button" class="btn btn-box-tool hidden"><i class="fa fa-plus"></i></a>
+        @if($edtypes == 'mp4')
+        <button id='vhistory' type="button" title="返回" class="btn btn-box-tool" onclick="javascript:videoRecordListSetting(1);"><i class="fa fa-long-arrow-left"></i></button>
+        @else
+        <button id='vhistory' type="button" title="记录" class="btn btn-box-tool" onclick="javascript:videoRecordListSetting(0);"><i class="fa fa-history"></i></button>
+        @endif
         <button id='vsetopt' type="button" title="设置" class="btn btn-box-tool" onclick="javascript:videolistSetting();"><i class="fa fa-cog"></i></button>
       </div>
     </div>
@@ -35,7 +39,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'videolist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+          <a href="javascript:updateVideoListPost('{{ $request->path() }}', 'videolist', '{{ $edtypes }}', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
       @for($index=$pagetag->start; $index < $pagetag->end; $index++)
         @if($pagetag->getPage() == $index)
@@ -43,7 +47,7 @@
         @else
         <li>
         @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'videolist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
+          <a href="javascript:updateVideoListPost('{{ $request->path() }}', 'videolist', '{{ $edtypes }}', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
         </li>
       @endfor
       @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -51,7 +55,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'videolist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+          <a href="javascript:updateVideoListPost('{{ $request->path() }}', 'videolist', '{{ $edtypes }}', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
       </ul>
     @endif

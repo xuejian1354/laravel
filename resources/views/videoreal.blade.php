@@ -42,41 +42,41 @@
 @section('conscript')
 <script>
 function refreshVideo(type, id, val) {
-	var name = $.trim($('#'+id).text());
-	if(name.length == 0) {
-      name = $.trim($('#'+id).val());
-	}
+  var name = $.trim($('#'+id).text());
+  if(name.length == 0) {
+    name = $.trim($('#'+id).val());
+  }
 
-	if(type == 'mp4' || type == 'm3u8' || type == 'rtmp') {
-	  $('#vtitle').text(name);
-	}
+  if(type == 'mp4' || type == 'm3u8' || type == 'rtmp') {
+    $('#vtitle').text(name);
+  }
 
-	if(type == 'mp4') {
-	  $('#viewplace').html(
-			  '<video id="vplay" class="embed-responsive-item" '
-				  + 'allowfullscreen controls autoplay>'
-				  + '<source src="' + val + '" type="video/mp4"><\/video>');
-	  $('#vplay source').attr('src', val);
-	  $('#vplay').load();
-	}
-	else if(type == 'm3u8') {
-	  $('#viewplace').html(
-			  '<div id="hplay" class="embed-responsive-item">'
-			  + '<script type="text/javascript" '
-			  	+ 'src="/sewise.player.min.js?'
-			  	+ 'server=vod&type=' + type
-			  	+ '&videourl=' + val
-			  	+ '&autostart=true&skin=vodWhite"><\/script><\/div>');
-	}
-	else if(type == 'rtmp') {
-	  $('#viewplace').html(
-			  '<div id="hplay" class="embed-responsive-item">'
-			  + '<script type="text/javascript" '
-			  	+ 'src="/sewise.player.min.js?'
-			  	+ 'server=live&type=' + type
-			  	+ '&streamurl=' + val
-			  	+ '&autostart=true&skin=liveWhite"><\/script><\/div>');
-	}
+  if(type == 'mp4') {
+    $('#viewplace').html(
+                      '<video id="vplay" class="embed-responsive-item" '
+				      + 'allowfullscreen controls autoplay>'
+				      + '<source src="' + val + '" type="video/mp4"><\/video>');
+    $('#vplay source').attr('src', val);
+    $('#vplay').load();
+  }
+  else if(type == 'm3u8') {
+  $('#viewplace').html(
+                    '<div id="hplay" class="embed-responsive-item">'
+                    + '<script type="text/javascript" '
+                      + 'src="/sewise.player.min.js?'
+                      + 'server=vod&type=' + type
+                      + '&videourl=' + val
+                      + '&autostart=true&skin=vodWhite"><\/script><\/div>');
+  }
+  else if(type == 'rtmp') {
+    $('#viewplace').html(
+                      '<div id="hplay" class="embed-responsive-item">'
+                      + '<script type="text/javascript" '
+                        + 'src="/sewise.player.min.js?'
+                        + 'server=live&type=' + type
+                        + '&streamurl=' + val
+                        + '&autostart=true&skin=liveWhite"><\/script><\/div>');
+  }
 }
 
 function videolistSetting() {
@@ -92,9 +92,9 @@ function videolistSetting() {
     $('.videom3u8,.videortmp,.videonone').each(function() {
       var ainput = $(this).find('input');
       $(this).html(
-    	      '<a id="' + ainput.attr('id') + '" '
-    	      + 'href="' + ainput.attr('href') + '" '
-    	      + 'class="product-description" style="margin: 15px 0;">' + ainput.val() + '</a>');
+                '<a id="' + ainput.attr('id') + '" '
+                + 'href="' + ainput.attr('href') + '" '
+                + 'class="product-description" style="margin: 15px 0;">' + ainput.val() + '</a>');
     });
   }
   else {
@@ -119,76 +119,85 @@ function videolistSetting() {
           $('#vsetopt i').addClass('fa-remove');
 
           $('.videom3u8,.videortmp,.videonone').each(function() {
-              var vname = $.trim($(this).text());
-              var ahref = $(this).find('a');
+            var vname = $.trim($(this).text());
+            var ahref = $(this).find('a');
 
-              var vahref = ahref.attr('href');
-              var vaid = ahref.attr('id');
+            var vahref = ahref.attr('href');
+            var vaid = ahref.attr('id');
 
-              if(camattrs[vaid].rtmp_enable == 'true') {
-              	camattrs[vaid].rtmp_checked = 'checked="checked" ';
-              }
-              else {
-              	camattrs[vaid].rtmp_checked = '';
-              }
+            if(camattrs[vaid].rtmp_enable == 'true') {
+              camattrs[vaid].rtmp_checked = 'checked="checked" ';
+            }
+            else {
+              camattrs[vaid].rtmp_checked = '';
+            }
 
-              if(camattrs[vaid].hls_enable == 'true') {
-              	camattrs[vaid].hls_checked = 'checked="checked" ';
-              }
-              else {
-              	camattrs[vaid].hls_checked = '';
-              }
+            if(camattrs[vaid].hls_enable == 'true') {
+              camattrs[vaid].hls_checked = 'checked="checked" ';
+            }
+            else {
+              camattrs[vaid].hls_checked = '';
+            }
 
-              if(camattrs[vaid].rtsp_enable == 'true') {
-              	camattrs[vaid].rtsp_checked = 'checked="checked" ';
-              }
-              else {
-              	camattrs[vaid].rtsp_checked = '';
-              }
+            if(camattrs[vaid].rtsp_enable == 'true') {
+              camattrs[vaid].rtsp_checked = 'checked="checked" ';
+            }
+            else {
+              camattrs[vaid].rtsp_checked = '';
+            }
 
-              if(camattrs[vaid].storage_enable == 'true') {
-              	camattrs[vaid].storage_start = ' disabled';
-              	camattrs[vaid].storage_stop = '';
-              }
-              else {
-            	camattrs[vaid].storage_start = '';
-                camattrs[vaid].storage_stop = ' disabled';
-              }
+            if(camattrs[vaid].storage_enable == 'true') {
+              camattrs[vaid].storage_start = ' disabled';
+              camattrs[vaid].storage_stop = '';
+            }
+            else {
+              camattrs[vaid].storage_start = '';
+              camattrs[vaid].storage_stop = ' disabled';
+            }
 
-              $(this).html(
-            	      '<input id="' + vaid
-            	      	+ '" href="' + vahref
-            	      	+ '" onblur="javascript:edtCam(\'' + vaid + '\');" '
-            	      	+ 'type="text" value="' + vname + '" style="width: 50px; margin: 12px 0;">'
-            	      + '<div class="pull-right" style="margin: 14px 0;">'
-            	      	+ '<input id="rtmpcheck' + vaid + '" type="checkbox" '
-            	      	  + camattrs[vaid].rtmp_checked
-            	      	  + 'onclick="javascript:videoStreamCheck(\'rtmp\', \'' + vaid + '\');">'
-            	      	+ '<span style="margin-left: 1px;">RTMP</span>'
-            	      	+ '<input id="hlscheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
-          	      	      + camattrs[vaid].hls_checked
-          	      	      + 'onclick="javascript:videoStreamCheck(\'hls\', \'' + vaid + '\');" disabled hidden>'
-            	      	+ '<span style="margin-left: 1px;" hidden>hls</span>'
-            	      	+ '<input id="rtspcheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
-          	      	      + camattrs[vaid].rtsp_checked
-        	      	      + 'onclick="javascript:videoStreamCheck(\'rtsp\', \'' + vaid + '\');" disabled hidden>'
-            	      	+ '<span style="margin-left: 1px;" hidden>rtsp</span>'
-            	      	+ '<button onclick="javascript:delCam(\'' + vaid + '\');" '
-          	      	      + 'title="删除" class="btn btn-link pull-right" style="margin-left: 8px; padding: 0;">'
-          	      	      + '<i class="fa fa-trash-o"></i></a>'
-          	      	    + '<button id="storagestart' + vaid + '" title="停止" '
-    	      	          + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', false);" '
-    	      	          + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_stop + ' '
-    	      	          + 'style="margin-left: 8px; padding: 0;">'
-    	      	          + '<i class="fa fa-stop-circle-o"></i></a>'
-            	      	+ '<button id="storagestop' + vaid + '" title="录制" '
-          	      	      + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', true);" '
-          	      	      + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_start + ' '
-          	      	      + 'style="margin-left: 8px; padding: 0;">'
-          	      	      + '<i class="fa fa-play-circle-o"></i></a></div>');
-            });
+            $(this).html(
+                      '<input id="' + vaid
+                      + '" href="' + vahref
+                      + '" onblur="javascript:edtCam(\'' + vaid + '\');" '
+                      + 'type="text" value="' + vname + '" style="width: 50px; margin: 12px 0;">'
+                      + '<div class="pull-right" style="margin: 14px 0;">'
+                        + '<input id="rtmpcheck' + vaid + '" type="checkbox" '
+                          + camattrs[vaid].rtmp_checked
+                          + 'onclick="javascript:videoStreamCheck(\'rtmp\', \'' + vaid + '\');">'
+                        + '<span style="margin-left: 1px;">RTMP</span>'
+                        + '<input id="hlscheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
+                          + camattrs[vaid].hls_checked
+                          + 'onclick="javascript:videoStreamCheck(\'hls\', \'' + vaid + '\');" disabled hidden>'
+                        + '<span style="margin-left: 1px;" hidden>hls</span>'
+                        + '<input id="rtspcheck' + vaid + '" type="checkbox" style="margin-left: 4px;"'
+                          + camattrs[vaid].rtsp_checked
+                          + 'onclick="javascript:videoStreamCheck(\'rtsp\', \'' + vaid + '\');" disabled hidden>'
+                        + '<span style="margin-left: 1px;" hidden>rtsp</span>'
+                        + '<button onclick="javascript:delCam(\'' + vaid + '\');" '
+                          + 'title="删除" class="btn btn-link pull-right" style="margin-left: 8px; padding: 0;">'
+                          + '<i class="fa fa-trash-o"></i></a>'
+                        + '<button id="storagestart' + vaid + '" title="停止" '
+                          + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', false);" '
+                          + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_stop + ' '
+                          + 'style="margin-left: 8px; padding: 0;">'
+                          + '<i class="fa fa-stop-circle-o"></i></a>'
+                        + '<button id="storagestop' + vaid + '" title="录制" '
+                          + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', true);" '
+                          + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_start + ' '
+                          + 'style="margin-left: 8px; padding: 0;">'
+                          + '<i class="fa fa-play-circle-o"></i></a></div>');
+          });
         }
     });
+  }
+}
+
+function videoRecordListSetting(isset) {
+  if(isset == 1) {
+    updateDevListPost('{{ $request->path() }}', 'videolist', '0', '{{ csrf_token() }}');
+  }
+  else {
+    updateVideoListPost('{{ $request->path() }}', 'videolist', 'mp4', '0', '{{ csrf_token() }}')
   }
 }
 
@@ -196,7 +205,7 @@ function edtCam(id) {
   $.post('/videoreal/camedt', { _token:'{{ csrf_token() }}', sn:id, name:$('#'+id).val() },
     function(data, status) {
       if(status != 'success') {
-	    alert("Status: " + status);
+        alert("Status: " + status);
       }
       else {
       }
@@ -208,7 +217,7 @@ function delCam(id) {
     $.post('/videoreal/camdel', { _token:'{{ csrf_token() }}', sn:id },
       function(data, status) {
         if(status != 'success') {
-	      alert("Status: " + status);
+          alert("Status: " + status);
         }
         else if(data == 'OK'){
           $('#vitem'+id).remove();
@@ -221,7 +230,7 @@ function delCam(id) {
 function videoStreamCheck(action, id, check) {
   var checkval = false;
   if(action == 'storage') {
-	checkval = check;
+    checkval = check;
   }
   else {
     var ele = $('#' + action + 'check' +id);
@@ -241,24 +250,38 @@ function videoStreamCheck(action, id, check) {
         alert("Status: " + status);
       }
       else {
-    	if(action == 'storage') {
+        if(action == 'storage') {
           if(check) {
             $('#storagestop'+id).attr('disabled', "disabled");
             $('#storagestart'+id).removeAttr('disabled');
           }
           else {
-        	$('#storagestop'+id).removeAttr('disabled');
+            $('#storagestop'+id).removeAttr('disabled');
             $('#storagestart'+id).attr('disabled', "disabled");
           }
-    	}
-    	else {
+        }
+        else {
           var jsdata = JSON.parse(data);
           $('#proimg'+id).attr('href', "javascript:refreshVideo('" + jsdata.action + "', '" + jsdata.sn + "', '" + jsdata.url + "');");
           $('#'+id).attr('href', "javascript:refreshVideo('" + jsdata.action + "', '" + jsdata.sn + "', '" + jsdata.url + "');");
-    	  ele.prop('checked', checkval);
+          ele.prop('checked', checkval);
         }
       }
   });
+}
+
+function updateVideoListPost(path, hid, types, pg, token) {
+  $.post('/'+path,
+    { _token:token, way:hid, edtypes:types, page:pg },
+	function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+	    $('#'+hid).html(data);
+	  }
+    }
+  );
 }
 </script>
 @endsection
