@@ -1123,6 +1123,7 @@ class AdminController extends Controller
 						$name = $camdev->name;
 
 						$data = json_decode($camdev->data);
+						$data->host = Globalval::getVal('hostaddr');
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
@@ -1422,6 +1423,14 @@ class AdminController extends Controller
 		$url .= $params;
 
 		return url($url);
+	}
+
+	public static function syncServerAddr() {
+		$hostval = Globalval::where('name', 'hostaddr')->first();
+		if ($hostval) {
+			$hostval->val = $_SERVER["SERVER_ADDR"];
+			$hostval->save();
+		}
 	}
 }
     

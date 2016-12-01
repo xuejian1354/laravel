@@ -27,7 +27,7 @@ class GlobalvalTableSeeder extends Seeder
         		'name' => 'video_storage_path',
         		'val' => '/home/www/laravel/storage/app/public/video'
         ]);
-        Globalval::create(['name' => 'video_storage_timelong', 'val' => '10']);	//mins
+        Globalval::create(['name' => 'video_storage_timelong', 'val' => '60']);	//mins
 
         Globalval::create(['name' => 'node_service', 'val' => 'http://127.0.0.1:8081']);
         Globalval::create(['name' => 'easydarwin_service', 'val' => 'http://127.0.0.1:8088']);

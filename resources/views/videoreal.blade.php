@@ -16,9 +16,25 @@
 		    <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_rand['url'] }}&autostart=true&skin=vodWhite"></script>
 		  </div>
 		  @elseif($video_rand['type'] == 'rtmp')
-          <div id="hplay" class="embed-responsive-item">
+          <!-- div id="hplay" class="embed-responsive-item">
 		    <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_rand['url'] }}&autostart=true&skin=liveWhite"></script>
-		  </div>
+		  </div -->
+		  <div id='hplay' class="embed-responsive-item">Video player not support</div>
+		  <script type='text/javascript' src='/jwplayer/jwplayer.js'></script>
+		  <script>jwplayer.key="ug0t4OFCQGuT+MAtmPobjyV4HqvzL4p/3KgXeA==";</script>
+	      <script type='text/javascript'>
+            jwplayer('hplay').setup({
+              playlist: [{
+                sources: [{
+                  file: '{{ $video_rand["url"] }}'
+                }]
+              }],
+              autostart:true,
+              aspectratio: "4:3",
+              width: '100%',
+              height: 'auto'
+            });
+	      </script>
 		  @elseif($video_rand['type'] == 'sdp')
           <object id="hplay" type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/">
 		    <param name='mrl' value="{{ $video_rand['url'] }}" />
@@ -69,13 +85,31 @@ function refreshVideo(type, id, val) {
                       + '&autostart=true&skin=vodWhite"><\/script><\/div>');
   }
   else if(type == 'rtmp') {
-    $('#viewplace').html(
+    /*$('#viewplace').html(
                       '<div id="hplay" class="embed-responsive-item">'
                       + '<script type="text/javascript" '
                         + 'src="/sewise.player.min.js?'
                         + 'server=live&type=' + type
                         + '&streamurl=' + val
-                        + '&autostart=true&skin=liveWhite"><\/script><\/div>');
+                        + '&autostart=true&skin=liveWhite"><\/script><\/div>');*/
+
+    $('#viewplace').html(
+                      '<div id="hplay" class="embed-responsive-item">Video player not support<\/div>'
+                      + '<script type="text/javascript" src="/jwplayer/jwplayer.js"><\/script>'
+                      + '<script>jwplayer.key="ug0t4OFCQGuT+MAtmPobjyV4HqvzL4p/3KgXeA==";<\/script>'
+                      + '<script type="text/javascript">'
+                        + 'jwplayer("hplay").setup({'
+                          + 'playlist: [{'
+                            + 'sources: [{'
+                              + 'file: "' + val + '"'
+                            + '}]'
+                          + '}],'
+                          + 'autostart:true,'
+                          + 'aspectratio: "4:3",'
+                          + 'width: "100%",'
+                          + 'height: "auto"'
+                        + '});'
+                      + '<\/script>');
   }
 }
 

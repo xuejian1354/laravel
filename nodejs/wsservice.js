@@ -439,12 +439,12 @@ redisClient.on("message", function(channel, message) {
 				else if(this.isset == 'rework') {
 					var reworkfunc = function(cam) {
 						return function() {
-							try {
-								var fs =  require("fs");
+							var fs =  require("fs");
+							fs.exists(cam.saveurl, function(exists) {
+							  if (exists) {
 								fs.rename(cam.saveurl, cam.outurl);
-							} catch (err) {
-								console.log(err);
-							}
+							  }
+							});
 
 							cam.outurl = cam.path_dir
 											+ '/' + cam.name
@@ -495,12 +495,12 @@ redisClient.on("message", function(channel, message) {
 				mcam.isset = 'end';
 				mcam.kill('SIGINT');
 
-				try {
-					var fs =  require("fs");
+				var fs =  require("fs");
+				fs.exists(mcam.saveurl, function(exists) {
+				  if (exists) {
 					fs.rename(mcam.saveurl, mcam.outurl);
-				} catch (err) {
-					console.log(err);
-				}
+				  }
+				});
 
 				if(storagecamlist.has(mcam.name)) {
 					storagecamlist.remove(mcam.name);
