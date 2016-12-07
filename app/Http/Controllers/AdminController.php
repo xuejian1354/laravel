@@ -1095,7 +1095,15 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = 'rtsp';
 						$data->source = $ffcam->source;
-						$data->host = Globalval::getVal('hostaddr');
+
+						if ($ffcam->host == '127.0.0.1'
+							|| $ffcam->host == 'localhost') {
+							$data->host = Globalval::getVal('hostaddr');
+						}
+						else {
+							$data->host = $ffcam->host;
+						}
+
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
@@ -1123,7 +1131,15 @@ class AdminController extends Controller
 						$name = $camdev->name;
 
 						$data = json_decode($camdev->data);
-						$data->host = Globalval::getVal('hostaddr');
+
+						if ($ffcam->host == '127.0.0.1'
+							|| $ffcam->host == 'localhost') {
+							$data->host = Globalval::getVal('hostaddr');
+						}
+						else {
+							$data->host = $ffcam->host;
+						}
+
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
