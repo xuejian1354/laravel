@@ -10,7 +10,6 @@ use App\Action;
 use App\Ctrlrecord;
 use App\Globalval;
 use App\Record;
-use App\Http\Controllers\AdminController;
 
 class LoginController extends Controller
 {
@@ -102,8 +101,6 @@ class LoginController extends Controller
 	    	if(Globalval::getVal('record_support') == true) {
 	    		Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'login']);
 	    	}
-
-	    	AdminController::syncServerAddr();
     	}
     	elseif($method == 'logout') {
     		$action = Action::where('content', '退出')->first();

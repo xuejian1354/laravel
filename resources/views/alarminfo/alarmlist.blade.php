@@ -44,13 +44,13 @@
         <button type="button" class="btn btn-default btn-sm checkbox-toggle" onclick="javascrpt:checkAllAlarminfos();"><i class="fa fa-square-o"></i></button>
         <div class="btn-group">
           <button type="button" class="btn btn-default btn-sm" onclick="javascript:delDevsCheck();"><i class="fa fa-trash-o"></i></button>
-          <button type="button" class="btn btn-default btn-sm" onclick="javascript:updateDevListPost('{{ $request->path() }}', 'alarmlist', '{{ $pagetag->getPage() }}', '{{ csrf_token() }}');"><i class="fa fa-refresh"></i></button>
+          <button type="button" class="btn btn-default btn-sm" onclick="javascript:updateDevListPost('/{{ $request->path() }}', 'alarmlist', '{{ $pagetag->getPage() }}', '{{ csrf_token() }}');"><i class="fa fa-refresh"></i></button>
         </div>
         <div class="pull-right">
           <span>{{ $pagetag->col_start.'-'.$pagetag->col_end.'/'.$pagetag->getAllcols() }}</span>
           <div class="btn-group">
-            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()<=1?'#':'javascript:updateDevListPost(\''.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()-1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-left"></i></a>
-            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()>=$pagetag->getPageSize()?'#':'javascript:updateDevListPost(\''.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()+1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-right"></i></a>
+            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()<=1?'#':'javascript:updateDevListPost(\'/'.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()-1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-left"></i></a>
+            <a type="button" class="btn btn-default btn-sm" href="{{ $pagetag->getPage()>=$pagetag->getPageSize()?'#':'javascript:updateDevListPost(\'/'.($request->path()).'\', \'alarmlist\', \''.($pagetag->getPage()+1).'\', \''.(csrf_token()).'\')' }}"><i class="fa fa-chevron-right"></i></a>
           </div>
         </div>
       </div>

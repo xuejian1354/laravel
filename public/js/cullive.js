@@ -21,7 +21,8 @@ function getWs() {
 }
 
 function wsConnect(callback) {
-	var url = 'ws://' + window.location.host + ':8021';
+	//alert('hostname:' + window.location.hostname);
+	var url = 'ws://' + window.location.hostname + ':8021';
 	var ws = new WebSocket(url);
 
 	ws.onopen = function(evt) {
@@ -77,8 +78,7 @@ function devCtrlPost(sw, devsn, gwsn) {
 }
 
 function updateDevListPost(path, hid, pg, token) {
-  $.post('/'+path,
-    { _token:token, way:hid, page:pg },
+  $.post(path, { _token:token, way:hid, page:pg },
 	function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);

@@ -228,10 +228,10 @@ function videolistSetting() {
 
 function videoRecordListSetting(isset) {
   if(isset == 1) {
-    updateDevListPost('{{ $request->path() }}', 'videolist', '0', '{{ csrf_token() }}');
+    updateCamListPost('/videoreal', 'videolist', '0', '{{ csrf_token() }}');
   }
   else {
-    updateVideoListPost('{{ $request->path() }}', 'videolist', 'mp4', '0', '{{ csrf_token() }}')
+    updateVideoListPost('/videoreal', 'videolist', 'mp4', '0', '{{ csrf_token() }}')
   }
 }
 
@@ -304,9 +304,21 @@ function videoStreamCheck(action, id, check) {
   });
 }
 
+function updateCamListPost(path, hid, pg, token) {
+  $.post(path, { _token:token, way:hid, page:pg },
+	function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+		$('#'+hid).html(data);
+	  }
+    }
+  );
+}
+
 function updateVideoListPost(path, hid, types, pg, token) {
-  $.post('/'+path,
-    { _token:token, way:hid, edtypes:types, page:pg },
+  $.post(path, { _token:token, way:hid, edtypes:types, page:pg },
 	function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);

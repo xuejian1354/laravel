@@ -79,7 +79,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
       @for($index=$pagetag->start; $index < $pagetag->end; $index++)
         @if($pagetag->getPage() == $index)
@@ -87,7 +87,7 @@
         @else
         <li>
         @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
+          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
         </li>
       @endfor
       @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -95,7 +95,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('{{ $request->path() }}', 'devlist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
       </ul>
     @endif

@@ -1095,15 +1095,7 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = 'rtsp';
 						$data->source = $ffcam->source;
-
-						if ($ffcam->host == '127.0.0.1'
-							|| $ffcam->host == 'localhost') {
-							$data->host = Globalval::getVal('hostaddr');
-						}
-						else {
-							$data->host = $ffcam->host;
-						}
-
+						$data->host = Globalval::getVal('videoaddr');
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
@@ -1131,15 +1123,7 @@ class AdminController extends Controller
 						$name = $camdev->name;
 
 						$data = json_decode($camdev->data);
-
-						if ($ffcam->host == '127.0.0.1'
-							|| $ffcam->host == 'localhost') {
-							$data->host = Globalval::getVal('hostaddr');
-						}
-						else {
-							$data->host = $ffcam->host;
-						}
-
+						//$data->host = $_SERVER['SERVER_ADDR'];
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
@@ -1195,7 +1179,7 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = $sdm4->protocol;
 						$data->source = $sdm4->source;
-						$data->host = Globalval::getVal('hostaddr');
+						$data->host = Globalval::getVal('videoaddr');
 						$data->storage_path = $sdm4->storage_path;
 						$data->storage_enable = 'true';
 
@@ -1377,6 +1361,7 @@ class AdminController extends Controller
 		krsort($video_ktfiles);
 
 		foreach ($video_ktfiles as $video_file) {
+			$videohost = Globalval::getVal('videoaddr');
 			$video_file_path_array = explode('/', $video_file);
 			$name = end($video_file_path_array);
 
@@ -1386,10 +1371,10 @@ class AdminController extends Controller
 			}
 
 			array_push($video_file_names, [
-					'id' => str_replace('.', '', $name),
+					'id' => preg_replace('/[^0-9]/', '', $name),
 					'type' => 'mp4',
 					'name' => $name,
-					'url' => '/video/'.$name
+					'url' => 'http://'.$videohost.'/video/'.$name
 			]);
 		}
 
@@ -1439,14 +1424,6 @@ class AdminController extends Controller
 		$url .= $params;
 
 		return url($url);
-	}
-
-	public static function syncServerAddr() {
-		$hostval = Globalval::where('name', 'hostaddr')->first();
-		if ($hostval) {
-			$hostval->val = $_SERVER["SERVER_ADDR"];
-			$hostval->save();
-		}
 	}
 }
     

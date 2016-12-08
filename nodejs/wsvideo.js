@@ -39,7 +39,13 @@ console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " WebSocket Server of Cam
 var express = require('express');
 var app = express();
 
-app.post('/getffrtmplist', function (req, res) {
+var bodyParser = require('body-parser');
+//create application/json parser
+//var jsonParser = bodyParser.json();
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+app.post('/getffrtmplist', urlencodedParser, function (req, res) {
 
 	var camobjs = new Array();
 	camlist.forEach(function (cam, camrand) {
@@ -47,7 +53,7 @@ app.post('/getffrtmplist', function (req, res) {
 			name: cam.name,
 			protocol: 'rtsp',
 			source: cam.url,
-			host: '192.168.1.68',
+			host: req.hostname,
 			rtmp_port: 1935,
 			rtmp_path: '/ffrtmp/' + cam.name
 		};
@@ -64,11 +70,12 @@ app.post('/getffrtmplist', function (req, res) {
 	}
 });
 
-app.post('/getffstoragelist', function (req, res) {
+app.post('/getffstoragelist', urlencodedParser, function (req, res) {
 
 	var camobjs = new Array();
 	storagecamlist.forEach(function (cam, camrand) {
 		var camobj = {
+			host: req.hostname,
 			name: cam.name,
 			protocol: 'rtsp',
 			source: cam.url,
@@ -201,6 +208,17 @@ redisClient.on("message", function(channel, message) {
 			mypeg.saveurl = savePath;
 			mypeg.outurl = outputPath;
 
+			try {
+				var fs =  require("fs");
+				fs.exists(mypeg.saveurl, function(exists) {
+					if (exists) {
+						fs.renameSync(mypeg.saveurl, mypeg.outurl);
+					}
+				});
+			} catch(e) {
+				console.log(e);
+			}
+
 			mypeg.on('start', function(commandLine) {
 				console.log('Spawned FFmpeg with command: ' + commandLine);
 			})
@@ -233,17 +251,21 @@ redisClient.on("message", function(channel, message) {
 				else if(this.isset == 'rework') {
 					var reworkfunc = function(cam) {
 						return function() {
-							var fs =  require("fs");
-							fs.exists(cam.saveurl, function(exists) {
-							  if (exists) {
-								fs.renameSync(cam.saveurl, cam.outurl);
-							  }
-							});
-
 							cam.outurl = cam.path_dir
 											+ '/' + cam.name
 											+ '_' + new Date().format('yyMMddhhmmss')
 											+ '.mp4';
+
+							try {
+								var fs =  require("fs");
+								fs.exists(cam.saveurl, function(exists) {
+									if (exists) {
+										fs.renameSync(cam.saveurl, cam.outurl);
+									}
+								});
+							} catch(e) {
+								console.log(e);
+							}
 
 							cam.isset = 'work';
 							cam.run();
@@ -275,6 +297,28 @@ redisClient.on("message", function(channel, message) {
 			})
 			.on('end', function() {
 				console.log('Processing finished !');
+
+				this.outurl = this.path_dir
+								+ '/' + this.name
+								+ '_' + new Date().format('yyMMddhhmmss')
+								+ '.mp4';
+
+				try {
+					var fs =  require("fs");
+					fs.exists(this.saveurl, function(exists) {
+						if (exists) {
+							fs.renameSync(this.saveurl, this.outurl);
+				  		}
+					});
+				} catch(e) {
+					console.log(e);
+				}
+
+				this.isset = 'end';
+				if(storagecamlist.has(this.name)) {
+					storagecamlist.remove(this.name);
+					console.log('Progress storage, del cam from list, name: ' + this.name);
+				}
 			})
 			.addOptions([
 				'-vcodec copy',
@@ -289,12 +333,16 @@ redisClient.on("message", function(channel, message) {
 				mcam.isset = 'end';
 				mcam.kill('SIGINT');
 
-				var fs =  require("fs");
-				fs.exists(mcam.saveurl, function(exists) {
-				  if (exists) {
-					fs.renameSync(mcam.saveurl, mcam.outurl);
-				  }
-				});
+				try {
+					var fs =  require("fs");
+					fs.exists(mcam.saveurl, function(exists) {
+						if (exists) {
+							fs.renameSync(mcam.saveurl, mcam.outurl);
+				  		}
+					});
+				} catch(e) {
+					console.log(e);
+				}
 
 				if(storagecamlist.has(mcam.name)) {
 					storagecamlist.remove(mcam.name);
