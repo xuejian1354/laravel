@@ -1275,7 +1275,7 @@ class AdminController extends Controller
 
 							if($ti == 'rtmp') {
 								$checkpos = array_search('none', $typesarr);
-								if($data->rtmp_enable == 'true') {
+								if(isset($data->rtmp_enable) && $data->rtmp_enable == 'true') {
 									DeviceController::addFFmpegRTMP($dbcam->sn, $data->source);
 	
 									if(isset($data->host)

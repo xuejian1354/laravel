@@ -38,7 +38,7 @@ class GlobalvalTableSeeder extends Seeder
         Globalval::create(['name' => 'easydarwin_addhls', 'val' => '/api/addHLSList']);
         Globalval::create(['name' => 'easydarwin_delhls', 'val' => '/api/StopHLS']);
 
-        Globalval::create(['name' => 'node_ffrtmplist', 'val' => '/getffrtmplist']);
-        Globalval::create(['name' => 'node_ffstoragelist', 'val' => '/getffstoragelist']);
+        Globalval::create(['name' => 'node_ffrtmp', 'val' => '/ffrtmp']);
+        Globalval::create(['name' => 'node_ffstorage', 'val' => '/ffstorage']);
     }
 }
