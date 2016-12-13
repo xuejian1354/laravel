@@ -1,0 +1,64 @@
+
+-----------------------------------------------------------------------------------------------------
+
+      ---------------     ------------     --------------           -----      ---      ------
+     |80 Main Service|   |8380 Cullive|   |8021 Client WS|         |Samba|    |SSH|    |GitLab|
+      ---------------     ------------     --------------           -----      ---      ------
+
+         loongsky4 192.168.1.74 <--                                   loongsky1 192.168.1.71
+                                   |                                              |
+                                   |                                              |
+                                   |                                              |
+                                    --> loongsky4 172.16.10.70                    |
+                                                           |                      | port mapped
+                                                           |                      |
+-----------------------------------------------------------|-ppp------------------|-----------------
+                                                           |                      |
+                             80 8180 81 8088 3306          |                      |
+                            loongsky1 172.16.10.71 <---> loongsky1 172.16.10.71 ---
+
+                               |                |
+                               |       ---      |
+                               |      |NFS|     |
+                               |       ---      |
+                               |                |
+
+                  80 81 8081 1935  -----------  80 81 8020 8021 1935
+              loongcloud1 172.16.10.68        loongcloud2 172.16.10.69
+
+
+----------------------------------------------------------------------------------------------------
+
+
+loongsky1 172.16.10.71
+
+tcp    0.0.0.0:80       ---   0.0.0.0:*    Main Service
+tcp    0.0.0.0:8021     ---   0.0.0.0:*    WebSocket Listen for Clients Proxy
+tcp    0.0.0.0:8081     ---   0.0.0.0:*    Node Video Http Proxy
+tcp    0.0.0.0:8088     ---   0.0.0.0:*    GitLab Service
+tcp    0.0.0.0:81       ---   0.0.0.0:*    PhpMyAdmin
+tcp    0.0.0.0:8180     ---   0.0.0.0:*    Cullive localhost
+tcp    0.0.0.0:8380     ---   0.0.0.0:*    Cullive Main Entrance Proxy
+tcp    127.0.0.1:9000   ---   0.0.0.0:*    PHP Server
+tcp6   :::3306          ---   :::*         Mysql Service
+
+
+loongcloud1 172.16.10.68
+
+tcp    0.0.0.0:80       ---   0.0.0.0:*    Cullive Service
+tcp    0.0.0.0:8021     ---   0.0.0.0:*    WebSocket Listen for Clients Proxy
+tcp6   :::8081          ---   :::*         Node Video Http Server
+tcp    0.0.0.0:81       ---   0.0.0.0:*    PhpMyAdmin
+tcp    127.0.0.1:9000   ---   0.0.0.0:*    PHP Server
+tcp    0.0.0.0:1935     ---   0.0.0.0:*    RTMP Server
+
+
+loongcloud2 172.16.10.69
+
+tcp    0.0.0.0:80       ---   0.0.0.0:*    Cullive Service
+tcp    0.0.0.0:8020     ---   0.0.0.0:*    WebSocket Listen for Devices Handler
+tcp    0.0.0.0:8021     ---   0.0.0.0:*    WebSocket Listen for Clients Handler
+tcp    0.0.0.0:8081     ---   0.0.0.0:*    Node Video Http Proxy
+tcp    0.0.0.0:81       ---   0.0.0.0:*    PhpMyAdmin
+tcp    127.0.0.1:9000   ---   0.0.0.0:*    PHP Server
+tcp    0.0.0.0:1935     ---   0.0.0.0:*    RTMP Server

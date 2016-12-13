@@ -15,7 +15,7 @@ class GlobalvalTableSeeder extends Seeder
         DB::table('globalvals')->delete();
         Globalval::create(['name' => 'title', 'val' => 'Cullive']);
         Globalval::create(['name' => 'hostaddr', 'val' => 'classyun.com']);
-        Globalval::create(['name' => 'videoaddr', 'val' => '192.168.1.68']);
+        Globalval::create(['name' => 'videoaddr', 'val' => '172.16.10.68']);
 
         Globalval::create(['name' => 'video_support', 'val' => '0']);
         Globalval::create(['name' => 'record_support', 'val' => '0']);
