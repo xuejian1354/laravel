@@ -1095,7 +1095,7 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = 'rtsp';
 						$data->source = $ffcam->source;
-						$data->host = Globalval::getVal('videoaddr');
+						$data->host = Globalval::getVal('hostaddr');
 						$data->rtmp_port = $ffcam->rtmp_port;
 						$data->rtmp_path = $ffcam->rtmp_path;
 						$data->rtmp_enable = 'true';
@@ -1179,7 +1179,7 @@ class AdminController extends Controller
 						$data = new \stdClass();
 						$data->protocol = $sdm4->protocol;
 						$data->source = $sdm4->source;
-						$data->host = Globalval::getVal('videoaddr');
+						$data->host = Globalval::getVal('hostaddr');
 						$data->storage_path = $sdm4->storage_path;
 						$data->storage_enable = 'true';
 
@@ -1361,7 +1361,7 @@ class AdminController extends Controller
 		krsort($video_ktfiles);
 
 		foreach ($video_ktfiles as $video_file) {
-			$videohost = Globalval::getVal('videoaddr');
+			$videohost = Globalval::getVal('hostaddr');
 			$video_file_path_array = explode('/', $video_file);
 			$name = end($video_file_path_array);
 
@@ -1374,7 +1374,7 @@ class AdminController extends Controller
 					'id' => preg_replace('/[^0-9]/', '', $name),
 					'type' => 'mp4',
 					'name' => $name,
-					'url' => 'http://'.$videohost.'/video/'.$name
+					'url' => 'http://'.$videohost.':8380/video/'.$name
 			]);
 		}
 

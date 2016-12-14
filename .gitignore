@@ -5,6 +5,7 @@
 /vendor
 /.idea
 /.settings
+*.log
 Homestead.json
 Homestead.yaml
 composer.lock

@@ -151,7 +151,7 @@ wss.on('connection', function(ws) {
 			break;
 
 		default:
-			console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " Unrecognize frame, cannot parse for it. Handle action is " + mobj.action);
+			console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + " Unrecognize frame, cannot parse for it. \n\t\t    data=" + data);
 		}
 	});
 });
