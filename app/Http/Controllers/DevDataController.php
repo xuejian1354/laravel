@@ -62,6 +62,34 @@ class DevDataController extends Controller
     		}
 
     		return '<h2>Fail</h2><span>Set device alarm threshold!</span>';
+
+    	case 'rtmplist':
+    		if (Globalval::getVal('matrix') == 'server') {
+    			$rtmplist = json_decode(Input::get('list'));
+    			foreach ($rtmplist as $rtsteam) {
+    				if(strpos($rtsteam->name, '_') === 0) {
+	    				$vdev = Device::where('sn', $rtsteam->name)->first();
+	    				if (!$vdev) {
+	    					Device::create([
+	    							'sn' => $rtsteam->name,
+	    							'name' => $rtsteam->name,
+	    							'type' => 1,
+	    							'attr' => 3,
+	    							'data' => json_encode([
+	    									'protocol' => 'rtmp',
+	    									'url' => $rtsteam->url,
+	    							]),
+	    					]);
+	    				}
+	    				else {
+	    					$vdev->data = json_encode(['protocol' => 'rtmp', 'url' => $rtsteam->url]);
+	    					$vdev->save();
+	    				}
+    				}
+    			}
+    		}
+
+    		return 'NULL';
     	}
     }
 }

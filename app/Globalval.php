@@ -12,6 +12,11 @@ class Globalval extends Model
     
     public static function getVal($name)
     {
-    	return Globalval::where('name', $name)->first()->val;
+    	try {
+	    	$agloval = Globalval::where('name', $name)->first();
+	    	return $agloval? $agloval->val : NULL;
+    	} catch (\PDOException $e) {
+    		return NULL;
+    	}
     }
 }

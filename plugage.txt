@@ -15,7 +15,7 @@
                                                            |                      |
 -----------------------------------------------------------|-ppp------------------|-----------------
                                                            |                      |
-                             80 8180 81 8088 3306          |                      |
+                             80 81 8088 3306          |                      |
                             loongsky1 172.16.10.71 <---> loongsky1 172.16.10.71 ---
 
                                |                |
@@ -38,7 +38,6 @@ tcp    0.0.0.0:8021     ---   0.0.0.0:*    WebSocket Listen for Clients Proxy
 tcp    0.0.0.0:8081     ---   0.0.0.0:*    Node Video Http Proxy
 tcp    0.0.0.0:8088     ---   0.0.0.0:*    GitLab Service
 tcp    0.0.0.0:81       ---   0.0.0.0:*    PhpMyAdmin
-tcp    0.0.0.0:8180     ---   0.0.0.0:*    Cullive localhost
 tcp    0.0.0.0:8380     ---   0.0.0.0:*    Cullive Main Entrance Proxy
 tcp    127.0.0.1:9000   ---   0.0.0.0:*    PHP Server
 tcp6   :::3306          ---   :::*         Mysql Service

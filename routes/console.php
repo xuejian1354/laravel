@@ -64,3 +64,25 @@ Artisan::command('record:support {action}', function ($action) {
 		print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
 	}
 })->describe('Record support enable|disable');
+
+Artisan::command('matrix {name}', function ($name) {
+	if($name == 'server') {
+		$vd = App\Globalval::where('name', 'matrix')->first();
+		if($vd) {
+			$vd->val = $name;
+			$vd->save();
+			print_r("matrix is server\n");
+		}
+	}
+	else if($name == 'raspberrypi') {
+		$vd = App\Globalval::where('name', 'matrix')->first();
+		if($vd) {
+			$vd->val = $name;
+			$vd->save();
+			print_r("matrix is raspberrypi\n");
+		}
+	}
+	else {
+		print_r("Can't set matrix \"".$name."\"\t\tchoice: [server|raspberrypi]\n");
+	}
+})->describe('Matrix setting server|raspberrypi');

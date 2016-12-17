@@ -189,6 +189,7 @@ function videolistSetting() {
               camattrs[vaid].storage_stop = ' disabled';
             }
 
+@if(\App\Globalval::getVal('matrix') == 'raspberrypi')
             $(this).html(
                       '<input id="' + vaid
                       + '" href="' + vahref
@@ -209,17 +210,28 @@ function videolistSetting() {
                         + '<span style="margin-left: 1px;" hidden>rtsp</span>'
                         + '<button onclick="javascript:delCam(\'' + vaid + '\');" '
                           + 'title="删除" class="btn btn-link pull-right" style="margin-left: 8px; padding: 0;">'
-                          + '<i class="fa fa-trash-o"></i></a>'
+                          + '<i class="fa fa-trash-o"></i></button>'
                         + '<button id="storagestart' + vaid + '" title="停止" '
                           + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', false);" '
                           + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_stop + ' '
                           + 'style="margin-left: 8px; padding: 0;">'
-                          + '<i class="fa fa-stop-circle-o"></i></a>'
+                          + '<i class="fa fa-stop-circle-o"></i></button>'
                         + '<button id="storagestop' + vaid + '" title="录制" '
                           + 'onclick="javascript:videoStreamCheck(\'storage\', \'' + vaid + '\', true);" '
                           + 'class="btn btn-link pull-right"' + camattrs[vaid].storage_start + ' '
                           + 'style="margin-left: 8px; padding: 0;">'
-                          + '<i class="fa fa-play-circle-o"></i></a></div>');
+                          + '<i class="fa fa-play-circle-o"></i></button></div>');
+@else
+		    $(this).html(
+		    		'<input id="' + vaid
+                    + '" href="' + vahref
+                    + '" onblur="javascript:edtCam(\'' + vaid + '\');" '
+                    + 'type="text" value="' + vname + '" style="width: 50px; margin: 12px 0;">'
+		            + '<div class="pull-right" style="margin: 14px 0;">'
+		              + '<button onclick="javascript:delCam(\'' + vaid + '\');" '
+		                + 'title="删除" class="btn btn-link pull-right" style="margin-left: 8px; padding: 0;">'
+		                + '<i class="fa fa-trash-o"></i></button></div>');
+@endif
           });
         }
     });

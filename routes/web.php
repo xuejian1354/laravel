@@ -1,5 +1,6 @@
 <?php
 
+use App\Globalval;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,13 +12,14 @@
 |
 */
 
-//Route::group(['domain' => 'classyun.com'], function () {
+$routecall = function() {
 
 	// Web URL
 	Route::group(['middleware' => ['web', 'auth']], function () {
 
 		$url_requests = [
 				'/' => 'AdminController@index',
+				'/home' => 'AdminController@index',
 				'/curinfo/{curopt?}' => 'AdminController@curInfo',
 				'/areactrl/{areasn?}/{areaopt?}' => 'AdminController@areaCtrl',
 				'/devstats/{devopt?}' => 'AdminController@devStats',
@@ -36,12 +38,19 @@
 		Route::post('/devctrl/{devsn}', 'DeviceController@devCtrl');
 	});
 
-	// Console URL
-	Route::get('/devdata', 'DevDataController@index');
-
 	Auth::routes();
-//});
+};
 
+// Console URL
+Route::get('/devdata', 'DevDataController@index');
+
+if (Globalval::getVal('matrix') == 'server') {
+	Route::group(['domain' => 'longyuanspace.com'], $routecall);
+	Route::group(['domain' => 'loongsky4.net'], $routecall);
+}
+else {
+	$routecall();
+}
 
 /*Route::group(['domain' => '{account}.classyun.com'], function () {
 
@@ -52,9 +61,8 @@
 	});
 });*/
 
-
-/*Route::any('{ret?}', function ($ret = null) {
+Route::any('{ret?}', function ($ret = null) {
 
 	//dd($ret);
-	return redirect('http://classyun.com/'.$ret);
-});*/
+	return 'NULL';
+});

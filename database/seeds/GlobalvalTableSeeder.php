@@ -14,11 +14,12 @@ class GlobalvalTableSeeder extends Seeder
     {
         DB::table('globalvals')->delete();
         Globalval::create(['name' => 'title', 'val' => 'Cullive']);
-        Globalval::create(['name' => 'hostaddr', 'val' => '192.168.1.74']);
+        Globalval::create(['name' => 'hostaddr', 'val' => 'longyuanspace.com']);
+        Globalval::create(['name' => 'matrix', 'val' => 'raspberrypi']);
 
-        Globalval::create(['name' => 'video_support', 'val' => '0']);
-        Globalval::create(['name' => 'record_support', 'val' => '0']);
-        
+        Globalval::create(['name' => 'video_support', 'val' => '1']);
+        Globalval::create(['name' => 'record_support', 'val' => '1']);
+
         Globalval::create(['name' => 'video_rtmp_default_enable', 'val' => 'true']);
         Globalval::create(['name' => 'video_hls_default_enable', 'val' => 'false']);
         Globalval::create(['name' => 'video_rtsp_default_enable', 'val' => 'false']);

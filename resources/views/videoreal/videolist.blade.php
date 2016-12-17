@@ -4,10 +4,12 @@
       <h3 class="box-title">视频列表</h3>
       <div class="box-tools pull-right">
         <a id='vaddopt' href="/videoreal/camadd" title="添加" type="button" class="btn btn-box-tool hidden"><i class="fa fa-plus"></i></a>
+        @if(\App\Globalval::getVal('matrix') == 'raspberrypi')
         @if($edtypes == 'mp4')
         <button id='vhistory' type="button" title="返回" class="btn btn-box-tool" onclick="javascript:videoRecordListSetting(1);"><i class="fa fa-long-arrow-left"></i></button>
         @else
         <button id='vhistory' type="button" title="记录" class="btn btn-box-tool" onclick="javascript:videoRecordListSetting(0);"><i class="fa fa-history"></i></button>
+        @endif
         @endif
         <button id='vsetopt' type="button" title="设置" class="btn btn-box-tool" onclick="javascript:videolistSetting();"><i class="fa fa-cog"></i></button>
       </div>

@@ -553,6 +553,7 @@ class DeviceController extends Controller
 										'name' => $name,
 										'opt' => 'add',
 										'url' => $rtsp_url,
+										'server' => Globalval::getVal('hostaddr'),
 								])
 						]
 				])
@@ -632,6 +633,13 @@ class DeviceController extends Controller
 												'name' => $name,
 												'opt' => 'del',
 											]));*/
+	}
+
+	public static function pushRTMPStreamListToServer($list) {
+		return file_get_contents('http://'
+									.Globalval::getVal('hostaddr')
+									.':8380/devdata?action=rtmplist&list='
+									.$list);
 	}
 
 	public static function addEasydarwinHLS($name, $rtsp_url, $timeout) {

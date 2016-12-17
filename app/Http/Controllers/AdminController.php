@@ -427,23 +427,25 @@ class AdminController extends Controller
 						]);
 					}
 
-					$data = json_decode($device->data);
-					if(isset($data->hls_enable) && $data->hls_enable == 'true') {
-						DeviceController::delEasydarwinHLS($request->input('sn'));
+					if(Globalval::getVal('matrix') == 'raspberrypi') {
+						$data = json_decode($device->data);
+						if(isset($data->hls_enable) && $data->hls_enable == 'true') {
+							DeviceController::delEasydarwinHLS($request->input('sn'));
+						}
+	
+						if(isset($data->rtsp_enable) && $data->rtsp_enable == 'true') {
+							DeviceController::delEasydarwinRTSP($request->input('sn'));
+						}
+	
+						if(isset($data->storage_enable) && $data->storage_enable == 'true') {
+							DeviceController::delFFmpegStorage($request->input('sn'));
+						}
+	
+						if(isset($data->rtmp_enable) && $data->rtmp_enable == 'true') {
+							DeviceController::delFFmpegRTMP($request->input('sn'));
+						}
 					}
 
-					if(isset($data->rtsp_enable) && $data->rtsp_enable == 'true') {
-						DeviceController::delEasydarwinRTSP($request->input('sn'));
-					}
-
-					if(isset($data->storage_enable) && $data->storage_enable == 'true') {
-						DeviceController::delFFmpegStorage($request->input('sn'));
-					}
-
-					if(isset($data->rtmp_enable) && $data->rtmp_enable == 'true') {
-						DeviceController::delFFmpegRTMP($request->input('sn'));
-					}
-					
 					$device->delete();
 					return 'OK';
 				}
@@ -476,19 +478,23 @@ class AdminController extends Controller
 				else if ($stream_type == 'hls' || $stream_type == 'rtmp') {
 					$data = ['protocol' => $stream_type, 'url' => $url];
 
-					Device::create([
-							'sn' => $sn,
-							'name' => $sn,
-							'type' => 1,
-							'attr' => 3,
-							'data' => json_encode($data),
-					]);
-					if(Globalval::getVal('record_support') == true) {
-						Record::create([
+					if((Globalval::getVal('matrix') == 'raspberrypi' && strpos($sn, '_') !== 0)
+						|| (Globalval::getVal('matrix') == 'server' && strpos($sn, '_') === 0)) {
+						Device::create([
 								'sn' => $sn,
-								'type' => 'dev',
-								'data' => 'add'
+								'name' => $sn,
+								'type' => 1,
+								'attr' => 3,
+								'data' => json_encode($data),
 						]);
+	
+						if(Globalval::getVal('record_support') == true) {
+							Record::create([
+									'sn' => $sn,
+									'type' => 'dev',
+									'data' => 'add'
+							]);
+						}
 					}
 
 					return 'OK';
@@ -1085,82 +1091,94 @@ class AdminController extends Controller
 		if($getpos !== false) {
 			$ffjson = json_decode(DeviceController::getFFmpegRTMPList());
 			if($ffjson) {
+				$pushlist = array();
 				foreach ($ffjson as $ffcam) {
-					$sn = $ffcam->name;
-					$name = $sn;
-
-					//Camera info match with DB
-					$camdev = Device::where('sn', $sn)->first();
-					if($camdev == null) {
-						$data = new \stdClass();
-						$data->protocol = 'rtsp';
-						$data->source = $ffcam->source;
-						$data->host = Globalval::getVal('hostaddr');
-						$data->rtmp_port = $ffcam->rtmp_port;
-						$data->rtmp_path = $ffcam->rtmp_path;
-						$data->rtmp_enable = 'true';
-						$data->storage_enable = Globalval::getVal('video_storage_default_enable');
-
-						$user = User::where('name', 'root')->first();
-						if (!$user) {
-							$user = User::query()->first();
-						}
+					if($ffcam->streamtype == 'local') {
+						$sn = $ffcam->name;
+						$name = $sn;
 	
-						Device::create([
-								'sn' => $sn,
-								'name' => $name,
-								'type' => 1,
-								'attr' => 3,
-								'data' => json_encode($data),
-								'owner' => $user->sn,
-						]);
+						//Camera info match with DB
+						$camdev = Device::where('sn', $sn)->first();
+						if($camdev == null) {
+							$data = new \stdClass();
+							$data->protocol = 'rtsp';
+							$data->source = $ffcam->source;
+							$data->host = $_SERVER["SERVER_ADDR"]; //Globalval::getVal('hostaddr');
+							$data->rtmp_port = $ffcam->rtmp_port;
+							$data->rtmp_path = $ffcam->rtmp_path;
+							$data->rtmp_enable = 'true';
+							$data->storage_enable = Globalval::getVal('video_storage_default_enable');
 	
-						if(Globalval::getVal('record_support') == true) {
-							Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
-						}
-					}
-					else {
-						$name = $camdev->name;
-
-						$data = json_decode($camdev->data);
-						//$data->host = $_SERVER['SERVER_ADDR'];
-						$data->rtmp_port = $ffcam->rtmp_port;
-						$data->rtmp_path = $ffcam->rtmp_path;
-						$data->rtmp_enable = 'true';
-
-						$camdev->data = json_encode($data);
-						$camdev->save();
-
-						$dbcams = $dbcams->where('sn', '!=', $sn);
-					}
-
-					//Select by names
-					if($selnames != null && count($selnames) > 0) {
-						foreach ($selnames as $selname) {
-							if ($selname == $sn) {
-								if($checkpos !== false && $checkpos < $getpos) {
-									break;
-								}
-
-								$video_file_names[$sn] = [ 'id' => $sn,
-										'type' => 'rtmp',
+							$user = User::where('name', 'root')->first();
+							if (!$user) {
+								$user = User::query()->first();
+							}
+		
+							if(strpos($sn, '_') !== 0) {
+								Device::create([
+										'sn' => $sn,
 										'name' => $name,
-										'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
-								break;
+										'type' => 1,
+										'attr' => 3,
+										'data' => json_encode($data),
+										'owner' => $user->sn,
+								]);
+			
+								if(Globalval::getVal('record_support') == true) {
+									Record::create(['sn' => $sn, 'type' => 'dev', 'data' => 'add']);
+								}
 							}
 						}
-
-						continue;
+						else {
+							$name = $camdev->name;
+	
+							$data = json_decode($camdev->data);
+							$data->host = $_SERVER['SERVER_ADDR'];
+							$data->rtmp_port = $ffcam->rtmp_port;
+							$data->rtmp_path = $ffcam->rtmp_path;
+							$data->rtmp_enable = 'true';
+	
+							$camdev->data = json_encode($data);
+							$camdev->save();
+	
+							$dbcams = $dbcams->where('sn', '!=', $sn);
+						}
+	
+						//Select by names
+						if($selnames != null && count($selnames) > 0) {
+							foreach ($selnames as $selname) {
+								if ($selname == $sn) {
+									if($checkpos !== false && $checkpos < $getpos) {
+										break;
+									}
+	
+									$video_file_names[$sn] = [ 'id' => $sn,
+											'type' => 'rtmp',
+											'name' => $name,
+											'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
+									break;
+								}
+							}
+	
+							continue;
+						}
+	
+						if($checkpos !== false && $checkpos < $getpos) {
+							continue;
+						}
+	
+						$video_file_names[$sn] = [ 'id' => $sn,
+								'type' => 'rtmp',
+								'name' => $name,
+								'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
 					}
-
-					if($checkpos !== false && $checkpos < $getpos) {
-						continue;
+					else if(Globalval::getVal('matrix') == 'raspberrypi' && $ffcam->streamtype == 'server') {
+						array_push($pushlist, ['name' => $ffcam->name, 'url' => $ffcam->url]);
 					}
+				}
 
-					$video_file_names[$sn] = [ 'id' => $sn,
-							'type' => 'rtmp',
-							'name' => $name,
-							'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
+				if (count($pushlist) > 0) {
+					DeviceController::pushRTMPStreamListToServer(json_encode($pushlist));
 				}
 			}
 		}
@@ -1318,7 +1336,9 @@ class AdminController extends Controller
 							'url' => $data->url
 					];
 				}
-				else if(isset($data->protocol) && $data->protocol == 'rtmp') {
+				else if(array_search('rtmp', $typesarr) !== false
+						&& isset($data->protocol)
+						&& $data->protocol == 'rtmp') {
 					$video_file_names[$dbcam->sn] = [
 							'id' => $dbcam->sn,
 							'type' => 'rtmp',
