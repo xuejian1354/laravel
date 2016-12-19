@@ -193,67 +193,67 @@ exports.listen = function() {
 			});
 		}
 	});
-}
 
-function devDataRequest(psn, sn, data, callback)
-{
-	var http = require('http');
-
-	var options =
+	function devDataRequest(psn, sn, data, callback)
 	{
-		hostname : '127.0.0.1',
-		port : 80,
-		method : 'GET',
-		path : '/devdata?psn='+psn+'&sn='+sn+'&data='+data
-	};
+		var http = require('http');
 
-	var req = http.request(options, function(res){
-		//console.log(res);
-		//console.log('STATUS:' + res.statusCode);
-		//console.log('HEADERS:' + JSON.stringify(res.headers));
-		res.setEncoding('utf8');
-		res.on('data', function(chunk){
-		   callback('data', chunk);
+		var options =
+		{
+			hostname : '127.0.0.1',
+			port : 80,
+			method : 'GET',
+			path : '/devdata?psn='+psn+'&sn='+sn+'&data='+data
+		};
+
+		var req = http.request(options, function(res){
+			//console.log(res);
+			//console.log('STATUS:' + res.statusCode);
+			//console.log('HEADERS:' + JSON.stringify(res.headers));
+			res.setEncoding('utf8');
+			res.on('data', function(chunk){
+			   callback('data', chunk);
+			});
 		});
-	});
 
-	req.on('error', function(e){
-	   callback('error', e.message);
-	});
+		req.on('error', function(e){
+		   callback('error', e.message);
+		});
 
-	req.end();
-}
+		req.end();
+	}
 
-/*
-* Handler Frame Operations
-*/
-function controlToFrame(gwsn, devsn, data)
-{
-	var ret = '{"action":"6", "gw_sn":"'
-				+ gwsn + '", "ctrls":[{"dev_sn":"'
-				+ devsn + '", "cmd":"'
-				+ data + '"}], "random":"'
-				+ String(Math.random()).substring(4, 8) + '"}';
+	/*
+	* Handler Frame Operations
+	*/
+	function controlToFrame(gwsn, devsn, data)
+	{
+		var ret = '{"action":"6", "gw_sn":"'
+					+ gwsn + '", "ctrls":[{"dev_sn":"'
+					+ devsn + '", "cmd":"'
+					+ data + '"}], "random":"'
+					+ String(Math.random()).substring(4, 8) + '"}';
 
-	return ret;
-}
+		return ret;
+	}
 
-function tocolresToFrame(action, random)
-{
-	var ret = '{"action":"' +
-				tocolres + '", "obj":{"owner":"server", "custom":"gateway"}, "req_action":"' +
-				action + '", "random":"' +
-				random + '"}';
+	function tocolresToFrame(action, random)
+	{
+		var ret = '{"action":"' +
+					tocolres + '", "obj":{"owner":"server", "custom":"gateway"}, "req_action":"' +
+					action + '", "random":"' +
+					random + '"}';
 
-	return ret;
-}
+		return ret;
+	}
 
-function refreshToFrame(gw_sn, random)
-{
-	var ret = '{"action":"' +
-				refresh + '", "obj":{"owner":"server", "custom":"gateway"}, "gw_sn":"' +
-				gw_sn + '", "random":"' +
-				random + '"}';
+	function refreshToFrame(gw_sn, random)
+	{
+		var ret = '{"action":"' +
+					refresh + '", "obj":{"owner":"server", "custom":"gateway"}, "gw_sn":"' +
+					gw_sn + '", "random":"' +
+					random + '"}';
 
-	return ret;
+		return ret;
+	}
 }
