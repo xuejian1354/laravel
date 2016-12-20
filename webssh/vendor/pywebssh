@@ -1,0 +1,29 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:  loongpi
+# Required-Start: $all
+# Required-Stop: $all
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: Start daemon at boot time
+# Description:  Enable service provided by daemon.
+### END INIT INFO
+# chkconfig:2345 10 02
+# description: Python for WenSSH
+
+HPATH=/home/cullive/laravel/webssh
+DEAMON=$HPATH/main.py  #这里需要填写你自己的Python项目的启动脚本文件
+export PATH=$PATH:/usr/bin #在这里指定一下Python的可执行程序安装目录
+ 
+case "$1" in
+ start)
+  cd $HPATH
+  python $DEAMON
+  ;;
+ stop|stopall|restart|restartall|reload|list)
+  ;;
+ *)
+  echo "Usage: /etc/init.d/pywebssh {start}"
+  exit 1
+  ;;
+esac
