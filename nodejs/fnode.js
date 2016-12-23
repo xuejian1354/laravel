@@ -22,122 +22,93 @@ exports.listen = function() {
 	//Start log ...
 	console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + " WebSocket Server of Node Start ...");
 
-	/*
-	* WebSocket for Gateway
-	*/
-	var WebSocketServer = require('ws').Server, wss = new WebSocketServer({port: 8020});
-	wss.on('connection', function(ws) {
+	var matrix = 'raspberrypi';
 
-		ws.on('close', function(code, message) {
-			if(typeof(this.gw_sn) != "undefined" && gwlist.has(this.gw_sn) == true) {
-				gwlist.remove(this.gw_sn);
-			}
+	if(matrix == 'raspberrypi') {
 
-			console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + " Websocket Close, gw_sn=" + this.gw_sn  + " ========>>>");
+		var macmodule = require('getmac');
+		var macflag = '0000';
+		var gwsn = 'FFFFFF';
+		macmodule.getMac(function(err, macAddress) {
+			var marr = macAddress.toUpperCase().split(':');
+			macflag = marr[4] + marr[5];
+			gwsn = marr[3] + marr[4] + marr[5];
 		});
 
-		ws.on('message', function(data, flags) {
-			var mobj = JSON.parse(data);
-			switch(mobj.action)
-			{
-			case tocolreq:
-				if(mobj.protocol == "websocket"
-					&& typeof(mobj.gw_sn) != "undefined"
-					&& typeof(mobj.protocol) != "undefined"
-					&& typeof(mobj.random) != "undefined")
-				{
-					this.gw_sn = mobj.gw_sn;
-					this.action = mobj.action;
-					this.random = mobj.random;
+		var SerialPort = require('serialport');
+		var readBuf = '';
+		var port = new SerialPort("/dev/ttyUSB0", {
+			autoOpen: true,
+			lock: true,
+			baudRate: 9600,
+			dataBits: 8,
+			stopBits: 1,
+			parity: 'none',
+			vmin: 9,
+			vtime: 1
+		});
 
-					if(gwlist.has(this.gw_sn) == false) {
-						gwlist.set(this.gw_sn, ws);
-					}
-
-					ws.send(tocolresToFrame(tocolreq, mobj.random));
-
-					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is tocolreq " + this.action + ", random=" + this.random);
-				}
-				break;
-
-			case report:
-				if(typeof(mobj.gw_sn) != "undefined"
-					&& typeof(mobj.devices) != "undefined"
-					&& typeof(mobj.random) != "undefined")
-				{
-					this.gw_sn = mobj.gw_sn;
-					this.action = mobj.action;
-					this.random = mobj.random;
-
-					if(gwlist.has(this.gw_sn) == false) {
-						gwlist.set(this.gw_sn, ws);
-					}
-
-					for(var i=0; i<mobj.devices.length; i++){
-						var device = mobj.devices[i];
-						if(typeof(device.dev_sn) != "undefined"
-							&& typeof(device.dev_data) != "undefined")
-						{
-							devDataRequest(mobj.gw_sn, device.dev_sn, device.dev_data, function(info, msg){
-								ws.send(msg);
-							});
-						}
-					}
-
-					//ws.send(tocolresToFrame(report, mobj.random));
-
-					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is report " + this.action + ", random=" + this.random);
-				}
-				break;
-
-			case check:
-				if(typeof(mobj.gw_sn) != "undefined"
-					&& mobj.code[0].code_check == "md5"
-					&& typeof(mobj.random) != "undefined"){
-
-					this.gw_sn = mobj.gw_sn;
-					this.action = mobj.action;
-					this.random = mobj.random;
-
-					if(gwlist.has(this.gw_sn) == false) {
-						gwlist.set(this.gw_sn, ws);
-					}
-
-					ws.send(tocolresToFrame(check, mobj.random));
-
-					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is check " + this.action + ", random=" + this.random);
-				}
-				break;
-
-			case respond:
-				if(typeof(mobj.gw_sn) != "undefined"
-					&& typeof(mobj.dev_sn) != "undefined"
-					&& typeof(mobj.random) != "undefined")
-				{
-					this.gw_sn = mobj.gw_sn;
-					this.action = mobj.action;
-					this.random = mobj.random;
-
-					if(gwlist.has(this.gw_sn) == false) {
-						gwlist.set(this.gw_sn, ws);
-					}
-
-					ws.send(tocolresToFrame(respond, mobj.random));
-
-					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is respond " + this.action + ", random=" + this.random);
-				}
-				break;
-
-			default:
-				console.log(ftime.datet('yyyy-MM-dd hh:mm:ss') + " Unrecognize frame, cannot parse for it. \n\t\t    data=" + data);
+		port.on('data', function(data) {
+			readBuf += data.toString('hex').toUpperCase();
+			var devmac = macflag + readBuf.substr(0, 2);
+			var data = readBuf.substr(6, 8);
+			if(readBuf.length >= 18) {
+				var frame = reportToFrame(gwsn, devmac, data);
+				updataHandler(port, frame, matrix);
 			}
 		});
-	});
+
+		port.on('error', function(err) {
+			console.log(err.message);
+		});
+
+		var schedule = require('node-schedule');
+		var rule = new schedule.RecurrenceRule();
+		var times = [];
+		for(var i=1; i<60; i++) {
+			times.push(i);
+		}
+		rule.second = times;
+
+		var c = 1;
+		schedule.scheduleJob(rule, function() {
+			var frame = getDevoptFrame(c++, 0, 2);
+			//console.log('Query-to-Serial: ' + frame.toString('hex').toUpperCase());
+			readBuf = '';
+			if(c < 30){
+				port.write(frame);
+			}
+
+			if(c > 60) {
+				c = 1;
+			}
+		});
+	}
+	else {
+		/*
+		* WebSocket for Gateway
+		*/
+		var WebSocketServer = require('ws').Server, wss = new WebSocketServer({port: 8020});
+		wss.on('connection', function(ws) {
+
+			ws.on('close', function(code, message) {
+				if(typeof(this.gw_sn) != "undefined" && gwlist.has(this.gw_sn) == true) {
+					gwlist.remove(this.gw_sn);
+				}
+
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + " Websocket Close, gw_sn=" + this.gw_sn  + " ========>>>");
+			});
+
+			ws.on('message', function(data, flags) {
+				updataHandler(ws, data, matrix);
+			});
+		});
+	}
 
 	/*
 	* WebSocket for Client
 	*/
-	cliserver = new WebSocketServer({port: 8021});
+	var WebSocketServer = require('ws').Server, cliserver = new WebSocketServer({port: 8021});
 	cliserver.on('connection', function(cli) {
 
 		cli.on('close', function(code, message) {
@@ -171,7 +142,16 @@ exports.listen = function() {
 				var ws = gwlist.get(this.gwsn);
 				if(typeof(ws) !== "undefined") {
 					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ' Send ctrl messsage, devsn=' + this.devsn + ', data=' + this.data);
-					ws.send(controlToFrame(this.gwsn, this.devsn, this.data));
+					if(matrix == 'raspberrypi') {
+						var devid = parseInt(this.devsn.slice(-2), 16);
+						var data = parseInt(this.data, 16);
+						var frame = devCtrl(devid, data);
+						console.log(frame);
+						ws.write(frame);
+					}
+					else {
+						ws.send(controlToFrame(this.gwsn, this.devsn, this.data));
+					}
 				}
 				else {
 					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ' No gateway found, gwsn=' + this.gwsn);
@@ -193,6 +173,63 @@ exports.listen = function() {
 			});
 		}
 	});
+
+	function getDevoptFrame(devid, data, len)
+	{
+		var frame = new Buffer(8);
+
+		frame[0] = devid;
+		frame[1] = 0x03;
+		frame[2] = (data>>8) & 0xFF;
+		frame[3] = data & 0xFF;
+		frame[4] = (len>>8) & 0xFF;
+		frame[5] = len & 0xFF;
+
+		var crcval = crcCheck(frame, 6);
+		frame[6] = (crcval>>8) & 0xFF;
+		frame[7] = crcval & 0xFF;
+
+		return frame;
+	}
+
+	function devCtrl(devid, data)
+	{
+		var frame = new Buffer(8);
+
+		frame[0] = devid;
+		frame[1] = 0x04;
+		frame[2] = (data>>24) & 0xFF;
+		frame[3] = (data>>16) & 0xFF;
+		frame[4] = (data>>8) & 0xFF;
+		frame[5] = data & 0xFF;
+
+		var crcval = crcCheck(frame, 6);
+		frame[6] = (crcval>>8) & 0xFF;
+		frame[7] = crcval & 0xFF;
+
+		return frame;
+	}
+
+	function crcCheck(msg, len)
+	{
+		var crc = 0xFFFF;
+		for (var i=0; i<len; i++) {
+			var current = msg[i] & 0xFF;
+			crc ^= current;
+			for (var j=0; j < 8; j++) {
+				if (crc & 0x0001) {
+					crc >>= 1;
+					crc ^= 0xA001;
+				}
+				else {
+					crc >>= 1;
+				}
+			}
+		}
+
+		crc = (crc>>8) + (crc<<8);
+		return crc;
+	}
 
 	function devDataRequest(psn, sn, data, callback)
 	{
@@ -223,9 +260,126 @@ exports.listen = function() {
 		req.end();
 	}
 
+	function updataHandler(ws, data, matrix) {
+		var mobj = JSON.parse(data);
+		switch(mobj.action)
+		{
+		case tocolreq:
+			if(mobj.protocol == "websocket"
+				&& typeof(mobj.gw_sn) != "undefined"
+				&& typeof(mobj.protocol) != "undefined"
+				&& typeof(mobj.random) != "undefined")
+			{
+				this.gw_sn = mobj.gw_sn;
+				this.action = mobj.action;
+				this.random = mobj.random;
+
+				if(gwlist.has(this.gw_sn) == false) {
+					gwlist.set(this.gw_sn, ws);
+				}
+
+				if(matrix != 'raspberrypi') {
+					ws.send(tocolresToFrame(tocolreq, mobj.random));
+				}
+
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is tocolreq " + this.action + ", random=" + this.random);
+			}
+			break;
+
+		case report:
+			if(typeof(mobj.gw_sn) != "undefined"
+				&& typeof(mobj.devices) != "undefined"
+				&& typeof(mobj.random) != "undefined")
+			{
+				this.gw_sn = mobj.gw_sn;
+				this.action = mobj.action;
+				this.random = mobj.random;
+
+				if(gwlist.has(this.gw_sn) == false) {
+					gwlist.set(this.gw_sn, ws);
+				}
+
+				for(var i=0; i<mobj.devices.length; i++){
+					var device = mobj.devices[i];
+					if(typeof(device.dev_sn) != "undefined"
+						&& typeof(device.dev_data) != "undefined")
+					{
+						devDataRequest(mobj.gw_sn, device.dev_sn, device.dev_data, function(info, msg){
+							if(matrix != 'raspberrypi') {
+								ws.send(msg);
+							}
+						});
+					}
+				}
+
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is report " + this.action + ", random=" + this.random);
+			}
+			break;
+
+		case check:
+			if(typeof(mobj.gw_sn) != "undefined"
+				&& mobj.code[0].code_check == "md5"
+				&& typeof(mobj.random) != "undefined"){
+
+				this.gw_sn = mobj.gw_sn;
+				this.action = mobj.action;
+				this.random = mobj.random;
+
+				if(gwlist.has(this.gw_sn) == false) {
+					gwlist.set(this.gw_sn, ws);
+				}
+
+				if(matrix != 'raspberrypi') {
+					ws.send(tocolresToFrame(check, mobj.random));
+				}
+
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is check " + this.action + ", random=" + this.random);
+			}
+			break;
+
+		case respond:
+			if(typeof(mobj.gw_sn) != "undefined"
+				&& typeof(mobj.dev_sn) != "undefined"
+				&& typeof(mobj.random) != "undefined")
+			{
+				this.gw_sn = mobj.gw_sn;
+				this.action = mobj.action;
+				this.random = mobj.random;
+
+				if(gwlist.has(this.gw_sn) == false) {
+					gwlist.set(this.gw_sn, ws);
+				}
+
+				if(matrix == 'raspberrypi') {
+					ws.write(tocolresToFrame(respond, mobj.random));
+				}
+				else {
+					ws.send(tocolresToFrame(respond, mobj.random));
+				}
+
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is respond " + this.action + ", random=" + this.random);
+			}
+			break;
+
+		default:
+			console.log(ftime.datet('yyyy-MM-dd hh:mm:ss') + " Unrecognize frame, cannot parse for it. \n\t\t    data=" + data);
+		}
+	}
+
 	/*
 	* Handler Frame Operations
 	*/
+	function reportToFrame(gwsn, devsn, data)
+	{
+		var ret = '{"action":"2", "gw_sn":"'
+					+ gwsn + '", "devices":[{"dev_sn":"'
+					+ devsn + '", "dev_data":"'
+					+ data + '"}], "random":"'
+					+ String(Math.random()).substring(4, 8) + '"}';
+
+		return ret;
+	}
+
 	function controlToFrame(gwsn, devsn, data)
 	{
 		var ret = '{"action":"6", "gw_sn":"'
@@ -242,16 +396,6 @@ exports.listen = function() {
 		var ret = '{"action":"' +
 					tocolres + '", "obj":{"owner":"server", "custom":"gateway"}, "req_action":"' +
 					action + '", "random":"' +
-					random + '"}';
-
-		return ret;
-	}
-
-	function refreshToFrame(gw_sn, random)
-	{
-		var ret = '{"action":"' +
-					refresh + '", "obj":{"owner":"server", "custom":"gateway"}, "gw_sn":"' +
-					gw_sn + '", "random":"' +
 					random + '"}';
 
 		return ret;
