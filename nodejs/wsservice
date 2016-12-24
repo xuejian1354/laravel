@@ -11,14 +11,15 @@
 # chkconfig:2345 10 02
 # description: Forever for Node.js
 
-HPATH=/home/sam/js
+HPATH=/home/cullive/laravel/nodejs
 
-DEAMON=$HPATH/wsservice.js  #这里需要填写你自己的Node项目的启动脚本文件
-LOG=$HPATH/wsservice-forever.log #可选，日志文件目录
-PID=$HPATH/wsservice.pid #必填内容，用于记录forever的进程号
+DEAMON=$HPATH/wsservice.js
+LOG=/tmp/wsservice-forever.log
+ELOG=/tmp/wsservice-err.log
+PID=/tmp/wsservice.pid
 
-export PATH=$PATH:/usr/local/bin #在这里指定一下Node的可执行程序安装目录，我的是/usr/local/bin
-export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules #这里是Node类库的路径
+export PATH=$PATH:/usr/local/bin
+export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
  
  
 node=node
@@ -26,7 +27,7 @@ forever=forever
  
 case "$1" in
  start)
-  $forever start -l $LOG --pidFile $PID -a $DEAMON
+  $forever start -l $LOG -e $ELOG --pidFile $PID -a $DEAMON
   ;;
  stop)
   $forever stop --pidFile $PID $DEAMON
@@ -38,7 +39,7 @@ case "$1" in
   $forever restartall --pidFile $PID
   ;;
  reload|restart)
-  $forever restart -l $LOG --pidFile $PID -a $DEAMON
+  $forever restart -l $LOG -e $ELOG --pidFile $PID -a $DEAMON
   ;;
  list)
   $forever list
