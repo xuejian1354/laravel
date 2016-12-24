@@ -4,7 +4,6 @@ from handlers import *
 
 
 handlers = [
-    (r"/", IndexHandler),
-    (r"/ws", WSHandler),
-    (r"/terminal", TerminalHandler)
+    (r"/", TerminalHandler),
+    (r"/ws", WSHandler)
 ]

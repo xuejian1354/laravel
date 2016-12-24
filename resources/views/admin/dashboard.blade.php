@@ -12,7 +12,11 @@
     | {{ $page_description }}
   @endif
   </title>
-  <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" type="image/x-icon">
+  @if(\App\Globalval::getVal('matrix') == 'raspberrypi')
+  <link rel="shortcut icon" href="{{ asset('/rasp.png') }}" type="image/x-icon">
+  @else
+  <link rel="icon" href="{{ asset('/favicon.ico') }}" type="image/png">
+  @endif
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->

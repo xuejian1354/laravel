@@ -72,6 +72,12 @@ Artisan::command('matrix {name}', function ($name) {
 			$vd->val = $name;
 			$vd->save();
 			print_r("matrix is server\n");
+
+			$ti = App\Globalval::where('name', 'title')->first();
+			if ($ti) {
+			    $ti->val = 'Cullive';
+			    $ti->save();
+			}
 		}
 	}
 	else if($name == 'raspberrypi') {
@@ -80,6 +86,12 @@ Artisan::command('matrix {name}', function ($name) {
 			$vd->val = $name;
 			$vd->save();
 			print_r("matrix is raspberrypi\n");
+
+			$ti = App\Globalval::where('name', 'title')->first();
+			if ($ti) {
+			    $ti->val = 'RaspberryPi3';
+			    $ti->save();
+			}
 		}
 	}
 	else {

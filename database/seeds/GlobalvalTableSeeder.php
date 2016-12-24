@@ -13,7 +13,7 @@ class GlobalvalTableSeeder extends Seeder
     public function run()
     {
         DB::table('globalvals')->delete();
-        Globalval::create(['name' => 'title', 'val' => 'Cullive']);
+        Globalval::create(['name' => 'title', 'val' => 'RaspberryPi3']);
         Globalval::create(['name' => 'hostaddr', 'val' => 'longyuanspace.com']);
         Globalval::create(['name' => 'matrix', 'val' => 'raspberrypi']);
 

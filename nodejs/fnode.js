@@ -10,6 +10,11 @@ exports.listen = function() {
 	var control = "6";
 	var tocolres = "7";
 
+	//var matrix = 'server';
+	var matrix = 'raspberrypi';
+
+	var hostserver = 'longyuanspace.com';
+
 	/*
 	* HashMap for WebSocket Connection
 	*/
@@ -22,8 +27,6 @@ exports.listen = function() {
 	//Start log ...
 	console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + " WebSocket Server of Node Start ...");
 
-	var matrix = 'raspberrypi';
-
 	if(matrix == 'raspberrypi') {
 
 		var macmodule = require('getmac');
@@ -35,6 +38,7 @@ exports.listen = function() {
 			gwsn = marr[3] + marr[4] + marr[5];
 		});
 
+		/* Operation for SerialPort */
 		var SerialPort = require('serialport');
 		var readBuf = '';
 		var port = new SerialPort("/dev/ttyUSB0", {
@@ -48,13 +52,29 @@ exports.listen = function() {
 			vtime: 1
 		});
 
+		port.dmap = new HashMap();
+
 		port.on('data', function(data) {
 			readBuf += data.toString('hex').toUpperCase();
 			var devmac = macflag + readBuf.substr(0, 2);
 			var data = readBuf.substr(6, 8);
+
 			if(readBuf.length >= 18) {
+				var beforedata = this.dmap.get(devmac);
+				if(beforedata == data) {
+					//console.log('repeat serial port data, ["' + devmac + '" => "' + data + '"]');
+					return;
+				}
+				else {
+					//console.log('setting serial port data, ["' + devmac + '" => "' + data + '"]');
+					this.dmap.set(devmac, data);
+				}
+
 				var frame = reportToFrame(gwsn, devmac, data);
 				updataHandler(port, frame, matrix);
+				if(wsock.isopen) {
+					wsock.send(frame);
+				}
 			}
 		});
 
@@ -62,6 +82,60 @@ exports.listen = function() {
 			console.log(err.message);
 		});
 
+		/* Operation for WebSocket */
+		var wsock;
+		wsConnect();
+
+		function wsConnect() {
+			var WebSocket = require('ws');
+			wsock = new WebSocket('ws://' + hostserver + ':8020');
+
+			wsock.on('open', function open() {
+				console.log('connected to server...');
+				this.isopen = true;
+				this.send(tocolreqToFrame(gwsn));
+			}).on('close', function close() {
+				console.log('disconnected with server');
+				this.isopen = false;
+				setTimeout(function() { wsConnect(); }, 2000);
+			}).on('error', function error(code, description) {
+				console.log('error: ' + code + (description ? ' ' + description : ''));
+				this.isopen = false;
+			}).on('message', function message(data, flags) {
+				//console.log(data);
+				if(data.charAt(0) != '{'
+					&& data.charAt(0) != ' ') {
+					return;
+				}
+
+				var mobj = JSON.parse(data);
+				if(mobj.action == control
+					&&typeof(mobj.gw_sn) != "undefined"
+					&& typeof(mobj.ctrls) != "undefined"
+					&& typeof(mobj.random) != "undefined")
+				{
+					for(var i=0; i<mobj.ctrls.length; i++) {
+						var ctrl = mobj.ctrls[i];
+						if(typeof(ctrl.dev_sn) != "undefined"
+							&& typeof(ctrl.cmd) != "undefined")
+						{
+							var devid = parseInt(ctrl.dev_sn.slice(-2), 16);
+							var data = parseInt(ctrl.cmd, 16);
+							var frame = devCtrl(devid, data);
+
+							console.log('SerialPort Write: ');
+							console.log(frame);
+
+							port.write(frame);
+						}
+					}
+
+					console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + mobj.gw_sn + ", The action is control " + mobj.action + ", random=" + mobj.random);
+				}
+			});
+		}
+	
+		/* Operation for node-schedule */
 		var schedule = require('node-schedule');
 		var rule = new schedule.RecurrenceRule();
 		var times = [];
@@ -270,19 +344,19 @@ exports.listen = function() {
 				&& typeof(mobj.protocol) != "undefined"
 				&& typeof(mobj.random) != "undefined")
 			{
-				this.gw_sn = mobj.gw_sn;
-				this.action = mobj.action;
-				this.random = mobj.random;
+				ws.gw_sn = mobj.gw_sn;
+				ws.action = mobj.action;
+				ws.random = mobj.random;
 
-				if(gwlist.has(this.gw_sn) == false) {
-					gwlist.set(this.gw_sn, ws);
+				if(gwlist.has(ws.gw_sn) == false) {
+					gwlist.set(ws.gw_sn, ws);
 				}
 
 				if(matrix != 'raspberrypi') {
 					ws.send(tocolresToFrame(tocolreq, mobj.random));
 				}
 
-				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is tocolreq " + this.action + ", random=" + this.random);
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + ws.gw_sn + ", The action is tocolreq " + ws.action + ", random=" + ws.random);
 			}
 			break;
 
@@ -291,12 +365,12 @@ exports.listen = function() {
 				&& typeof(mobj.devices) != "undefined"
 				&& typeof(mobj.random) != "undefined")
 			{
-				this.gw_sn = mobj.gw_sn;
-				this.action = mobj.action;
-				this.random = mobj.random;
+				ws.gw_sn = mobj.gw_sn;
+				ws.action = mobj.action;
+				ws.random = mobj.random;
 
-				if(gwlist.has(this.gw_sn) == false) {
-					gwlist.set(this.gw_sn, ws);
+				if(gwlist.has(ws.gw_sn) == false) {
+					gwlist.set(ws.gw_sn, ws);
 				}
 
 				for(var i=0; i<mobj.devices.length; i++){
@@ -312,7 +386,7 @@ exports.listen = function() {
 					}
 				}
 
-				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is report " + this.action + ", random=" + this.random);
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + ws.gw_sn + ", The action is report " + ws.action + ", random=" + ws.random);
 			}
 			break;
 
@@ -321,19 +395,19 @@ exports.listen = function() {
 				&& mobj.code[0].code_check == "md5"
 				&& typeof(mobj.random) != "undefined"){
 
-				this.gw_sn = mobj.gw_sn;
-				this.action = mobj.action;
-				this.random = mobj.random;
+				ws.gw_sn = mobj.gw_sn;
+				ws.action = mobj.action;
+				ws.random = mobj.random;
 
-				if(gwlist.has(this.gw_sn) == false) {
-					gwlist.set(this.gw_sn, ws);
+				if(gwlist.has(ws.gw_sn) == false) {
+					gwlist.set(ws.gw_sn, ws);
 				}
 
 				if(matrix != 'raspberrypi') {
 					ws.send(tocolresToFrame(check, mobj.random));
 				}
 
-				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is check " + this.action + ", random=" + this.random);
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + ws.gw_sn + ", The action is check " + ws.action + ", random=" + ws.random);
 			}
 			break;
 
@@ -342,12 +416,12 @@ exports.listen = function() {
 				&& typeof(mobj.dev_sn) != "undefined"
 				&& typeof(mobj.random) != "undefined")
 			{
-				this.gw_sn = mobj.gw_sn;
-				this.action = mobj.action;
-				this.random = mobj.random;
+				ws.gw_sn = mobj.gw_sn;
+				ws.action = mobj.action;
+				ws.random = mobj.random;
 
-				if(gwlist.has(this.gw_sn) == false) {
-					gwlist.set(this.gw_sn, ws);
+				if(gwlist.has(ws.gw_sn) == false) {
+					gwlist.set(ws.gw_sn, ws);
 				}
 
 				if(matrix == 'raspberrypi') {
@@ -357,7 +431,7 @@ exports.listen = function() {
 					ws.send(tocolresToFrame(respond, mobj.random));
 				}
 
-				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + this.gw_sn + ", The action is respond " + this.action + ", random=" + this.random);
+				console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ", gw_sn=" + ws.gw_sn + ", The action is respond " + ws.action + ", random=" + ws.random);
 			}
 			break;
 
@@ -369,6 +443,15 @@ exports.listen = function() {
 	/*
 	* Handler Frame Operations
 	*/
+	function tocolreqToFrame(gwsn)
+	{
+		var ret = '{"action":"1", "gw_sn":"'
+					+ gwsn + '", "protocol":"websocket", "random":"'
+					+ String(Math.random()).substring(4, 8) + '"}';
+
+		return ret;
+	}
+
 	function reportToFrame(gwsn, devsn, data)
 	{
 		var ret = '{"action":"2", "gw_sn":"'
