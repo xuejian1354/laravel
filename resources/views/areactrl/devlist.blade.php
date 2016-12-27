@@ -32,7 +32,7 @@
           @endif
           </td>
           @if($devices[$index]->attr == 2)
-          <td>
+          <td style="min-width: 80px;">
             @include('devopt', ['device' => $devices[$index]])
           </td>
           @else

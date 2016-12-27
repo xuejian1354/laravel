@@ -554,6 +554,7 @@ class DeviceController extends Controller
 										'opt' => 'add',
 										'url' => $rtsp_url,
 										'server' => Globalval::getVal('hostaddr'),
+								        'pushtoserver' => Globalval::getVal('node_rtmptoserver_enable')
 								])
 						]
 				])

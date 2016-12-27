@@ -10,8 +10,8 @@ exports.listen = function() {
 	var control = "6";
 	var tocolres = "7";
 
-	//var matrix = 'server';
-	var matrix = 'raspberrypi';
+	var matrix = 'server';
+	//var matrix = 'raspberrypi';
 
 	var hostserver = 'longyuanspace.com';
 

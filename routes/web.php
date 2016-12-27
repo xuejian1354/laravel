@@ -41,25 +41,27 @@ $routecall = function() {
 	Auth::routes();
 };
 
+$routeredict = function () {
+    Route::any('{ret?}', function ($ret = null) {
+        //$host = Route::getCurrentRoute()->getAction()['domain'];
+        $host = Request::server('HTTP_HOST');
+        return redirect('http://www.'.$host.'/'.$ret);
+    });
+};
+
 // Console URL
 Route::get('/devdata', 'DevDataController@index');
 
 if (Globalval::getVal('matrix') == 'server') {
-	Route::group(['domain' => 'longyuanspace.com'], $routecall);
-	Route::group(['domain' => 'loongsky4.net'], $routecall);
+	Route::group(['domain' => 'longyuanspace.com'], $routeredict);
+	Route::group(['domain' => 'loongsky4.net'], $routeredict);
+
+	Route::group(['domain' => 'www.longyuanspace.com'], $routecall);
+	Route::group(['domain' => 'www.loongsky4.net'], $routecall);
 }
 else {
 	$routecall();
 }
-
-/*Route::group(['domain' => '{account}.classyun.com'], function () {
-
-	Route::any('{ret?}', function ($account, $ret = null) {
-
-		$dommain = Route::getCurrentRoute()->getAction()['domain'];
-		return redirect('http://'.explode('.', $dommain, 2)[1].'/'.$ret);
-	});
-});*/
 
 Route::any('{ret?}', function ($ret = null) {
 

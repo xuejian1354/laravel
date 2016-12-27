@@ -40,5 +40,6 @@ class GlobalvalTableSeeder extends Seeder
 
         Globalval::create(['name' => 'node_ffrtmp', 'val' => '/ffrtmp']);
         Globalval::create(['name' => 'node_ffstorage', 'val' => '/ffstorage']);
+        Globalval::create(['name' => 'node_rtmptoserver_enable', 'val' => '0']);
     }
 }

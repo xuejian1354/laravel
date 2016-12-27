@@ -43,6 +43,28 @@ Artisan::command('video:support {action}', function ($action) {
 	}
 })->describe('Video support enable|disable');
 
+Artisan::command('video:server {action}', function ($action) {
+    if($action == 'enable') {
+        $vd = App\Globalval::where('name', 'node_rtmptoserver_enable')->first();
+        if($vd) {
+            $vd->val = true;
+            $vd->save();
+            print_r("video push to server enable\n");
+        }
+    }
+    else if($action == 'disable') {
+        $vd = App\Globalval::where('name', 'node_rtmptoserver_enable')->first();
+        if($vd) {
+            $vd->val = false;
+            $vd->save();
+            print_r("video push to server disable\n");
+        }
+    }
+    else {
+        print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
+    }
+})->describe('Video push to server enable|disable');
+
 Artisan::command('record:support {action}', function ($action) {
 	if($action == 'enable') {
 		$vd = App\Globalval::where('name', 'record_support')->first();

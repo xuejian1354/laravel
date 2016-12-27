@@ -68,7 +68,9 @@ exports.listen = function() {
 			var serverPath = 'rtmp://' + req.body.server + ':1935/ffrtmp/' + req.body.name;
 
 			fftransrtmp(name, inputPath, outputPath, ['-vcodec copy', '-acodec aac']);
-			fftransrtmp('_'+name, inputPath, serverPath, ['-vcodec h264', '-s 320x180', '-acodec aac']);
+			if(req.body.pushtoserver == '1') {
+				fftransrtmp('_'+name, inputPath, serverPath, ['-vcodec h264', '-s 320x180', '-acodec aac']);
+			}
 		}
 		else if(req.body.opt == 'del') {
 			var mcam = camlist.get(req.body.name);
