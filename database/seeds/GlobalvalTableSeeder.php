@@ -19,6 +19,7 @@ class GlobalvalTableSeeder extends Seeder
 
         Globalval::create(['name' => 'video_support', 'val' => '1']);
         Globalval::create(['name' => 'record_support', 'val' => '1']);
+        Globalval::create(['name' => 'domain_permit', 'val' => '0']);
 
         Globalval::create(['name' => 'video_rtmp_default_enable', 'val' => 'true']);
         Globalval::create(['name' => 'video_hls_default_enable', 'val' => 'false']);

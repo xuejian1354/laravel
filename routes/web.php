@@ -52,7 +52,8 @@ $routeredict = function () {
 // Console URL
 Route::get('/devdata', 'DevDataController@index');
 
-if (Globalval::getVal('matrix') == 'server') {
+if (Globalval::getVal('matrix') == 'server' && Globalval::getVal('domain_permit')) {
+	//Enable is lower performance
 	Route::group(['domain' => 'longyuanspace.com'], $routeredict);
 	Route::group(['domain' => 'loongsky4.net'], $routeredict);
 
