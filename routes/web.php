@@ -15,11 +15,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => 'auth'], function () {
-    //    Route::get('/link1', function ()    {
-//        // Uses Auth Middleware
-//    });
+Route::get('/landplanting', 'CulliveController@landplanting');
+Route::get('/devgardening', 'CulliveController@devgardening');
+Route::get('/farmbreeding', 'CulliveController@farmbreeding');
+Route::get('/aquaculture', 'CulliveController@aquaculture');
 
-    //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
-    #adminlte_routes
+Route::group(['middleware' => ['web', 'auth']], function () {
+    Route::get('/dashboard', [ 'as' => 'web.dashboard', 'uses' => 'HomeController@index']);
+    Route::get('/home', function () {
+        return redirect()->route('web.dashboard');
+    });
+    
+    Route::get('/landplanting/{childreq}', 'ChildCulliveController@landplanting');
+    Route::get('/devgardening/{childreq}', 'ChildCulliveController@devgardening');
+    Route::get('/farmbreeding/{childreq}', 'ChildCulliveController@farmbreeding');
+    Route::get('/aquaculture/{childreq}', 'ChildCulliveController@aquaculture');
 });
+
+Auth::routes();
