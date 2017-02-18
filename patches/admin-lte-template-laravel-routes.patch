@@ -1,0 +1,11 @@
+diff --git a/vendor/acacha/admin-lte-template-laravel/src/Http/routes.php b/vendor/acacha/admin-lte-template-laravel/src/Http/routes.php
+index c98d193..5defbd7 100644
+--- a/vendor/acacha/admin-lte-template-laravel/src/Http/routes.php
++++ b/vendor/acacha/admin-lte-template-laravel/src/Http/routes.php
+@@ -8,5 +8,5 @@
+ Route::group(['middleware' => 'web'], function () {
+     Route::auth();
+ 
+-    Route::get('/home', 'HomeController@index');
++    //Route::get('/home', 'HomeController@index');
+ });
