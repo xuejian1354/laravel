@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html lang="en">
 
 @section('htmlheader')
-    @include('cullive.layouts.partials.htmlheader')
+  @include('cullive.layouts.partials.htmlheader')
 @show
 
 <!--
@@ -31,33 +31,23 @@ desired effect
 -->
 <body class="skin-blue sidebar-mini">
 <div id="app">
-    <div class="wrapper">
+  <div class="wrapper">
 
-    @include('cullive.layouts.partials.mainheader')
+  @include('cullive.layouts.partials.mainheader')
 
-    @include('cullive.layouts.partials.sidebar')
+  @include('cullive.layouts.partials.sidebar')
 
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+  <!-- Content Wrapper. Contains page content -->
+  <div id="contentwrap" class="content-wrapper">
+    @include('cullive.layouts.content')
+  </div><!-- /.content-wrapper -->
 
-        @include('cullive.layouts.partials.contentheader')
-
-        <!-- Main content -->
-        <section class="content">
-            <!-- Your Page Content Here -->
-            @yield('main-content')
-        </section><!-- /.content -->
-    </div><!-- /.content-wrapper -->
-
-    @include('cullive.layouts.partials.controlsidebar')
-
-    @include('cullive.layouts.partials.footer')
+  @include('cullive.layouts.partials.footer')
 
 </div><!-- ./wrapper -->
 </div>
 @section('scripts')
-    @include('cullive.layouts.partials.scripts')
+  @include('cullive.layouts.partials.scripts')
 @show
-
 </body>
 </html>

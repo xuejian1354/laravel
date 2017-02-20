@@ -25,7 +25,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/home', function () {
         return redirect()->route('web.dashboard');
     });
-    
+
+    Route::post('/dashboard/{childreq}', 'HomeController@contentreq');
+
     Route::get('/landplanting/{childreq}', 'ChildCulliveController@landplanting');
     Route::get('/devgardening/{childreq}', 'ChildCulliveController@devgardening');
     Route::get('/farmbreeding/{childreq}', 'ChildCulliveController@farmbreeding');

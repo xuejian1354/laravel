@@ -210,7 +210,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="c">
         <div class="container">
             <p>
-                <strong>Copyright @ 2017 <a href="#">cullive.com</a>.</strong> </a>
+              <strong>Copyright &copy; 2017 <a href="{{ asset('http://cullive.com') }}" target="_blank">NanJing LongYuan Innovation Space Co.,Ltd</a>.</strong> </a>
             </p>
         </div>
     </div>

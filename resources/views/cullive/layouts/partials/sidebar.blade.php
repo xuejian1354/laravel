@@ -18,31 +18,30 @@
             </div>
         @endif
 
-        <!-- search form (Optional) -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="{{ trans('adminlte_lang::message.search') }}..."/>
-              <span class="input-group-btn">
-                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-        </form>
-        <!-- /.search form -->
-
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="header">{{ trans('adminlte_lang::message.header') }}</li>
+            <li class="header">{{ trans('message.console') }}</li>
             <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="{{ url('home') }}"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.home') }}</span></a></li>
-            <li><a href="#"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.anotherlink') }}</span></a></li>
-            <li class="treeview">
-                <a href="#"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.multilevel') }}</span> <i class="fa fa-angle-left pull-right"></i></a>
-                <ul class="treeview-menu">
-                    <li><a href="#">{{ trans('adminlte_lang::message.linklevel2') }}</a></li>
-                    <li><a href="#">{{ trans('adminlte_lang::message.linklevel2') }}</a></li>
-                </ul>
+            @foreach($dashconfig['header'] as $header)
+            @if($header['action'] == $curreq)
+            <li id="menu_{{ $header['action'] }}" class="active">
+            @else
+            <li id="menu_{{ $header['action'] }}">
+            @endif
+              <a href="javascript:updateMenuView('menu_{{ $header['action'] }}', '{{ $header['link'] }}')">
+                <i class="{{ $header['img'] }}"></i>
+                <span>{{ $header['menu'] }}</span>
+              </a>
             </li>
+            @endforeach
         </ul><!-- /.sidebar-menu -->
     </section>
+    <script type="text/javascript">
+      function updateMenuView(myele, path) {
+    	  updateViewPost(path, 'contentwrap', '', '{{ csrf_token() }}');
+    	  $('.sidebar-menu li').removeClass('active');
+    	  $('#'+myele).addClass('active');
+      }
+    </script>
     <!-- /.sidebar -->
 </aside>
