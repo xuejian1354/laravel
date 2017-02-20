@@ -188,22 +188,23 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
             <div class="col-lg-7">
                 <h3>线上留言</h3>
                 <br>
-                <form role="form" action="#" method="post" enctype="plain">
+                <div>
+                    <input id="mtoken" type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="name1">{{ trans('message.yourname') }}</label>
-                        <input type="name" name="Name" class="form-control" id="name1" placeholder="{{ trans('message.yourname') }}">
+                        <input id="mname" type="name" name="Name" class="form-control" id="name1" placeholder="{{ trans('message.yourname') }}">
                     </div>
                     <div class="form-group">
                         <label for="email1">{{ trans('message.emailaddress') }}</label>
-                        <input type="email" name="Mail" class="form-control" id="email1" placeholder="{{ trans('message.emailaddress') }}">
+                        <input id="memail" type="email" name="Mail" class="form-control" id="email1" placeholder="{{ trans('message.emailaddress') }}">
                     </div>
                     <div class="form-group">
                         <label>{{ trans('message.yourtext') }}</label>
-                        <textarea class="form-control" name="Message" rows="3"></textarea>
+                        <textarea id="mmessage" class="form-control" name="Message" rows="3"></textarea>
                     </div>
                     <br>
-                    <button type="submit" class="btn btn-large btn-success">{{ trans('message.submit') }}</button>
-                </form>
+                    <button class="btn btn-large btn-success" onclick="javascript:uploadMsg();">{{ trans('message.submit') }}</button>
+                </div>
             </div>
         </div>
     </div>
@@ -221,6 +222,26 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{ asset('/js/app.js') }}"></script>
 <script src="{{ asset('/js/smoothscroll.js') }}"></script>
+<script src="{{ asset('/js/cullive.js') }}"></script>
+<script type="text/javascript">
+function uploadMsg() {
+  $.post('/upinfo',
+    { _token:$('#mtoken').val(), Name:$('#mname').val(), Mail:$('#memail').val(), Message:$('#mmessage').val() },
+	function(data, status) {
+      $('#mname').val('');
+	  $('#memail').val('');
+	  $('#mmessage').val('');
+
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else if (data == 'TRUE'){
+		  alert('提交成功');
+	  }
+    }
+  );
+}
+</script>
 </script>
 </body>
 </html>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use App\Message;
 
 /**
  * Class CulliveController
@@ -49,5 +50,23 @@ class CulliveController extends Controller
     public function aquaculture(Request $request, $req = null)
     {
         return view('cullive.aquaculture');
+    }
+
+    public function upinfo(Request $request) {
+
+        $name = $request->get('Name');
+        $email = $request->get('Mail');
+        $text = $request->get('Message');
+        if (trim($name) != '' && trim($email) != '' && trim($text) != '') {
+            Message::create([
+                'name' => $name,
+                'email' => $email,
+                'text' => $text
+            ]);
+
+            return 'TRUE';
+        }
+
+        return 'False';
     }
 }

@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('/upinfo', 'CulliveController@upinfo');
+
 Route::get('/landplanting', 'CulliveController@landplanting');
 Route::get('/devgardening', 'CulliveController@devgardening');
 Route::get('/farmbreeding', 'CulliveController@farmbreeding');
