@@ -15,6 +15,14 @@ class CreateAlarmsTable extends Migration
     {
         Schema::create('alarms', function (Blueprint $table) {
             $table->increments('id');
+			$table->string('sn')->unique();
+			$table->string('content')->nullable();
+			$table->string('devsn')->nullable();
+			$table->string('action')->nullable();
+			$table->string('thres')->nullable();
+			$table->string('val')->nullable();
+			$table->string('optnum')->nullable();
+			$table->boolean('enable');
             $table->timestamps();
         });
     }

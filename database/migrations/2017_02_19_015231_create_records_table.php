@@ -15,6 +15,12 @@ class CreateRecordsTable extends Migration
     {
         Schema::create('records', function (Blueprint $table) {
             $table->increments('id');
+			$table->string('sn')->unique();
+			$table->string('content')->nullable();
+			$table->string('usersn')->nullable();
+			$table->integer('action')->nullable();
+			$table->string('optnum')->nullable();
+			$table->string('data')->nullable();
             $table->timestamps();
         });
     }

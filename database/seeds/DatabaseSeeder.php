@@ -13,5 +13,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(GradesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
+        $this->call(ActionsTableSeeder::class);
+        $this->call(AreaTableSeeder::class);
+        $this->call(DevattrTableSeeder::class);
+        $this->call(DevtypeTableSeeder::class);
+        $this->call(DevoptTableSeeder::class);
+        //$this->call(DeviceTableSeeder::class);
+        $this->call(FuncmodelTableSeeder::class);
     }
 }

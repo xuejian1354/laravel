@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFuncmodelsTable extends Migration
+class CreateDevicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateFuncmodelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('funcmodels', function (Blueprint $table) {
-            $table->integer('id')->unique();
-			$table->string('name');
+        Schema::create('devices', function (Blueprint $table) {
+            $table->increments('id');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ class CreateFuncmodelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('funcmodels');
+        Schema::dropIfExists('devices');
     }
 }

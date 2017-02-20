@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFuncmodelsTable extends Migration
+class CreateDevattrsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateFuncmodelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('funcmodels', function (Blueprint $table) {
+        Schema::create('devattrs', function (Blueprint $table) {
             $table->integer('id')->unique();
 			$table->string('name');
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateFuncmodelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('funcmodels');
+        Schema::dropIfExists('devattrs');
     }
 }

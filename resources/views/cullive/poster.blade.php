@@ -93,7 +93,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/app-bg.png') }}" alt="">
+                    <img class="img-responsive" src="{{ asset('/img/landplanting2.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
@@ -117,7 +117,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/app-bg.png') }}" alt="">
+                    <img class="img-responsive" src="{{ asset('/img/devgardening.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
@@ -141,7 +141,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/app-bg.png') }}" alt="">
+                    <img class="img-responsive" src="{{ asset('/img/farmbreeding2.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
@@ -164,7 +164,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/app-bg.png') }}" alt="">
+                    <img class="img-responsive" src="{{ asset('/img/aquaculture.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>

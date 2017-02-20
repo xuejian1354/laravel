@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Auth;
 use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
+use App\Action;
+use App\Record;
 
 /**
  * Class RegisterController
@@ -84,5 +89,37 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
             'grade' => 3,
         ]);
+    }
+    
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+    
+        event(new Registered($user = $this->create($request->all())));
+    
+        $this->guard()->login($user);
+        
+        $this->addRegisterRecord('register');
+    
+        return $this->registered($request, $user)
+        ?: redirect($this->redirectPath());
+    }
+    
+    public function addRegisterRecord($method) {
+    
+        $user = Auth::user();
+    
+        if($method == 'register') {
+            $action = Action::where('content', '注册')->first();
+            $sn = Controller::getRandNum();
+            Record::create([
+                'sn' => $sn,
+                'content' => '注册 "'.$user->name.'" 到 "'.trans('message.appname').'"',
+                'usersn' => $user->sn,
+                'action' => $action->id,
+                'optnum' => Controller::getRandHex($user->email.$action->id),
+                'data' => null,
+            ]);
+        }
     }
 }

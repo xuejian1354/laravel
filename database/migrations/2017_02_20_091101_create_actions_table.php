@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFuncmodelsTable extends Migration
+class CreateActionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateFuncmodelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('funcmodels', function (Blueprint $table) {
+        Schema::create('actions', function (Blueprint $table) {
             $table->integer('id')->unique();
-			$table->string('name');
-            $table->timestamps();
+			$table->string('content');
+			$table->string('img')->nullable();
+			$table->timestamps();
         });
     }
 
@@ -27,6 +28,6 @@ class CreateFuncmodelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('funcmodels');
+        Schema::dropIfExists('actions');
     }
 }
