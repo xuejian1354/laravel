@@ -70,12 +70,6 @@ hr {
    Wrap Sections
    ========================================================================== */
 
-#headerwrap {
-    background-color: #34495e;
-	padding-top: 60px;
-    padding-bottom: 60px;	
-}
-
 #headerwrap h1, #plantwrap h1, #gardenwrap h1,
 #farmwrap h1, #aquawrap h1 {
     margin-top: 30px;
@@ -103,35 +97,50 @@ hr {
     color: white
 }
 
+#headerwrap {
+	background: #34495e;
+	margin-top: 60px;
+}
+
 #plantwrap {
-    background-color: #218868;
-	padding-top: 60px;
-    padding-bottom: 60px;	
+    background: #34495e no-repeat center;
+	background-image: url('/img/landplanting.png');
+	background-size: 100% 100%;
+	width: 100%;
+	height: 0;
+    padding-bottom: 66.67%;
 }
 
 #gardenwrap {
-    background-color: #53868B;
-	padding-top: 60px;
-    padding-bottom: 60px;	
+    background: #34495e no-repeat center;
+	background-image: url('/img/devgardening.png');
+	background-size: 100% 100%;
+	width: 100%;
+	height: 0;
+    padding-bottom: 66.67%;
 }
 
 #farmwrap {
-    background-color: #FFA07A;
-	padding-top: 60px;
-    padding-bottom: 60px;	
+    background: #34495e no-repeat center;
+	background-image: url('/img/farmbreeding2.png');
+	background-size: 100% 100%;
+	width: 100%;
+	height: 0;
+    padding-bottom: 66.67%;		
 }
 
 #aquawrap {
-    background-color: #CD4F39;
-	padding-top: 60px;
-    padding-bottom: 60px;	
+    background: #34495e no-repeat center;
+	background-image: url('/img/aquaculture.png');
+	background-size: 100% 100%;
+	width: 100%;
+	height: 0;
+    padding-bottom: 66.67%;	
 }
 
 #footerwrap {
     background-color: #2f2f2f;
     color: white;
-	padding-top: 60px;
-    padding-bottom: 60px;
     text-align: left;
 }
 

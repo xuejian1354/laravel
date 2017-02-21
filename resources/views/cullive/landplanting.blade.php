@@ -87,23 +87,20 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="basewrap">
         <div class="container">
             <div class="row centered">
-                <h1>{{ trans('adminlte_lang::message.designed') }}</h1>
+                <h1>LandPlanting</h1>
                 <br>
                 <br>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro01.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.community') }}</h3>
-                    <p>{{ trans('adminlte_lang::message.see') }} <a href="https://github.com/acacha/adminlte-laravel">{{ trans('adminlte_lang::message.githubproject') }}</a>, {{ trans('adminlte_lang::message.post') }} <a href="https://github.com/acacha/adminlte-laravel/issues">{{ trans('adminlte_lang::message.issues') }}</a> {{ trans('adminlte_lang::message.and') }} <a href="https://github.com/acacha/adminlte-laravel/pulls">{{ trans('adminlte_lang::message.pullrequests') }}</a></p>
+                <div class="col-lg-4 ltoggle" durl="/landplanting/plantctrl">
+                    <img src="{{ asset('/img/iplantctrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>PlantCtrl</h3>
                 </div>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro02.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.schedule') }}</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                <div class="col-lg-4 ltoggle" durl="/landplanting/plantmanage">
+                    <img src="{{ asset('/img/iplantmanage.png') }}" alt="" style="cursor: pointer;">
+                    <h3>PlantManage</h3>
                 </div>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro03.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.monitoring') }}</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                <div class="col-lg-4 ltoggle" durl="/landplanting/plantservice">
+                    <img src="{{ asset('/img/iplantservice.png') }}" alt="" style="cursor: pointer;">
+                    <h3>PlantService</h3>
                 </div>
             </div>
             <br>

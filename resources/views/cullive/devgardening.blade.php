@@ -98,24 +98,31 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="basewrap">
         <div class="container">
             <div class="row centered">
-                <h1>{{ trans('adminlte_lang::message.designed') }}</h1>
+                <h1>Devgardening</h1>
                 <br>
                 <br>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro01.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.community') }}</h3>
-                    <p>{{ trans('adminlte_lang::message.see') }} <a href="https://github.com/acacha/adminlte-laravel">{{ trans('adminlte_lang::message.githubproject') }}</a>, {{ trans('adminlte_lang::message.post') }} <a href="https://github.com/acacha/adminlte-laravel/issues">{{ trans('adminlte_lang::message.issues') }}</a> {{ trans('adminlte_lang::message.and') }} <a href="https://github.com/acacha/adminlte-laravel/pulls">{{ trans('adminlte_lang::message.pullrequests') }}</a></p>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-2 ltoggle" durl="{{ trans('message.lkgreenhousectrl') }}">
+                    <img src="{{ asset('/img/igreenhousectrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>GreenhouseCtrl</h3>
                 </div>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro02.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.schedule') }}</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                <div class="col-lg-2 ltoggle" durl="{{ trans('message.lkseedctrl') }}">
+                    <img src="{{ asset('/img/iseedctrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>SeedCtrl</h3>
                 </div>
-                <div class="col-lg-4">
-                    <img src="{{ asset('/img/intro03.png') }}" alt="">
-                    <h3>{{ trans('adminlte_lang::message.monitoring') }}</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                <div class="col-lg-2 ltoggle" durl="{{ trans('message.lkproductionctrl') }}">
+                    <img src="{{ asset('/img/iproductionctrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>ProductionCtrl</h3>
                 </div>
+                <div class="col-lg-2 ltoggle" durl="{{ trans('message.lkqualityctrl') }}">
+                    <img src="{{ asset('/img/iqualityctrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>QualityCtrl</h3>
+                </div>
+                <div class="col-lg-2 ltoggle" durl="{{ trans('message.lkbusinessctrl') }}">
+                    <img src="{{ asset('/img/ibusinessctrl.png') }}" alt="" style="cursor: pointer;">
+                    <h3>BusinessCtrl</h3>
+                </div>
+                <div class="col-lg-1"></div>
             </div>
             <br>
             <hr>

@@ -80,9 +80,9 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 </div>
             </div>
         </div> <!--/ .container -->
-    <section id="landplanting" name="landplanting"></section>
     </div><!--/ #headerwrap -->
 
+    <section id="landplanting" name="landplanting"></section>
     <!-- PLANT WRAP -->
     <div id="plantwrap">
         <div class="container">
@@ -90,23 +90,20 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <div class="col-lg-2">
                     <h5>大田种植</h5>
                     <p>数字农业建设试点</p>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/landplanting2.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow2.png') }}">
                     <h5>机械种植</h5>
                     <p>精准定位，信息化一键管理，公共服务系统</p>
                     <h3><a href="/landplanting" class="btn btn-lg btn-success">进 入 . . .</a></h3>
                 </div>
             </div>
         </div> <!--/ .container -->
-    <section id="devgardening" name="devgardening"></section>
     </div><!--/ #plantwrap -->
 
+    <section id="devgardening" name="devgardening"></section>
     <!-- GARDEN WRAP -->
     <div id="gardenwrap">
         <div class="container">
@@ -114,23 +111,20 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <div class="col-lg-2">
                     <h5>设施农业</h5>
                     <p>数字化管理</p>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/devgardening.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow2.png') }}">
                     <h5>工厂化监控平台</h5>
                     <p>温室大棚监控系统，工厂化育苗，生产过程管理，生产质量管理，水肥一体化</p>
                     <h3><a href="/devgardening" class="btn btn-lg btn-success">进 入 . . .</a></h3>
                 </div>
             </div>
         </div> <!--/ .container -->
-    <section id="farmbreeding" name="farmbreeding"></section>
     </div><!--/ #gardenwrap -->
 
+    <section id="farmbreeding" name="farmbreeding"></section>
     <!-- FARM WRAP -->
     <div id="farmwrap">
         <div class="container">
@@ -138,37 +132,31 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <div class="col-lg-2">
                     <h5>畜禽养殖</h5>
                     <p>自动化控制</p>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/farmbreeding2.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow2.png') }}">
                     <h5>智能养猪系统</h5>
                     <p>数字化精准喂料系统，分级管理，无害化粪污处理</p>
                     <h3><a href="/farmbreeding" class="btn btn-lg btn-success">进 入 . . .</a></h3>
                 </div>
             </div>
         </div><!--/ .container -->
-    <section id="aquaculture" name="aquaculture"></section>
     </div><!--/ #farmwrap -->
 
+    <section id="aquaculture" name="aquaculture"></section>
     <div id="aquawrap">
         <div class="container">
             <div class="row centered">
                 <div class="col-lg-2">
                     <h5>水产养殖</h5>
                     <p>在线检测系统</p>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow1.png') }}">
                 </div>
                 <div class="col-lg-8">
-                    <img class="img-responsive" src="{{ asset('/img/aquaculture.png') }}" alt="">
                 </div>
                 <div class="col-lg-2">
                     <br>
-                    <img class="hidden-xs hidden-sm hidden-md" src="{{ asset('/img/arrow2.png') }}">
                     <h5>信息化养鱼</h5>
                     <p>综合管理保障系统，公共服务设施，远程视频检测</p>
                     <h3><a href="/aquaculture" class="btn btn-lg btn-success">进 入 . . .</a></h3>
