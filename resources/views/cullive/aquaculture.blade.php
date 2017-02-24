@@ -29,7 +29,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <li><a href="{{ trans('message.lkaquactrl') }}">{{ trans('message.aquactrl') }}</a></li>
                     <li><a href="{{ trans('message.lkaquamanage') }}">{{ trans('message.aquamanage') }}</a></li>
                     <li><a href="{{ trans('message.lkaquadetect') }}">{{ trans('message.aquadetect') }}</a></li>
-                    <li><a href="{{ trans('message.lkaquaservie') }}">{{ trans('message.aquaservie') }}</a></li>
+                    <li><a href="{{ trans('message.lkaquaservice') }}">{{ trans('message.aquaservice') }}</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (Auth::guest())
@@ -55,16 +55,16 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
         <!-- Wrapper for slides -->
         <div class="carousel-inner">
             <div class="item ltoggle active" durl="{{ trans('message.lkaquactrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/caquactrl.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkaquamanage') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/caquamanage.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkaquadetect') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/caquadetect.png') }}" alt="">
             </div>
-            <div class="item ltoggle" durl="{{ trans('message.lkaquaservie') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+            <div class="item ltoggle" durl="{{ trans('message.lkaquaservice') }}" align="center" style="cursor: pointer;">
+                <img src="{{ asset('/img/caquaservice.png') }}" alt="">
             </div>
         </div>
         <a class="left carousel-control" href="#carousel-base" role="button" data-slide="prev">
@@ -97,7 +97,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                     <img src="{{ asset('/img/iaquadetect.png') }}" alt="" style="cursor: pointer;">
                     <h3>AquaDetect</h3>
                 </div>
-                <div class="col-lg-3 ltoggle" durl="{{ trans('message.lkaquaservie') }}">
+                <div class="col-lg-3 ltoggle" durl="{{ trans('message.lkaquaservice') }}">
                     <img src="{{ asset('/img/iaquaservice.png') }}" alt="" style="cursor: pointer;">
                     <h3>AquaService</h3>
                 </div>
@@ -107,7 +107,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
         </div> <!--/ .container -->
     </div><!--/ #basewrap -->
 </div>
-section('scripts')
+@section('scripts')
   @include('cullive.layouts.partials.scripts')
 @show
 <script>

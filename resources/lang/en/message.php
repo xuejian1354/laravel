@@ -48,7 +48,7 @@ return [
     'aquactrl'      => '水产监控',
     'aquamanage'    => '生产管理',
     'aquadetect'    => '保障系统',
-    'aquaservie'    => '公共服务',
+    'aquaservice'    => '公共服务',
     
     'lkplantctrl'     => '/landplanting/plantctrl',
     'lkplantmanage'   => '/landplanting/plantmanage',
@@ -66,5 +66,5 @@ return [
     'lkaquactrl'      => '/aquaculture/aquactrl',
     'lkaquamanage'    => '/aquaculture/aquamanage',
     'lkaquadetect'    => '/aquaculture/aquadetect',
-    'lkaquaservie'    => '/aquaculture/aquaservie',
+    'lkaquaservice'    => '/aquaculture/aquaservice',
 ];

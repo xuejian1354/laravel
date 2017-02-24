@@ -35,7 +35,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
                 <ul class="nav navbar-nav navbar-right">
                     @if (Auth::guest())
                         <li><a role="button" data-target="#loginOptModal" data-toggle="modal">{{ trans('message.login') }}</a></li>
-                        <li><a href="{{ url('/register') }}">{{ trans('message.register') }}</a></li>
+                        <li><a role="button" data-target="#registerOptModal" data-toggle="modal">{{ trans('message.register') }}</a></li>
                     @else
                         <li><a href="/home">{{ Auth::user()->name }}</a></li>
                     @endif
@@ -187,8 +187,9 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 </div>
 
 @include('cullive.auth.login')
+@include('cullive.auth.register')
 
-section('scripts')
+@section('scripts')
   @include('cullive.layouts.partials.scripts')
 @show
 

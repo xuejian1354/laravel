@@ -72,7 +72,7 @@ class ChildCulliveController extends CulliveController
         case 'aquactrl':
         case 'aquamanage':
         case 'aquadetect':
-        case 'aquaservie':
+        case 'aquaservice':
             return view('cullive.aquaculture.'.$childreq);
         }
 

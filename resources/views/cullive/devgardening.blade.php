@@ -57,19 +57,19 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
         <!-- Wrapper for slides -->
         <div class="carousel-inner">
             <div class="item ltoggle active" durl="{{ trans('message.lkgreenhousectrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/cgreenhousectrl.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkseedctrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/cseedctrl.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkproductionctrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/cproductionctrl.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkqualityctrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/cqualityctrl.png') }}" alt="">
             </div>
             <div class="item ltoggle" durl="{{ trans('message.lkbusinessctrl') }}" align="center" style="cursor: pointer;">
-                <img src="{{ asset('/img/item-02.png') }}" alt="">
+                <img src="{{ asset('/img/cbusinessctrl.png') }}" alt="">
             </div>
         </div>
         <a class="left carousel-control" href="#carousel-base" role="button" data-slide="prev">
@@ -118,7 +118,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
         </div> <!--/ .container -->
     </div><!--/ #basewrap -->
 </div>
-section('scripts')
+@section('scripts')
   @include('cullive.layouts.partials.scripts')
 @show
 <script>
