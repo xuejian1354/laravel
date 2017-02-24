@@ -1,0 +1,1 @@
+@extends('cullive.layouts.app')
