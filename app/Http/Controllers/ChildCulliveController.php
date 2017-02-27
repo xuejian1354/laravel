@@ -29,53 +29,66 @@ class ChildCulliveController extends CulliveController
     public function landplanting(Request $request, $childreq = null)
     {
         switch ($childreq) {
-        case 'plantctrl':
-        case 'plantmanage':
         case 'plantservice':
-            return view('cullive.landplanting.'.$childreq);
+            $this->slideto++;
+        case 'plantmanage':
+            $this->slideto++;
+        case 'plantctrl':
+            break;
         }
 
-        return view('cullive.landplanting');
+        return parent::landplanting($request, $childreq);
     }
 
     public function devgardening(Request $request, $childreq = null)
     {
         switch ($childreq) {
-        case 'greenhousectrl':
-        case 'seedctrl':
-        case 'productionctrl':
-        case 'qualityctrl':
         case 'businessctrl':
-            return view('cullive.devgardening.'.$childreq);
+            $this->slideto++;
+        case 'qualityctrl':
+            $this->slideto++;
+        case 'productionctrl':
+            $this->slideto++;
+        case 'seedctrl':
+            $this->slideto++;
+        case 'greenhousectrl':
+            break;
         }
 
-        return view('cullive.devgardening');
+        return parent::devgardening($request, $childreq);
     }
 
     public function farmbreeding(Request $request, $childreq = null)
     {
         switch ($childreq) {
-        case 'barctrl':
-        case 'feedctrl':
-        case 'eggctrl':
-        case 'milkctrl':
         case 'dungctrl':
-            return view('cullive.farmbreeding.'.$childreq);
+            $this->slideto++;
+        case 'milkctrl':
+            $this->slideto++;
+        case 'eggctrl':
+            $this->slideto++;
+        case 'feedctrl':
+            $this->slideto++;
+        case 'barctrl':
+            break;
         }
 
-        return view('cullive.farmbreeding');
+        return parent::farmbreeding($request, $childreq);
     }
 
     public function aquaculture(Request $request, $childreq = null)
     {
         switch ($childreq) {
-        case 'aquactrl':
-        case 'aquamanage':
-        case 'aquadetect':
         case 'aquaservice':
-            return view('cullive.aquaculture.'.$childreq);
+            $this->slideto++;
+        case 'aquadetect':
+            $this->slideto++;
+        case 'aquamanage':
+            $this->slideto++;
+        case 'aquactrl':
+            break;
         }
 
-        return view('cullive.aquaculture');
+        return parent::aquaculture($request, $childreq);
     }
 }

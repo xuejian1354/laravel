@@ -12,6 +12,8 @@ use App\Message;
  */
 class CulliveController extends Controller
 {
+    protected $slideto;
+
     /**
      * Create a new controller instance.
      *
@@ -19,6 +21,7 @@ class CulliveController extends Controller
      */
     public function __construct()
     {
+        $this->slideto = 0;
         //$this->middleware('auth');
     }
 
@@ -32,24 +35,45 @@ class CulliveController extends Controller
         return view('cullive.base');
     }
     
-    public function landplanting(Request $request, $req = null)
-    {   
-        return view('cullive.landplanting');
+    public function landplanting(Request $request, $childreq = null)
+    {
+        if ($childreq) {
+            return view('cullive.landplanting.'.$childreq)
+                    ->with('slideto', $this->slideto);
+        }
+
+        return view('cullive.landplanting')
+                ->with('slideto', $this->slideto);
     }
     
-    public function devgardening(Request $request, $req = null)
+    public function devgardening(Request $request, $childreq = null)
     {
-        return view('cullive.devgardening');
+        if ($childreq) {
+            return view('cullive.devgardening.'.$childreq)
+                    ->with('slideto', $this->slideto);
+        }
+        return view('cullive.devgardening')
+                ->with('slideto', $this->slideto);
     }
     
-    public function farmbreeding(Request $request, $req = null)
+    public function farmbreeding(Request $request, $childreq = null)
     {
-        return view('cullive.farmbreeding');
+        if ($childreq) {
+            return view('cullive.farmbreeding.'.$childreq)
+                    ->with('slideto', $this->slideto);
+        }
+        return view('cullive.farmbreeding')
+                ->with('slideto', $this->slideto);
     }
     
-    public function aquaculture(Request $request, $req = null)
+    public function aquaculture(Request $request, $childreq = null)
     {
-        return view('cullive.aquaculture');
+        if ($childreq) {
+            return view('cullive.aquaculture.'.$childreq)
+                    ->with('slideto', $this->slideto);
+        }
+        return view('cullive.aquaculture')
+                ->with('slideto', $this->slideto);
     }
 
     public function upinfo(Request $request) {

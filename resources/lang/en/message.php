@@ -19,7 +19,7 @@ return [
 
     'home'          => '首页',
     'landplanting'  => '大田种植',
-    'devgardening'  => '设施园艺',
+    'devgardening'  => '设施农业',
     'farmbreeding'  => '畜禽养殖',
     'aquaculture'   => '水产养殖',
 

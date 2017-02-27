@@ -126,7 +126,9 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     $('.carousel').carousel({
         interval: 3500
     })
-    
+
+    $('.carousel').carousel({{ $slideto }})
+
     $('.ltoggle').click(function () {
         $durl = $(this).attr('durl');
         location.href = $durl;
