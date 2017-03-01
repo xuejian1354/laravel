@@ -2,10 +2,5 @@
 <!-- Main content -->
 <section class="content">
   <!-- Your Page Content Here -->
-  @section('main-content')
-  <div class="container-fluid spark-screen">
-    <div class="row">
-    </div>
-  </div>
-  @show
+  @include('cullive.layouts.content.'.$curreq)
 </section><!-- /.content -->

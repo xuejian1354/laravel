@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
-use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Auth\Events\Registered;
-use App\Action;
-use App\Record;
+use App\Model\User;
+use App\Model\Action;
+use App\Model\Record;
+use App\Model\Ctrlrecord;
 
 class RegisterController extends Controller
 {
@@ -97,7 +98,7 @@ class RegisterController extends Controller
         if($method == 'register') {
             $action = Action::where('content', '注册')->first();
             $sn = Controller::getRandNum();
-            Record::create([
+            Ctrlrecord::create([
                 'sn' => $sn,
                 'content' => '注册 "'.$user->name.'" 到 "'.trans('message.appname').'"',
                 'usersn' => $user->sn,
@@ -105,6 +106,10 @@ class RegisterController extends Controller
                 'optnum' => Controller::getRandHex($user->email.$action->id),
                 'data' => null,
             ]);
+
+            if(Globalval::getVal('record_support') == true) {
+                Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'register']);
+            }
         }
     }
 }

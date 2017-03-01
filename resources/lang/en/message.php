@@ -14,7 +14,7 @@ return [
     */
 
     'appname'       => 'Cullive',
-    'console'       => '智能农业监控管理平台',
+    'console'       => '数字农业监控管理平台',
     'description'   => 'Digital Agriculture Control & Detect Platform',
 
     'home'          => '首页',

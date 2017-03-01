@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Devopt;
+use App\Model\Devopt;
 use App\Http\Controllers\Controller;
 
 class DevoptTableSeeder extends Seeder

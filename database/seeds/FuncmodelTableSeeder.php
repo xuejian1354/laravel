@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Funcmodel;
+use App\Model\Funcmodel;
 
 class FuncmodelTableSeeder extends Seeder
 {

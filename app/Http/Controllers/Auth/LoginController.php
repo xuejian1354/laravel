@@ -6,8 +6,10 @@ use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use App\Action;
-use App\Record;
+use App\Model\Action;
+use App\Model\Record;
+use App\Model\Ctrlrecord;
+use App\Model\Globalval;
 
 class LoginController extends Controller
 {
@@ -63,7 +65,7 @@ class LoginController extends Controller
         if($method == 'login') {
             $action = Action::where('content', '登录')->first();
             $sn = Controller::getRandNum();
-            Record::create([
+            Ctrlrecord::create([
                 'sn' => $sn,
                 'content' => '"'.$user->name.'" 登录到 "'.trans('message.appname').'"',
                 'usersn' => $user->sn,
@@ -71,11 +73,15 @@ class LoginController extends Controller
                 'optnum' => Controller::getRandHex($user->email.$action->id),
                 'data' => null,
             ]);
+
+            if(Globalval::getVal('record_support') == true) {
+                Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'login']);
+            }
         }
         elseif($method == 'logout') {
             $action = Action::where('content', '退出')->first();
             $sn = Controller::getRandNum();
-            Record::create([
+            Ctrlrecord::create([
                 'sn' => $sn,
                 'content' => '"'.$user->name.'" 从 "'.trans('message.appname').'" 退出',
                 'usersn' => $user->sn,
@@ -83,6 +89,10 @@ class LoginController extends Controller
                 'optnum' => Controller::getRandHex($user->email.$action->id),
                 'data' => null,
             ]);
+
+            if(Globalval::getVal('record_support') == true) {
+                Record::create(['sn' => $sn, 'type' => 'user', 'data' => 'logout']);
+            }
         }
     }
 }

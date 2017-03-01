@@ -1,0 +1,51 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:  loongsky
+# Required-Start: $all
+# Required-Stop: $all
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: Start daemon at boot time
+# Description:  Enable service provided by daemon.
+### END INIT INFO
+# chkconfig:2345 10 02
+# description: Forever for Node.js
+
+HPATH=/home/cullive/laravel/nodejs
+
+DEAMON=$HPATH/wsservice.js
+LOG=/tmp/wsservice-forever.log
+ELOG=/tmp/wsservice-err.log
+PID=/tmp/wsservice.pid
+
+export PATH=$PATH:/usr/local/bin
+export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+ 
+ 
+node=node
+forever=forever
+ 
+case "$1" in
+ start)
+  $forever start -l $LOG -e $ELOG --pidFile $PID -a $DEAMON
+  ;;
+ stop)
+  $forever stop --pidFile $PID $DEAMON
+  ;;
+ stopall)
+  $forever stopall --pidFile $PID
+  ;;
+ restartall)
+  $forever restartall --pidFile $PID
+  ;;
+ reload|restart)
+  $forever restart -l $LOG -e $ELOG --pidFile $PID -a $DEAMON
+  ;;
+ list)
+  $forever list
+  ;;
+ *)
+  echo "Usage: /etc/init.d/wsservice {start|stop|restart|reload|stopall|restartall|list}"
+  exit 1
+  ;;
+esac

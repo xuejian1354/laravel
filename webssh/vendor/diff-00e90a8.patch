@@ -1,0 +1,190 @@
+diff --git a/handlers.py b/handlers.py
+index 1d2d727..1e966e8 100644
+--- a/handlers.py
++++ b/handlers.py
+@@ -15,6 +15,10 @@ class IndexHandler(tornado.web.RequestHandler):
+     def get(self):
+         self.render("index.html")
+ 
++class TerminalHandler(tornado.web.RequestHandler):
++
++    def get(self):
++        self.render("terminal.html")
+ 
+ class WSHandler(tornado.websocket.WebSocketHandler):
+ 
+@@ -51,12 +55,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
+         bridge = self.get_client()
+         client_data = ClientData(message)
+         if self._is_init_data(client_data):
+-            if self._check_init_param(client_data.data):
++            #if self._check_init_param(client_data.data):
+                 bridge.open(client_data.data)
+                 logging.info('connection established from: %s' % self._id())
+-            else:
+-                self.remove_client()
+-                logging.warning('init param invalid: %s' % client_data.data)
++            #else:
++                #self.remove_client()
++                #logging.warning('init param invalid: %s' % client_data.data)
+         else:
+             if bridge:
+                 bridge.trans_forward(client_data.data)
+diff --git a/main.py b/main.py
+index 6de25e7..d670967 100644
+--- a/main.py
++++ b/main.py
+@@ -1,4 +1,5 @@
+ __author__ = 'xsank'
++__editor__ = 'xuejian1354'
+ 
+ import os.path
+ 
+@@ -35,7 +36,7 @@ Welcome to the webssh!
+ |__/|__/\___/_.___/____/____/_/ /_/
+ 
+ Webssh now start~
+-Please visit the localhost:9257 from the explorer~
++Please visit the localhost:9527 from the explorer~
+     '''
+ 
+ 
+diff --git a/static/css/main.css b/static/css/main.css
+index 13e6b30..7e87fa4 100644
+--- a/static/css/main.css
++++ b/static/css/main.css
+@@ -34,12 +34,13 @@
+ }
+ 
+ .terminal {
++    margin: 0 auto;
+     float: none;
+     border: #000 solid 5px;
+     font-family: "Monaco", "DejaVu Sans Mono", "Liberation Mono", monospace;
+     font-size: 11px;
+     color: #f0f0f0;
+     background: #000;
+-    width: 600px;
++    width: 800px;
+     box-shadow: rgba(0, 0, 0, 0.8) 2px 2px 20px;
+ }
+\ No newline at end of file
+diff --git a/static/js/formvalid.js b/static/js/formvalid.js
+index 1f0e8a9..2dca15c 100644
+--- a/static/js/formvalid.js
++++ b/static/js/formvalid.js
+@@ -22,7 +22,7 @@ $.fn.extend({
+ 			"number" : /^\d+$/,
+ 			"int" : /^[0-9]{1,30}$/,
+ 			"double" : /^[-\+]?\d+(\.\d+)?$/,
+-			"username" : /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/,
++			"username" : /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){1,19}$/,
+ 			"password" : /^[\w\W]{6,20}$/,
+ 			"safe" : />|<|,|\[|\]|\{|\}|\?|\/|\+|=|\||\'|\\|\"|:|;|\~|\!|\@|\#|\*|\$|\%|\^|\&|\(|\)|`/i,
+ 			"dbc" : /[ａ-ｚＡ-Ｚ０-９！＠＃￥％＾＆＊（）＿＋｛｝［］｜：＂＇；．，／？＜＞｀～　]/,
+@@ -61,7 +61,7 @@ $.fn.extend({
+ 			"number" : "only number welcomed",
+ 			"int" : "only integer welcomed",
+ 			"double" : "only float welcomed",
+-			"username" :"invalid username format,4-20 characters",
++			"username" :"invalid username format,2-20 characters",
+ 			"password" : "invalid password format,6-20 characters",
+ 			"safe" : "forbidden special characters",
+ 			"dbc" : "forbidden full width characters",
+diff --git a/templates/terminal.html b/templates/terminal.html
+new file mode 100644
+index 0000000..8ce5609
+--- /dev/null
++++ b/templates/terminal.html
+@@ -0,0 +1,78 @@
++<!DOCTYPE html>
++<html>
++<head lang="en">
++    <meta charset="UTF-8">
++    <title>webssh</title>
++    <link rel='shortcut icon' type='image/x-icon' href='static/image/favicon.ico'/>
++    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
++    <link href="static/css/tooltip.css" rel="stylesheet" type="text/css"/>
++    <link href="static/css/main.css" rel="stylesheet" type="text/css"/>
++</head>
++<body>
++<div id="main" align="center">
++
++<header id="head" class="aside">Login SSH</header>
++    <form id="form" name="form" class="pure-form pure-form-stacked">
++        <fieldset>
++            <div class="pure-item">
++                <label for="username">Username</label>
++                <input id="username" name="username" type="text" placeholder="Username">
++            </div>
++            <div class="pure-item">
++                <label for="password">Password</label>
++                <input id="password" name="password" type="password" placeholder="Password">
++            </div>
++            <button type="button" class="pure-button pure-button-primary" onclick="connect()">Connect</button>
++        </fieldset>
++    </form>
++</div>
++<script src="http://cdn.bootcss.com/jquery/2.1.2/jquery.min.js"></script>
++<script src="http://apps.bdimg.com/libs/term.js/0.0.2/term.js"></script>
++<script src="static/js/ws.js"></script>
++<script src="static/js/formvalid.js"></script>
++<script src="static/js/main.js"></script>
++<script type="application/javascript">
++function openHostTerminal(options) {
++    var client = new WSSHClient();
++    var term = new Terminal({cols: 95, rows: 40, screenKeys: true, useStyle:true});
++    term.on('data', function (data) {
++        client.sendClientData(data);
++    });
++    term.open();
++    $('.terminal').detach().replaceAll('#main');
++    term.write('Connecting...');
++    client.connect({
++        onError: function (error) {
++            term.write('Error: ' + error + '\r\n');
++            console.debug('error happened');
++        },
++        onConnect: function () {
++            client.sendInitData(options);
++            client.sendClientData('\r');
++            console.debug('connection established');
++        },
++        onClose: function () {
++            term.write("\rconnection closed")
++            console.debug('connection reset by peer');
++        },
++        onData: function (data) {
++            term.write(data);
++            console.debug('get data:' + data);
++        }
++    })
++}
++
++function connect() {
++
++    var options = {
++        host: window.location.hostname,
++        port: '22',
++        username: $("#username").val(),
++        password: $("#password").val()
++    };
++
++    openHostTerminal(options);
++}
++</script>
++</body>
++</html>
+\ No newline at end of file
+diff --git a/urls.py b/urls.py
+index fce7fd4..9fe9802 100644
+--- a/urls.py
++++ b/urls.py
+@@ -5,5 +5,6 @@ from handlers import *
+ 
+ handlers = [
+     (r"/", IndexHandler),
+-    (r"/ws", WSHandler)
++    (r"/ws", WSHandler),
++    (r"/terminal", TerminalHandler)
+ ]

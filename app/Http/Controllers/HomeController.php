@@ -1,15 +1,11 @@
 <?php
 
-/*
- * Taken from
- * https://github.com/laravel/framework/blob/5.3/src/Illuminate/Auth/Console/stubs/make/controllers/HomeController.stub
- */
-
 namespace App\Http\Controllers;
 
 use Auth;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use App\User;
 
 /**
  * Class HomeController
@@ -36,18 +32,33 @@ class HomeController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('cullive.dashboard')
-                ->with('user', Auth::user())
-                ->with('curreq', $this->curreq)
-                ->with('dashconfig', $this->dashconfig);
+        $mixdata = User::getUserData('userlist', 1);
+        $mixdata['request'] = $request;
+
+        return $this->getViewWithCommon('cullive.dashboard', $mixdata);
     }
 
     public function contentreq(Request $request, $childreq = null)
     {
         $this->curreq = $childreq;
-        return view('cullive.layouts.content')
+        $mixdata = [];
+
+        //dd($childreq);
+        switch ($this->curreq) {
+        case 'usermanage':
+            $mixdata['request'] = $request;
+            $mixdata = array_merge($mixdata, User::getUserData('userlist', 1));
+            break;
+        }
+
+        return $this->getViewWithCommon('cullive.layouts.content', $mixdata);
+    }
+
+    public function getViewWithCommon($view = null, $mixdata = [], $data = [], $mergeData = []) {
+        return view($view, $data, $mergeData)
+                ->with($mixdata)
                 ->with('user', Auth::user())
                 ->with('curreq', $this->curreq)
                 ->with('dashconfig', $this->dashconfig);

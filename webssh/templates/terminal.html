@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>webssh</title>
+    <link rel='shortcut icon' type='image/x-icon' href='static/image/favicon.ico'/>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link href="static/css/tooltip.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/main.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="main" align="center">
+
+<header id="head" class="aside">Login SSH</header>
+    <form id="form" name="form" class="pure-form pure-form-stacked">
+        <fieldset>
+            <div class="pure-item">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="Username">
+            </div>
+            <div class="pure-item">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Password">
+            </div>
+            <button type="button" class="pure-button pure-button-primary" onclick="connect()">Connect</button>
+        </fieldset>
+    </form>
+</div>
+<script src="http://cdn.bootcss.com/jquery/2.1.2/jquery.min.js"></script>
+<script src="http://apps.bdimg.com/libs/term.js/0.0.2/term.js"></script>
+<script src="static/js/ws.js"></script>
+<script src="static/js/formvalid.js"></script>
+<script src="static/js/main.js"></script>
+<script type="application/javascript">
+function openHostTerminal(options) {
+    var client = new WSSHClient();
+    var term = new Terminal({cols: 95, rows: 40, screenKeys: true, useStyle:true});
+    term.on('data', function (data) {
+        client.sendClientData(data);
+    });
+    term.open();
+    $('.terminal').detach().replaceAll('#main');
+    term.write('Connecting...');
+    client.connect({
+        onError: function (error) {
+            term.write('Error: ' + error + '\r\n');
+            console.debug('error happened');
+        },
+        onConnect: function () {
+            client.sendInitData(options);
+            client.sendClientData('\r');
+            console.debug('connection established');
+        },
+        onClose: function () {
+            term.write("\rconnection closed")
+            console.debug('connection reset by peer');
+        },
+        onData: function (data) {
+            term.write(data);
+            console.debug('get data:' + data);
+        }
+    });
+}
+
+function connect() {
+
+    var options = {
+        host: window.location.hostname,
+        port: '22',
+        username: $("#username").val(),
+        password: $("#password").val()
+    };
+
+    openHostTerminal(options);
+}
+</script>
+</body>
+</html>

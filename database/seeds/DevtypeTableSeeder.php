@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Devtype;
+use App\Model\Devtype;
 
 class DevtypeTableSeeder extends Seeder
 {

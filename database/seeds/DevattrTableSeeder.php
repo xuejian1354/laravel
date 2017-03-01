@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Devattr;
+use App\Model\Devattr;
 
 class DevattrTableSeeder extends Seeder
 {
