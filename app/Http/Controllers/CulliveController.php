@@ -13,6 +13,7 @@ use App\Model\Message;
 class CulliveController extends Controller
 {
     protected $slideto;
+    protected $entrance;
 
     /**
      * Create a new controller instance.
@@ -22,7 +23,7 @@ class CulliveController extends Controller
     public function __construct()
     {
         $this->slideto = 0;
-        //$this->middleware('auth');
+        $this->entrance = config('cullive.entrance');
     }
 
     /**
@@ -32,47 +33,47 @@ class CulliveController extends Controller
      */
     public function index()
     {
-        return view('cullive.base');
+        return view($this->entrance.'.base');
     }
     
     public function landplanting(Request $request, $childreq = null)
     {
         if ($childreq) {
-            return view('cullive.landplanting.'.$childreq)
+            return view($this->entrance.'.landplanting.'.$childreq)
                     ->with('slideto', $this->slideto);
         }
 
-        return view('cullive.landplanting')
+        return view($this->entrance.'.landplanting')
                 ->with('slideto', $this->slideto);
     }
     
     public function devgardening(Request $request, $childreq = null)
     {
         if ($childreq) {
-            return view('cullive.devgardening.'.$childreq)
+            return view($this->entrance.'.devgardening.'.$childreq)
                     ->with('slideto', $this->slideto);
         }
-        return view('cullive.devgardening')
+        return view($this->entrance.'.devgardening')
                 ->with('slideto', $this->slideto);
     }
     
     public function farmbreeding(Request $request, $childreq = null)
     {
         if ($childreq) {
-            return view('cullive.farmbreeding.'.$childreq)
+            return view($this->entrance.'.farmbreeding.'.$childreq)
                     ->with('slideto', $this->slideto);
         }
-        return view('cullive.farmbreeding')
+        return view($this->entrance.'.farmbreeding')
                 ->with('slideto', $this->slideto);
     }
     
     public function aquaculture(Request $request, $childreq = null)
     {
         if ($childreq) {
-            return view('cullive.aquaculture.'.$childreq)
+            return view($this->entrance.'.aquaculture.'.$childreq)
                     ->with('slideto', $this->slideto);
         }
-        return view('cullive.aquaculture')
+        return view($this->entrance.'.aquaculture')
                 ->with('slideto', $this->slideto);
     }
 
@@ -92,5 +93,15 @@ class CulliveController extends Controller
         }
 
         return 'False';
+    }
+
+    public function mbhandler(Request $request) {
+        $reqs = explode('/', $request->path());
+
+        if($reqs[1] == 'mbenvdetect' && $reqs[2] == 'autoctrl') {
+            return redirect(config('cullivebefore.mainrouter'));
+        }
+
+        return view($this->entrance.'.'.$reqs[0]);
     }
 }

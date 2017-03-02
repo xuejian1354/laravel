@@ -35,6 +35,12 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/devgardening/{childreq}', 'ChildCulliveController@devgardening');
     Route::get('/farmbreeding/{childreq}', 'ChildCulliveController@farmbreeding');
     Route::get('/aquaculture/{childreq}', 'ChildCulliveController@aquaculture');
+
+    /*menubar*/
+    Route::get('/landplanting/mb{childreq}/{funcreq}/{opt?}', 'CulliveController@mbhandler');
+    Route::get('/devgardening/mb{childreq}/{funcreq}', 'CulliveController@mbhandler');
+    Route::get('/farmbreeding/mb{childreq}/{funcreq}', 'CulliveController@mbhandler');
+    Route::get('/aquaculture/mb{childreq}/{funcreq}', 'CulliveController@mbhandler');
 });
 
 Auth::routes();

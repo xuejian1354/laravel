@@ -1,0 +1,1 @@
+../../../public/menubar/farmbreeding.blade.php

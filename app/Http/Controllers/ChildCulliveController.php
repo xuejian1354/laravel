@@ -18,6 +18,7 @@ class ChildCulliveController extends CulliveController
      */
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth');
     }
 
