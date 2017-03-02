@@ -520,7 +520,7 @@ class DeviceController extends Controller
 	public static function getFFmpegRTMPList() {
 	    $rtlist = null;
 
-	    try {
+	    //try {
 		$rtlist = file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmp'),
 						false,
 						stream_context_create([
@@ -531,9 +531,9 @@ class DeviceController extends Controller
 								]
 						])
 				);
-	    } catch (\Exception $e) {
-	        return 'Caught exception: '.$e->getMessage().'\n';
-	    }
+	    //} catch (\Exception $e) {
+	        //return 'Caught exception: '.$e->getMessage().'\n';
+	    //}
 
 		return $rtlist;
 	}
@@ -541,7 +541,7 @@ class DeviceController extends Controller
 	public static function getFFmpegStorageList() {
 	    $stlist = null;
 
-	    try {
+	    //try {
 		$stlist = file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffstorage'),
 				false,
 				stream_context_create([
@@ -552,9 +552,9 @@ class DeviceController extends Controller
 						]
 				])
 		);
-		} catch (\Exception $e) {
-		    return 'Caught exception: '.$e->getMessage().'\n';
-		}
+		//} catch (\Exception $e) {
+		    //return 'Caught exception: '.$e->getMessage().'\n';
+		//}
 
 		return $stlist;
 	}

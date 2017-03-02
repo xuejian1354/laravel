@@ -4,9 +4,25 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 -->
 <html lang="en">
 <head>
-@section('htmlheader')
-  @include('cullive.layouts.partials.htmlheader')
-@show
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width">
+  <title>{{ trans('message.description') }}</title>
+  <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" type="image/x-icon">
+
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{{ asset('/adminlte/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('//cdn.bootcss.com/ionicons/2.0.1/css/ionicons.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/fullcalendar/fullcalendar.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/fullcalendar/fullcalendar.print.css') }}" media="print">
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/morris/morris.css') }}">
+  <link rel="stylesheet" href="{{ asset('/adminlte/plugins/bootstrap-slider/slider.css') }}">
+  <link rel="stylesheet" href="{{ asset('/adminlte/dist/css/AdminLTE.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('/adminlte/dist/css/skins/skin-blue.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('/css/main.css') }}">
 </head>
 
 <body data-spy="scroll" data-offset="0" data-target="#navigation">
@@ -76,13 +92,13 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="plantwrap">
         <div class="container">
             <div class="row centered">
-                <div class="col-md-offset-4 col-md-2" style="margin-top: 20%;">
-                    <h5>大田种植</h5>
-                    <p>数字农业建设试点</p>
+                <div class="col-md-offset-3 col-md-4" style="margin-top: 1%;">
+                    <h1>大田种植</h1>
+                    <h3>数字农业建设试点</h3>
                 </div>
-                <div class="col-md-offset-4 col-md-2" style="margin-top: 30%;">
+                <div class="col-md-offset-10 col-md-2" style="margin-top: 20%;">
                     <br>
-                    <h5>机械种植</h5>
+                    <h3>机械种植</h3>
                     <p>精准定位，信息化一键管理，公共服务系统</p>
                     <h3><a href="/landplanting" class="btn btn-lg btn-success">进 入 ...</a></h3>
                 </div>
@@ -95,13 +111,13 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="gardenwrap">
         <div class="container">
             <div class="row centered">
-                <div class="col-md-2" style="margin-top: 2%;">
-                    <h5>设施农业</h5>
-                    <p>数字化管理</p>
+                <div class="col-md-4" style="margin-top: 2%;">
+                    <h1>设施农业</h1>
+                    <h3>数字化管理</h3>
                 </div>
-                <div class="col-md-2" style="margin-top: 16%;">
+                <div class="col-md-3" style="margin-top: 20%;">
                     <br>
-                    <h5>工厂化监控平台</h5>
+                    <h3>工厂化监控平台</h3>
                     <p>温室大棚监控系统，工厂化育苗，生产过程管理，生产质量管理，水肥一体化</p>
                     <h3><a href="/devgardening" class="btn btn-lg btn-success">进 入 ...</a></h3>
                 </div>
@@ -114,13 +130,13 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="farmwrap">
         <div class="container">
             <div class="row centered">
-                <div class="col-md-offset-5 col-md-2" style="margin-top: 5%;">
-                    <h5>畜禽养殖</h5>
-                    <p>自动化控制</p>
+                <div class="col-md-offset-5 col-md-4" style="margin-top: 5%;">
+                    <h1>畜禽养殖</h1>
+                    <h3>自动化控制</h3>
                 </div>
-                <div class="col-md-offset-3 col-md-2" style="margin-top: 30%;">
+                <div class="col-md-offset-9 col-md-3" style="margin-top: 30%;">
                     <br>
-                    <h5>智能养猪系统</h5>
+                    <h3>智能养猪系统</h3>
                     <p>数字化精准喂料系统，分级管理，无害化粪污处理</p>
                     <h3><a href="/farmbreeding" class="btn btn-lg btn-success">进 入 ...</a></h3>
                 </div>
@@ -132,15 +148,15 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     <div id="aquawrap">
         <div class="container">
             <div class="row centered">
-                <div class="col-md-3" style="margin-top: 35%;">
+                <div class="col-md-3" style="margin-top: 37%;">
                     <br>
-                    <h5>信息化养鱼</h5>
+                    <h3>信息化养鱼</h3>
                     <p>综合管理保障系统，公共服务设施，远程视频检测</p>
                     <h3><a href="/aquaculture" class="btn btn-lg btn-success">进 入 ...</a></h3>
                 </div>
-                <div class="col-md-offset-2 col-md-2" style="margin-top: 4%;">
-                    <h5>水产养殖</h5>
-                    <p>在线检测系统</p>
+                <div class="col-md-offset-1 col-md-4" style="margin-top: 4%;">
+                    <h1>水产养殖</h1>
+                    <h3>在线检测系统</h3>
                 </div>
             </div>
         </div><!-- / .container -->

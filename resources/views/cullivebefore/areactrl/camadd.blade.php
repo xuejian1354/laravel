@@ -26,7 +26,7 @@
         <td></td>
         <td>
           <button class="btn btn-success" onclick="javascript:addCameraToArea();" style="font-weight: bold;">添加</button>
-          <button class="btn btn-default" onclick="window.location.href='/areactrl/{{ $area->sn }}';" style="margin-left: 10px;">返回</button>
+          <button class="btn btn-default" onclick="window.location.href='{{ config('cullivebefore.mainrouter') }}/areactrl/{{ $area->sn }}';" style="margin-left: 10px;">返回</button>
         </td>
       </tr>
     </table>
@@ -38,7 +38,7 @@
 @section('conscript')
 <script>
 function addCameraToArea() {
-  $.post('/areactrl/{{ $area->sn }}/camadd', { _token:'{{ csrf_token() }}', camerasn: $('#selcamera').val() },
+  $.post("{{ config('cullivebefore.mainrouter') }}/areactrl/{{ $area->sn }}/camadd", { _token:'{{ csrf_token() }}', camerasn: $('#selcamera').val() },
     function(data, status) {
       if(status != 'success') {
 	    alert("Status: " + status);
@@ -54,4 +54,4 @@ function addCameraToArea() {
 </script>
 @endsection
 
-@extends('admin.dashboard')
+@extends(config('cullivebefore.mainrouter').'.admin.dashboard')

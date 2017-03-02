@@ -41,7 +41,7 @@
         <button onclick="javascript:licheckAll()" type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
         <div class="btn-group">
           <a href="javascript:delChoiceUser()" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></a>
-          <a href="/{{ $request->path() }}?page={{ $pagetag->getPage() }}" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
+          <a href="{{ config('cullivebefore.mainrouter') }}/{{ $request->path() }}?page={{ $pagetag->getPage() }}" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
         </div>
       </div>
       <div class="col-md-6">

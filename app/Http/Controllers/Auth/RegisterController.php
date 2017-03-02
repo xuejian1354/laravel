@@ -8,8 +8,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Auth\Events\Registered;
-use App\Model\User;
+use App\User;
 use App\Model\Action;
+use App\Model\Globalval;
 use App\Model\Record;
 use App\Model\Ctrlrecord;
 

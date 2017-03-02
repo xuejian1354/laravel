@@ -87,7 +87,7 @@ function delDevsCheck() {
 		return;
 	}
 
-	$.post('/alarminfo',
+	$.post('{{ config("cullivebefore.mainrouter") }}/alarminfo',
       { _token:'{{ csrf_token() }}', way:'msgdel', infos:JSON.stringify(achs) },
 	  function(data, status) {
 	    if(status != 'success') {
@@ -142,7 +142,7 @@ function checkAllAlarminfos() {
     });
 
     $("#add-new-event").click(function (e) {
-    	$.post('/'+'{{ $request->path() }}',
+    	$.post('{{ config("cullivebefore.mainrouter")."/".$request->path() }}',
     	  { _token:'{{ csrf_token() }}', 
       	    way:'msgadd', color:currColor, 
       	    content:$("#new-event").val() },
@@ -155,24 +155,6 @@ function checkAllAlarminfos() {
     		}
     	  }
     	);
-      /*e.preventDefault();
-      //Get value and make sure it is not null
-      var val = $("#new-event").val();
-      if (val.length == 0) {
-        return;
-      }
-
-      //Create events
-      var event = $("<div />");
-      event.css({"background-color": currColor, "border-color": currColor, "color": "#fff"}).addClass("external-event");
-      event.html(val);
-      $('#external-events').prepend(event); */
-
-      //Add draggable funtionality
-      //ini_events(event);
-
-      //Remove event from text input
-      //$("#new-event").val("");
     });
   });
 </script>

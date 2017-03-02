@@ -11,7 +11,7 @@
 @section('conscript')
 <script>
 function updateUserListPost(hid, pg) {
-  $.post('/'+'{{ $request->path() }}',
+  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}',
     { _token:'{{ csrf_token() }}', way:hid, page:pg },
 	function(data, status) {
 	  if(status != 'success') {
@@ -56,7 +56,7 @@ function delChoiceUser() {
 
   var arrStr = JSON.stringify(usersns);
 
-  $.post('/'+'{{ $request->path() }}',
+  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}',
     { _token:'{{ csrf_token() }}', way:'userdel', usersns:arrStr },
 	function(data, status) {
       if(status != 'success') {
@@ -69,7 +69,7 @@ function delChoiceUser() {
 }
 
 function activeForUser(sn) {
-  $.post('/'+'{{ $request->path() }}', 
+  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}', 
     { _token:'{{ csrf_token() }}', way:'useractive', usersn:sn },
     function(data, status) {
       if(status != 'success') {

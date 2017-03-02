@@ -30,7 +30,7 @@
         <td></td>
         <td>
           <button class="btn btn-success" onclick="javascript:addCameraToList();" style="font-weight: bold;">提交</button>
-          <button class="btn btn-default" onclick="window.location.href='/videoreal';" style="margin-left: 10px;">返回</button>
+          <button class="btn btn-default" onclick="window.location.href='{{ config('cullivebefore.mainrouter') }}/videoreal';" style="margin-left: 10px;">返回</button>
         </td>
       </tr>
     </table>
@@ -56,7 +56,7 @@ function addCameraToList() {
     return;
   }
 
-  $.post('/videoreal/camadd', { _token:'{{ csrf_token() }}', sn: sname, type: stype, url: surl },
+  $.post('{{ config("cullivebefore.mainrouter") }}/videoreal/camadd', { _token:'{{ csrf_token() }}', sn: sname, type: stype, url: surl },
     function(data, status) {
       if(status != 'success') {
 	    alert("Status: " + status);
@@ -72,4 +72,4 @@ function addCameraToList() {
 </script>
 @endsection
 
-@extends('admin.dashboard')
+@extends(config('cullivebefore.mainrouter').'.admin.dashboard')

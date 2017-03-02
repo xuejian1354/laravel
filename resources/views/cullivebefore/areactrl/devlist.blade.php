@@ -18,7 +18,7 @@
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
           <td>
             @if(App\Globalval::getVal('record_support') == true && $devices[$index]->attr == 1)
-            <a class="devsna" href="{{ '/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a>
+            <a class="devsna" href="{{ config('cullivebefore.mainrouter').'/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a>
             @else
             <a class="devsna">{{ $devices[$index]->sn }}</a>
             @endif
@@ -56,7 +56,7 @@
     @else
       <li>
     @endif
-        <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter').'/'.$request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>
     @for($index=$pagetag->start; $index < $pagetag->end; $index++)
       @if($pagetag->getPage() == $index)
@@ -64,7 +64,7 @@
       @else
       <li>
       @endif
-        <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
+        <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter').'/'.$request->path() }}', 'devlist{{ $listid }}', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
       </li>
     @endfor
     @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -72,7 +72,7 @@
     @else
       <li>
     @endif
-        <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter').'/'.$request->path() }}', 'devlist{{ $listid }}', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>
     </ul>
   @else

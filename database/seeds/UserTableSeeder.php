@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Model\User;
+use App\User;
 use App\Http\Controllers\Controller;
 
 class UserTableSeeder extends Seeder

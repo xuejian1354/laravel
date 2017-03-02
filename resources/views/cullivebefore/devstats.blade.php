@@ -46,7 +46,7 @@ function devAreaEdt(sn) {
 }
 
 function devEdtPost(sn, key, val) {
-  $.post('/devstats/device', {_token:'{{ csrf_token() }}', way:key, sn:sn, value:val},
+  $.post('{{ config("cullivebefore.mainrouter") }}/devstats/device', {_token:'{{ csrf_token() }}', way:key, sn:sn, value:val},
 	function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);
@@ -85,7 +85,7 @@ function devSettingPost(devsn = null) {
 
   var devstr = JSON.stringify(devsettings);
 
-  $.post('/devsetting', { _token:'{{ csrf_token() }}', devs:devstr }, function(data, status) {
+  $.post('{{ config("cullivebefore.mainrouter") }}/devsetting', { _token:'{{ csrf_token() }}', devs:devstr }, function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);
 	  }

@@ -40,7 +40,7 @@ return [
     'productionctrl'=> '生产管理',
     'qualityctrl'   => '质量管理',
     'businessctrl'  => '商品管理',
-    'barctrl'       => '圈栏管理',
+    'barctrl'       => '圈舍管理',
     'feedctrl'      => '自动喂料',
     'eggctrl'       => '自动集蛋',
     'milkctrl'      => '自动挤奶',

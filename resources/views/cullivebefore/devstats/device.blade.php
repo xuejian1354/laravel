@@ -181,7 +181,7 @@ function devDelPost() {
 }
 
 function devEdtPost(key, val) {
-  $.post('/'+'{{ $request->path() }}', {_token:'{{ csrf_token() }}', way:key, sn:'{{ $device->sn }}', value:val},
+  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}', {_token:'{{ csrf_token() }}', way:key, sn:'{{ $device->sn }}', value:val},
 	function(data, status) {
 	  if(status != 'success') {
 		alert("Status: " + status);
@@ -196,4 +196,4 @@ function devEdtPost(key, val) {
 </script>
 @endsection
 
-@extends('admin.dashboard')
+@extends(config('cullivebefore.mainrouter').'.admin.dashboard')

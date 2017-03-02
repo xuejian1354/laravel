@@ -63,7 +63,7 @@
       <div class="box-header with-border">
         <h3 class="box-title">视频</h3>
         <div class="box-tools pull-right">
-          <a id='vaddopt' href="/areactrl/{{ $area->sn }}/camadd" title="添加" type="button" class="btn btn-box-tool"><i class="fa fa-plus"></i></a>
+          <a id='vaddopt' href="{{ config('cullivebefore.mainrouter') }}/areactrl/{{ $area->sn }}/camadd" title="添加" type="button" class="btn btn-box-tool"><i class="fa fa-plus"></i></a>
         </div>
       </div>
       <!-- /.box-header -->

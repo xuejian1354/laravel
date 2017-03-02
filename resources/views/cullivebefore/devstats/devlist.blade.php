@@ -19,7 +19,7 @@
         @foreach($devices as $index => $device)
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td><a class="devsna" href="/devstats/device?sn={{ $device->sn }}">{{ $device->sn }}</a></td>
+          <td><a class="devsna" href="{{ config('cullivebefore.mainrouter') }}/devstats/device?sn={{ $device->sn }}">{{ $device->sn }}</a></td>
           <td>
             <i class="{{ $device->rel_type->img }}">
             @if(isset($device->name))
@@ -79,7 +79,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+          <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter') }}/{{ $request->path() }}', 'devlist', '{{ $pagetag->start-1 }}', '{{ csrf_token() }}')" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
       @for($index=$pagetag->start; $index < $pagetag->end; $index++)
         @if($pagetag->getPage() == $index)
@@ -87,7 +87,7 @@
         @else
         <li>
         @endif
-          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
+          <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter') }}/{{ $request->path() }}', 'devlist', '{{ $index }}', '{{ csrf_token() }}')">{{ $index }}</a>
         </li>
       @endfor
       @if($pagetag->end == $pagetag->getPageSize() + 1)
@@ -95,7 +95,7 @@
       @else
         <li>
       @endif
-          <a href="javascript:updateDevListPost('/{{ $request->path() }}', 'devlist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+          <a href="javascript:updateDevListPost('{{ config('cullivebefore.mainrouter') }}/{{ $request->path() }}', 'devlist', '{{ $pagetag->end }}', '{{ csrf_token() }}')" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
       </ul>
     @endif

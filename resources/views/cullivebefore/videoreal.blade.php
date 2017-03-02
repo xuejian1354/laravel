@@ -137,7 +137,7 @@ function videolistSetting() {
       videodev.push($(this).find('a').attr('id'));
     });
 
-    $.post('/videoreal/camattr', { _token:'{{ csrf_token() }}', sns:JSON.stringify(videodev) },
+    $.post('{{ config("cullivebefore.mainrouter") }}/videoreal/camattr', { _token:'{{ csrf_token() }}', sns:JSON.stringify(videodev) },
       function(data, status) {
         if(status != 'success') {
           alert("Status: " + status);
@@ -240,15 +240,15 @@ function videolistSetting() {
 
 function videoRecordListSetting(isset) {
   if(isset == 1) {
-    updateCamListPost('/videoreal', 'videolist', '0', '{{ csrf_token() }}');
+    updateCamListPost('{{ config("cullivebefore.mainrouter") }}/videoreal', 'videolist', '0', '{{ csrf_token() }}');
   }
   else {
-    updateVideoListPost('/videoreal', 'videolist', 'mp4', '0', '{{ csrf_token() }}')
+    updateVideoListPost('{{ config("cullivebefore.mainrouter") }}/videoreal', 'videolist', 'mp4', '0', '{{ csrf_token() }}')
   }
 }
 
 function edtCam(id) {
-  $.post('/videoreal/camedt', { _token:'{{ csrf_token() }}', sn:id, name:$('#'+id).val() },
+  $.post('{{ config("cullivebefore.mainrouter") }}/videoreal/camedt', { _token:'{{ csrf_token() }}', sn:id, name:$('#'+id).val() },
     function(data, status) {
       if(status != 'success') {
         alert("Status: " + status);
@@ -260,7 +260,7 @@ function edtCam(id) {
 
 function delCam(id) {
   if(confirm('是否删除该设备？')) {
-    $.post('/videoreal/camdel', { _token:'{{ csrf_token() }}', sn:id },
+    $.post('{{ config("cullivebefore.mainrouter") }}/videoreal/camdel', { _token:'{{ csrf_token() }}', sn:id },
       function(data, status) {
         if(status != 'success') {
           alert("Status: " + status);
@@ -289,7 +289,7 @@ function videoStreamCheck(action, id, check) {
     }
   }
 
-  $.post('/videoreal/camset',
+  $.post('{{ config("cullivebefore.mainrouter") }}/videoreal/camset',
     { _token:'{{ csrf_token() }}', action:action, sn:id, check:checkval },
     function(data, status) {
       if(status != 'success') {
