@@ -17,7 +17,7 @@
         <tr class="devtr">
           <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
           <td>
-            @if(App\Globalval::getVal('record_support') == true && $devices[$index]->attr == 1)
+            @if(App\Model\Globalval::getVal('record_support') == true && $devices[$index]->attr == 1)
             <a class="devsna" href="{{ config('cullivebefore.mainrouter').'/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a>
             @else
             <a class="devsna">{{ $devices[$index]->sn }}</a>
@@ -33,12 +33,12 @@
           </td>
           @if($devices[$index]->attr == 2)
           <td style="min-width: 80px;">
-            @include('devopt', ['device' => $devices[$index]])
+            @include(config('cullivebefore.mainrouter').'.devopt', ['device' => $devices[$index]])
           </td>
           @else
-          <td height="40"><span id="selopt{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\DeviceController::getDevValueBySN($devices[$index]->sn) }}</span></td>
+          <td height="40"><span id="selopt{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\CulliveBefore\DeviceController::getDevValueBySN($devices[$index]->sn) }}</span></td>
           @endif
-          <td id="devat{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($devices[$index]->updated_at) }}</td>
+          <td id="devat{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\CulliveBefore\ComputeController::getTimeFlag($devices[$index]->updated_at) }}</td>
         </tr>
       @endfor
       @while($index++ < $pagetag->getRow())

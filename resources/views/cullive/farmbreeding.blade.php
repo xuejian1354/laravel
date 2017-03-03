@@ -86,7 +86,7 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
 
     <div id="basewrap">
         <div class="container">
-            <div class="row centered">
+            <div class="row" style="text-align: center;">
                 <h1>Farmbreeding</h1>
                 <br>
                 <br>

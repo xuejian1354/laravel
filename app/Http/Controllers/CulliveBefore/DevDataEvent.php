@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\CulliveBefore;
 
 use App\Model\Device;
-use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\AlarminfoController;
 use Illuminate\Support\Facades\Redis;
 use App\Model\Record;

@@ -38,6 +38,10 @@ class AdminController extends Controller
 
 	public function curInfo(Request $request, $curopt = null) {
 
+	    if (Auth::user()->grade > 2) {
+	        return redirect('/farmbreeding');
+	    }
+
 		if($curopt == null) {
 			$record = new \stdClass();
 			$record->data = Ctrlrecord::query()->orderBy('updated_at', 'desc')->get();
@@ -101,6 +105,21 @@ class AdminController extends Controller
 						return 0;
 					}
 				}
+				else if($request->input('way') == 'usergrade') {
+				    $user = User::where('sn', $request->input('usersn'))->first();
+				    if($user != null) {
+				        $user->grade = $request->input('usergrade');
+				        $user->save();
+
+				        if(Globalval::getVal('record_support') == true) {
+				            Record::create(['sn' => $user->sn, 'type' => 'user', 'data' => 'setgrade='.$user->grade]);
+				        }
+				        return 1;
+				    }
+				    else {
+				        return 0;
+				    }
+				}
 			}
 
 			return $this->getViewWithMenus('curinfo.user', $request)
@@ -111,6 +130,10 @@ class AdminController extends Controller
 	}
 
 	public function areaCtrl(Request $request, $areasn = null, $areaopt = null) {
+
+	    if (Auth::user()->grade > 2) {
+	        return redirect('/farmbreeding');
+	    }
 
 		if($areaopt == 'camadd' && Globalval::getVal('video_support')) {
 			$area = Area::where('sn', $areasn)->first();
@@ -236,6 +259,10 @@ class AdminController extends Controller
 	}
 
 	public function devStats(Request $request, $devopt = null) {
+
+	    if (Auth::user()->grade > 2) {
+	        return redirect('/farmbreeding');
+	    }
 
 		if ($devopt == 'device') {
 			$device = Device::where('sn', $request->get('sn'))->first();
@@ -392,6 +419,10 @@ class AdminController extends Controller
 	}
 
 	public function videoReal(Request $request, $camopt = null) {
+
+	    if (Auth::user()->grade > 2) {
+	        return redirect('/farmbreeding');
+	    }
 
 		if(Globalval::getVal('video_support') == false) {
 			return '<h3>Video not Support !</h3>'
@@ -608,6 +639,10 @@ class AdminController extends Controller
 	}
 
 	public function alarmInfo(Request $request) {
+
+	    if (Auth::user()->grade > 2) {
+	        return redirect('/farmbreeding');
+	    }
 
 		if($request->isMethod('post')) {
 			if($request->input('way') == 'alarmlist') {

@@ -54,12 +54,12 @@
           </td>
           @if($device->attr == 2)
           <td><center>
-            @include('devopt')
+            @include(config('cullivebefore.mainrouter').'.devopt')
           </center></td>
           @else
-          <td height="40"><center id="selopt{{ $device->sn }}">{{ \App\Http\Controllers\DeviceController::getDevValueBySN($device->sn) }}</center></td>
+          <td height="40"><center id="selopt{{ $device->sn }}">{{ \App\Http\Controllers\CulliveBefore\DeviceController::getDevValueBySN($device->sn) }}</center></td>
           @endif
-          <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($device->updated_at) }}</td>
+          <td id="devat{{ $device->sn }}">{{ \App\Http\Controllers\CulliveBefore\ComputeController::getTimeFlag($device->updated_at) }}</td>
         </tr>
         @endforeach
 	@if(isset($index))

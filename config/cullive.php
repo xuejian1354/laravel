@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'entrance' => 'menubar',    //menubar or cullive
+    'entrance' => 'cullive',    //menubar or cullive
 ];

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ App\Globalval::getVal('title') }} | Registration</title>
+  <title>{{ App\Model\Globalval::getVal('title') }} | Registration</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -38,7 +38,7 @@
 <body class="hold-transition register-page">
 <div class="register-box">
   <div class="register-logo">
-    <a href="#"><b>{{ App\Globalval::getVal('title') }}</b></a>
+    <a href="#"><b>{{ App\Model\Globalval::getVal('title') }}</b></a>
   </div>
 
   <div class="register-box-body">

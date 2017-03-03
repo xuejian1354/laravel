@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
 use App\Model\Device;
-use App\Model\User;
+use App\User;
 use App\Model\Record;
 use App\Model\Globalval;
+use App\Http\Controllers\Controller;
 
 class DevDataController extends Controller
 {

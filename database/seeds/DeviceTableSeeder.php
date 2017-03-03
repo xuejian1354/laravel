@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Model\Device;
 use App\Model\Devtype;
 use App\Http\Controllers\Controller;
-use App\Model\User;
+use App\User;
 use App\Model\Area;
 
 class DeviceTableSeeder extends Seeder

@@ -96,7 +96,7 @@ function appendRecordsChart(record) {
 }
 
 function getRecordsPost(devsn, count, start, end) {
-  $.post('{{ config("cullivebefore.mainrouter)" }}/{{ $request->path() }}',
+  $.post('/{{ $request->path() }}',
 	{ _token:'{{ csrf_token() }}', sn:devsn, num:count, start_time:start, end_time:end },
 	function(data, status) {
 	  if(status != 'success') {

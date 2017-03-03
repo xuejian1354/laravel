@@ -11,7 +11,7 @@
 @section('conscript')
 <script>
 function updateUserListPost(hid, pg) {
-  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}',
+  $.post('/{{ $request->path() }}',
     { _token:'{{ csrf_token() }}', way:hid, page:pg },
 	function(data, status) {
 	  if(status != 'success') {
@@ -56,7 +56,7 @@ function delChoiceUser() {
 
   var arrStr = JSON.stringify(usersns);
 
-  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}',
+  $.post('/{{ $request->path() }}',
     { _token:'{{ csrf_token() }}', way:'userdel', usersns:arrStr },
 	function(data, status) {
       if(status != 'success') {
@@ -69,7 +69,7 @@ function delChoiceUser() {
 }
 
 function activeForUser(sn) {
-  $.post('{{ config("cullivebefore.mainrouter") }}'+'/'+'{{ $request->path() }}', 
+  $.post('/{{ $request->path() }}', 
     { _token:'{{ csrf_token() }}', way:'useractive', usersn:sn },
     function(data, status) {
       if(status != 'success') {
@@ -78,6 +78,25 @@ function activeForUser(sn) {
       else {
         if(data == 1) {
           $('#tdact'+sn).html('可用');
+        }
+        else {
+           alert('未找到该用户');
+        }
+      }
+    }
+  );
+}
+
+function SetUserGrade(sn) {
+  var grade = $('#usergrade'+sn+' option:selected').val();
+  $.post('/{{ $request->path() }}', 
+    { _token:'{{ csrf_token() }}', way:'usergrade', usersn:sn, usergrade:grade },
+    function(data, status) {
+      if(status != 'success') {
+    	alert("Status: " + status);
+      }
+      else {
+        if(data == 1) {
         }
         else {
            alert('未找到该用户');

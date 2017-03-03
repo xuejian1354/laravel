@@ -8,7 +8,7 @@
           <th>序列号</th>
           <th>名称</th>
           <th>邮箱</th>
-          <th>状态</th>
+          <th>身份</th>
           <th>活跃率</th>
           <th style="width: 40px"></th>
         </tr>
@@ -18,11 +18,17 @@
           <td class="usersn">{{ $user->sn }}</td>
           <td>{{ $user->name }}</td>
           <td>{{ $user->email }}</td>
-          @if($user->active == true)
-          <td id='tdact{{ $user->sn }}'>可用</td>
-          @else
-          <td id='tdact{{ $user->sn }}'><a href="javascript:activeForUser('{{ $user->sn }}')">激活</a></td>
-          @endif
+          <td id='tdact{{ $user->sn }}'>
+            <select id="usergrade{{ $user->sn }}" onchange="javascript:SetUserGrade('{{ $user->sn }}');" >
+            @foreach(App\Model\Grade::all() as $grade)
+              @if($user->grade == $grade->grade)
+              <option selected="selected" value="{{ $grade->grade }}">{{ $grade->val.'('.$grade->grade.')' }}</option>
+              @else
+              <option value="{{ $grade->grade }}">{{ $grade->val.'('.$grade->grade.')' }}</option>
+              @endif
+            @endforeach
+            </select>
+          </td>
           <td>
             <div class="progress progress-xs">
               <div class="progress-bar progress-bar-danger" style="width: {{ $user->actcount }}%"></div>
@@ -41,7 +47,7 @@
         <button onclick="javascript:licheckAll()" type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
         <div class="btn-group">
           <a href="javascript:delChoiceUser()" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></a>
-          <a href="{{ config('cullivebefore.mainrouter') }}/{{ $request->path() }}?page={{ $pagetag->getPage() }}" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
+          <a href="/{{ $request->path() }}?page={{ $pagetag->getPage() }}" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
         </div>
       </div>
       <div class="col-md-6">

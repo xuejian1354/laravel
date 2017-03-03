@@ -27,7 +27,7 @@
             @endif
             <td class="mailbox-name"><span><a>{{ $alarminfo->rel_devname->name }}</a></span></td>
             <td class="mailbox-subject">{{ $alarminfo->content }}</td>
-            <td class="mailbox-date">{{ \App\Http\Controllers\ComputeController::getTimeFlag($alarminfo->updated_at) }}</td>
+            <td class="mailbox-date">{{ \App\Http\Controllers\CulliveBefore\ComputeController::getTimeFlag($alarminfo->updated_at) }}</td>
           </tr>
           @endforeach
           @if(count($alarminfos) > 0)

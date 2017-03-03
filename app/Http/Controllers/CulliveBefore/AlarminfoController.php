@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Model\Alarminfo;
 use App\Model\Device;
+use App\Http\Controllers\Controller;
 
 class AlarminfoController extends Controller
 {

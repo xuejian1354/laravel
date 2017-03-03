@@ -29,6 +29,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function rel_grade() {
+        return $this->hasOne('App\Model\Grade', 'grade', 'grade');
+    }
+
     public static function getUserData($way, $page) {
         if($way == 'userdel') {
             $usersns = json_decode($request->input('usersns'));

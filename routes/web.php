@@ -70,13 +70,13 @@ $routecall = function() {
 
     // Post Request
     Route::group(['middleware' => ['api', 'auth']], function () {
-        Route::post('/devsetting', 'DeviceController@devSetting');
-        Route::post('/devctrl/{devsn}', 'DeviceController@devCtrl');
+        Route::post('/devsetting', 'CulliveBefore\DeviceController@devSetting');
+        Route::post('/devctrl/{devsn}', 'CulliveBefore\DeviceController@devCtrl');
     });
 };
 
 // Console URL
-Route::get('/devdata', 'DevDataController@index');
+Route::get('/devdata', 'CulliveBefore\DevDataController@index');
 
 if (Globalval::getVal('matrix') == 'server' && Globalval::getVal('domain_permit')) {
     //Enable is lower performance

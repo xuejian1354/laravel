@@ -11,7 +11,7 @@ use App\Model\Ctrlrecord;
 use App\Model\Action;
 use App\Model\Areaboxcontent;
 use App\Model\Globalval;
-use App\Model\User;
+use App\User;
 use App\Http\Controllers\Controller;
 
 class DeviceController extends Controller
