@@ -42,6 +42,16 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
+    
+    public function showLoginForm()
+    {
+        if (Globalval::getVal('dgsrc')) {
+            return view('auth.dg');
+        }
+        else {
+            return view('auth.login');
+        }
+    }
 
     protected function sendLoginResponse(Request $request)
     {

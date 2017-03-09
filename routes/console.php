@@ -142,3 +142,25 @@ Artisan::command('domain:permit {action}', function ($action) {
         print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
     }
 })->describe('Domain permission enable|disable');
+
+Artisan::command('dgsrc {action}', function ($action) {
+    if($action == 'enable') {
+        $vd = App\Globalval::where('name', 'dgsrc')->first();
+        if($vd) {
+            $vd->val = true;
+            $vd->save();
+            print_r("digital agriculture login ui enable\n");
+        }
+    }
+    else if($action == 'disable') {
+        $vd = App\Globalval::where('name', 'dgsrc')->first();
+        if($vd) {
+            $vd->val = false;
+            $vd->save();
+            print_r("digital agriculture login ui disable\n");
+        }
+    }
+    else {
+        print_r("Can't excute action \"".$action."\"\t\tchoice: [enable|disable]\n");
+    }
+})->describe('digital agriculture login ui enable|disable');
