@@ -81,6 +81,27 @@ desired effect
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
+  <ul class="nav nav-tabs" role="tablist">
+  @foreach($console_menus[0] as $home_menu)
+  @if($home_menu->haschild && isset($home_menu->isactive) 
+    && $home_menu->isactive == true && isset($console_menus[$home_menu->inode]))
+    @foreach($console_menus[$home_menu->inode] as $child_menu)
+    @if(isset($child_menu->isactive) && $child_menu->isactive == true)
+    <li role="presentation" class="nav-li active">
+    @else
+    <li role="presentation" class="nav-li">
+    @endif
+      <a href="{{ App\Http\Controllers\AdminController::withurl($child_menu->action) }}">
+        </i><h4>{{ $child_menu->name }}</h4>
+      </a>
+    </li>
+    @endforeach
+  @endif
+  @endforeach
+  </ul>
+
+  @if(isset(end($select_menus)->haschild))
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
@@ -95,6 +116,7 @@ desired effect
         @endif
       </ol>
     </section>
+  @endif
 
     <!-- Main content -->
     <section class="content">
