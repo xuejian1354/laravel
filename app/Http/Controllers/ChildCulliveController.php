@@ -74,10 +74,6 @@ class ChildCulliveController extends CulliveController
             break;
         }
 
-        if ($childreq == 'barctrl') {
-            return redirect(config('cullivebefore.mainrouter'));
-        }
-
         return parent::farmbreeding($request, $childreq);
     }
 

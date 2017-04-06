@@ -26,14 +26,14 @@ Route::get('/aquaculture', 'CulliveController@aquaculture');
 Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/dashboard', [ 'as' => 'web.dashboard', 'uses' => 'HomeController@index']);
     Route::get('/home', function () {
-        return redirect()->route('web.dashboard');
+        return redirect('/dashboard');
     });
 
     Route::post('/dashboard/{childreq}', 'HomeController@contentreq');
 
     Route::get('/landplanting/{childreq}', 'ChildCulliveController@landplanting');
     Route::get('/devgardening/{childreq}', 'ChildCulliveController@devgardening');
-    Route::get('/farmbreeding/{childreq}', 'ChildCulliveController@farmbreeding');
+    Route::get('/farmbreeding/{childreq}/{funcreq?}', 'ChildCulliveController@farmbreeding');
     Route::get('/aquaculture/{childreq}', 'ChildCulliveController@aquaculture');
 
     /*menubar*/

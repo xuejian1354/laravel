@@ -1033,6 +1033,20 @@ class AdminController extends Controller
 							'url' => 'http://'.$data->host.':'.$data->hls_port.$data->hls_path ];
 				}
 			}
+			else {
+			    foreach($dbcams->get() as $dbcam) {
+			        $camdata = json_decode($dbcam->data);
+			        if (($selnames && in_array($dbcam->sn, $selnames) || !$selnames)
+			            && $camdata->protocol = 'hls') {
+    			        $video_file_names[$dbcam->sn] = [ 
+    			            'id' => $dbcam->sn,
+    			            'type' => 'm3u8',
+    			            'name' => $dbcam->name,
+    			            'url' => $camdata->url
+    			            ];
+			        }
+			    }
+			}
 		}
 
 		//Using by easydarwin
@@ -1444,7 +1458,8 @@ class AdminController extends Controller
 			return null;
 		}
 
-		$video_file_names = $this->getAllVideoNames($names, 'rtmp');
+		$video_file_names = $this->getAllVideoNames($names, 'rtmp|m3u8');
+		//dd($video_file_names);
 		$video_file_names = $video_file_names['video_files'];
 		if(count($video_file_names) == 0) {
 			return null;

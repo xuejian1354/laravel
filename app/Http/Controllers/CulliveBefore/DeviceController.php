@@ -492,7 +492,9 @@ class DeviceController extends Controller
 	}
 
 	public static function getEasydarwinHLSList() {
-		return file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_hlslist'),
+	   $hlslist = null;
+	   try {
+	   $hlslist = file_get_contents(Globalval::getVal('easydarwin_service').Globalval::getVal('easydarwin_hlslist'),
 						false,
 						stream_context_create([
 								'http' => [
@@ -502,6 +504,11 @@ class DeviceController extends Controller
 								]
 						])
 				);
+	   } catch (\Exception $e) {
+	       //return 'Caught exception: '.$e->getMessage().'\n';
+	   }
+	   
+	   return $hlslist;
 	}
 
 	public static function getEasydarwinRTSPList() {
@@ -520,7 +527,7 @@ class DeviceController extends Controller
 	public static function getFFmpegRTMPList() {
 	    $rtlist = null;
 
-	    //try {
+	    try {
 		$rtlist = file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmp'),
 						false,
 						stream_context_create([
@@ -531,9 +538,9 @@ class DeviceController extends Controller
 								]
 						])
 				);
-	    //} catch (\Exception $e) {
+	    } catch (\Exception $e) {
 	        //return 'Caught exception: '.$e->getMessage().'\n';
-	    //}
+	    }
 
 		return $rtlist;
 	}
@@ -541,7 +548,7 @@ class DeviceController extends Controller
 	public static function getFFmpegStorageList() {
 	    $stlist = null;
 
-	    //try {
+	    try {
 		$stlist = file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffstorage'),
 				false,
 				stream_context_create([
@@ -552,9 +559,9 @@ class DeviceController extends Controller
 						]
 				])
 		);
-		//} catch (\Exception $e) {
+		} catch (\Exception $e) {
 		    //return 'Caught exception: '.$e->getMessage().'\n';
-		//}
+		}
 
 		return $stlist;
 	}

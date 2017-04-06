@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'mainrouter' => '/cullivebefore',
+    'mainrouter' => '/dashboard',
 ];
