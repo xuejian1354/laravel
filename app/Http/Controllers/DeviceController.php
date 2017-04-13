@@ -22,7 +22,7 @@ class DeviceController extends Controller
 	public static function getDevtypeFromBoxtype($type) {
 		$arr = [1 => 2, 2 => 3, 3 => 13, 4 => 19, 5 => 20, 6 => 22,
 		        7 => 5, 8 => 6, 9 => 4, 10 => null, 11 => 2, 12 => 2, 13 => 3,
-		        14 => 13, 15 => 7, 16 => 9];
+		        14 => 13, 15 => 7, 16 => 9, 17 => 17, 18 => 18, 19 => 14, 20 => null];
 
 		return $arr[$type];
 	}
@@ -94,6 +94,22 @@ class DeviceController extends Controller
 				case 16: //养猪厂硫化氢
 					$areaboxcontent->val = DeviceController::getHydrothionFromArea($areasn, $type);
 					break;
+
+				case 17: //鱼塘水温
+				    $areaboxcontent->val = DeviceController::getWarmhouseSoilTempFromArea($areasn, $type);
+				    break;
+
+				case 18: //鱼塘PH值
+				    $areaboxcontent->val = DeviceController::getWarmhouseSoilPHFromArea($areasn, $type);
+				    break;
+
+				case 19: //鱼塘含氧量
+				    $areaboxcontent->val = DeviceController::getWarmhouseSoilPHFromArea($areasn, $type);
+				    break;
+
+				case 20: //鱼塘控制设备数
+				    $areaboxcontent->val = DeviceController::getWarmhouseDeviceNumsFromArea($areasn);
+				    break;
 			}
 
 			$areaboxcontent->save();

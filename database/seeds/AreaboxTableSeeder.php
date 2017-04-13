@@ -75,5 +75,23 @@ class AreaboxTableSeeder extends Seeder
         		'icon_class' => 'fa-cloud',
         		'color_class' => 'bg-red',
         ]);
+        
+        Areabox::create([
+            'id' => 8,
+            'area_type' => '鱼塘',
+            'title' => '水质环境',
+            'column' => 2,
+            'icon_class' => 'fa-cloud',
+            'color_class' => 'bg-red',
+        ]);
+        
+        Areabox::create([
+        		'id' => 9,
+        		'area_type' => '鱼塘',
+        		'title' => '设备控制',
+        		'column' => 2,
+        		'icon_class' => 'fa-support',
+        		'color_class' => 'bg-yellow',
+        ]);
     }
 }

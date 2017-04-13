@@ -31,7 +31,7 @@ class AdminController extends Controller
 	public function index(Request $request) {
 
 		if($request->isMethod('get')) {
-			return redirect('curinfo');
+			return redirect('areactrl');
 		}
 	}
 
@@ -703,7 +703,7 @@ class AdminController extends Controller
 			$devices = $devices->where('attr', $attr);
 		}
 
-		$pagetag = new PageTag(8, 3, $devices->count(), $gp?$gp:1);
+		$pagetag = new PageTag(3, 3, $devices->count(), $gp?$gp:1);
 		$devices = $devices->orderBy('updated_at', 'desc')
 							->paginate($pagetag->getRow());
 

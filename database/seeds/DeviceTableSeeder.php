@@ -18,7 +18,7 @@ class DeviceTableSeeder extends Seeder
     {
         if(count(Device::all()) == 0) {
         	$root = User::where('name', 'root')->firstOrFail();
-            $area = ['大棚1', '大棚2'];
+            $area = ['鱼塘1', '鱼塘2', '鱼塘3'];
 
         	foreach (Devtype::all() as $devtype) {
         		$ran = Controller::getRandHex();
