@@ -84,6 +84,16 @@
         </div>
       </div>
       <!-- /.box-body -->
+      @if($video_file['type'] == 'rtmp')
+      <div class="box-footer clearfix">
+        <div class="btn-group">
+          <a id='vleftopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'left');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="左移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-left"></i></a>
+          <a id='vupopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'up');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="上移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-up"></i></a>
+          <a id='vdownopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'down');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="下移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-down"></i></a>
+          <a id='vrightopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'right');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="右移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-right"></i></a>
+        </div>
+      </div>
+      @endif
     </div>
     <!-- /.box -->
     @else
@@ -128,4 +138,17 @@
   <!-- /.col -->
 </div>
 <!-- /.row -->
+<script type="text/javascript">
+function camctrl(camsn, action) {
+  $.post('/videoreal/camctrl', { _token:'{{ csrf_token() }}', sn:camsn, action:action },
+	function(data, status) {
+	  if(status != 'success') {
+		alert("Status: " + status);
+	  }
+	  else {
+	  }
+    }
+  );
+}
+</script>
 @endsection

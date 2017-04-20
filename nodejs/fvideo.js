@@ -3,8 +3,10 @@ exports.listen = function() {
 	* HashMap for WebSocket Connection
 	*/
 	var HashMap = require('hashmap');
+	var SysCtrl = require('sysctrl');
 	var camlist = new HashMap();
 	var storagecamlist = new HashMap();
+	var mycamctrl = null;
 
 	var ftime = require('./ftime');
 
@@ -88,6 +90,32 @@ exports.listen = function() {
 			}
 			camlist.remove('_' + req.body.name);
 			console.log(ftime.date('yyyy-MM-dd hh:mm:ss') + ' Camera del from list, name: _' + req.body.name);
+		}
+		else if(req.body.opt == 'ctrl') {
+			var mycam = camlist.get(req.body.sn);
+			var urlObj = require('url').parse(mycam.url, true);
+			var auth = urlObj.auth.split(':');
+
+			if(mycamctrl == null) {
+				mycamctrl = new SysCtrl({
+					ipaddr: urlObj.host,
+					port: 9008,
+					user: auth[0],
+					pass: auth[1]
+				}, function(userId, playHandle) {
+					mycamctrl.netcamctrl(req.body.action);
+				});
+			}
+			else {
+				mycamctrl.reflush({
+					ipaddr: urlObj.host,
+					port: 9008,
+					user: auth[0],
+					pass: auth[1]
+				}, function(userId, playHandle) {
+					mycamctrl.netcamctrl(req.body.action);
+				});
+			}
 		}
 
 		return res.send('');

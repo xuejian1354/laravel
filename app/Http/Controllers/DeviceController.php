@@ -531,6 +531,23 @@ class DeviceController extends Controller
 				])
 		);
 	}
+	
+	public static function sendFFmpegCtrl($sn, $action) {
+	    return file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmp'),
+	        false,
+	        stream_context_create([
+	            'http' => [
+	                'method'  => 'POST',
+	                'header'  => 'Content-type: application/x-www-form-urlencoded',
+	                'content' => http_build_query([
+	                    'opt' => 'ctrl',
+	                    'sn' => $sn,
+	                    'action' => $action
+	                ])
+	            ]
+	        ])
+	    );
+	}
 
 	public static function getFFmpegRTMPList() {
 		return file_get_contents(Globalval::getVal('node_service').Globalval::getVal('node_ffrtmp'),

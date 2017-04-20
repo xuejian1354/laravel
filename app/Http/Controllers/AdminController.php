@@ -572,6 +572,9 @@ class AdminController extends Controller
 
 				return json_encode($camdatas);
 			}
+			else if($camopt == 'camctrl') {
+			    DeviceController::sendFFmpegCtrl($request->input('sn'), $request->input('action'));
+			}
 		}
 		else if($camopt == 'camadd') {
 			return $this->getViewWithMenus('videoreal.camadd', $request)
@@ -1152,10 +1155,12 @@ class AdminController extends Controller
 										break;
 									}
 	
-									$video_file_names[$sn] = [ 'id' => $sn,
-											'type' => 'rtmp',
-											'name' => $name,
-											'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
+									$video_file_names[$sn] = [
+									    'id' => $sn,
+									    'type' => 'rtmp',
+									    'name' => $name,
+									    'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path
+									];
 									break;
 								}
 							}
@@ -1167,10 +1172,12 @@ class AdminController extends Controller
 							continue;
 						}
 	
-						$video_file_names[$sn] = [ 'id' => $sn,
-								'type' => 'rtmp',
-								'name' => $name,
-								'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path ];
+						$video_file_names[$sn] = [
+						    'id' => $sn,
+						    'type' => 'rtmp',
+						    'name' => $name,
+						    'url' => 'rtmp://'.$data->host.':'.$data->rtmp_port.$data->rtmp_path
+						];
 					}
 					else if(Globalval::getVal('matrix') == 'raspberrypi' && $ffcam->streamtype == 'server') {
 						array_push($pushlist, ['name' => $ffcam->name, 'url' => $ffcam->url]);
