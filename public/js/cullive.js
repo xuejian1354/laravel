@@ -50,7 +50,7 @@ function devOptCtrl(devsn, gwsn, method, channel, index, data) {
 		data = $('#devsta'+devsn).text();
 		darr = new Array(channel);
 		for(i=0; i<channel; i++) {
-			darr[i] = data.substr(i*ctrls.on.length, ctrls.on.length);
+			darr[i] = '0'+ data.substr(i, 1);
 		}
 
 		if(darr[index] == ctrls.off) {
@@ -60,10 +60,8 @@ function devOptCtrl(devsn, gwsn, method, channel, index, data) {
 			darr[index] = ctrls.off;
 		}
 
-		ctrldata = '';
-		for(i=0; i<channel; i++) {
-			ctrldata += darr[i];
-		}
+		index++;
+		ctrldata = '0' + index + darr[index-1];
 
 		devCtrlPost(ctrldata, devsn, gwsn);
 	}

@@ -19,7 +19,7 @@ class DevoptTableSeeder extends Seeder
     	Devopt::create(['devtype' => 25, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
     	Devopt::create(['devtype' => 26, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
     	Devopt::create(['devtype' => 27, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
-    	Devopt::create(['devtype' => 28, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
+    	Devopt::create(['devtype' => 28, 'method' => 'trigger', 'channel' => 6, 'data' => '{ "off":"00", "on":"01" }']);
     	Devopt::create(['devtype' => 29, 'method' => 'trigger', 'channel' => 4, 'data' => '{ "off":"00", "on":"01" }']);
     	Devopt::create(['devtype' => 30, 'method' => 'switch', 'channel' => 1, 'data' => '{"正":"01", "停":"02", "反":"03"}']);
     }

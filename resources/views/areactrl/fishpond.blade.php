@@ -14,16 +14,13 @@
   <div class="col-md-4 col-sm-6 col-xs-12">
   @endif
     <div class="info-box">
-      <button class="btn btn-link info-box-icon {{ $areabox->color_class }}" onclick="javascript:$('#box-title').text('{{ $areabox->title }}');" data-target="#myCarousel" data-slide-to="{{ ($pos+1)%4 }}"><i class="fa {{ $areabox->icon_class }}"></i></button>
+      <button class="btn btn-link info-box-icon {{ $areabox->color_class }}"><i class="fa {{ $areabox->icon_class }}"></i></button>
       <div class="info-box-content">
         <span class="info-box-number">{{ $areabox->title }}</span>
-        <p class="info-box-text">
+        <p class="info-box-text" style="font-size: 20px; margin-top: 5px;">
         @foreach($areabox->contents as $index => $areaboxcontent)
           {{ $areaboxcontent->key }}{{ $areaboxcontent->key && $areaboxcontent->val?'：':''}}<span id="devspan{{ $areaboxcontent->id }}">{{ $areaboxcontent->val }}</span><br>
         @endforeach
-        @while($index++ < 2)
-          <br>
-        @endwhile
         </p>
       </div>
       <!-- /.info-box-content -->
@@ -112,25 +109,12 @@
     <div class="box box-info">
       <div class="box-header with-border">
         <span id="box-title" class="box-title">控制设备</span>
-        <div class="box-tools pull-right">
-          <div class="btn-group">
-            <button class="btn btn-default btn-sm" onclick="javascript:boxTitleUpdate('prev');" data-target="#myCarousel" data-slide="prev"><i class="fa fa-chevron-left"></i></button>
-            <button class="btn btn-default btn-sm" onclick="javascript:boxTitleUpdate('next');" data-target="#myCarousel" data-slide="next"><i class="fa fa-chevron-right"></i></button>
-          </div>
-        </div>
       </div>
       <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
         <div class="carousel-inner" role="listbox">
           <div class="item active" boxtitle="控制设备">
             @include('areactrl.devlist')
           </div>
-          @foreach($areaboxes as $areabox)
-          @if($areabox->id != 4)
-          <div class="item" boxtitle="{{ $areabox->title }}">
-            @include('areactrl.devlist', ['listid' => $areabox->id, 'pagetag' => $areabox->pagetag, 'devices' => $areabox->devices])
-          </div>
-          @endif
-          @endforeach
         </div>
       </div>
     </div>

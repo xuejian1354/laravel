@@ -17,13 +17,45 @@ class DevDataController extends Controller
 
     	switch(Input::get('action', 'update')) {
     	case 'update': 
-    		if(Device::where('sn', Input::get('sn'))->first() != null) {
-	    		(new DevDataEvent(Input::get('sn'), Input::get('data')))->updateToPusher();
+    	    
+    	    $resn = Input::get('sn');
+    	    $redata = Input::get('data');
+
+    	    $qdev = Device::where('sn', Input::get('sn'))->first();
+    		if($qdev != null) {
+    		    if(substr($resn, -2) == '07') {
+    		        $darr = [];
+    		        for($i=0; $i<6; $i++) {
+    		            $y = intval(substr($redata, 0, 2)) - 1;
+    		            if( $y == $i) {
+    		                if(substr($redata, 2, 2) == '01') {
+    		                    $darr[$i] = '1';
+    		                }
+    		                else {
+    		                    $darr[$i] = '0';
+    		                }
+    		            }
+    		            else {
+    		                $darr[$i] = substr($qdev->data, $i, 1);
+    		            }
+    		        }
+    		        
+    		        $redata = '';
+    		        for($i=0; $i<6; $i++) {
+    		            $redata .= $darr[$i];
+    		        }
+    		    }
+
+	    		(new DevDataEvent(Input::get('sn'), $redata))->updateToPusher();
 	    		return '<h2>Success</h2>'
 	    				.'<span>Update device data!</span><br><br>'
-	    				.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
+	    				.'<span>sn: '.$resn.', data: '.$redata.'</span>';
     		}
     		else {
+    		    if(substr($resn, -2) == '07') {
+    		        $redata = '000000';
+    		    }
+
     			$user = User::where('name', 'root')->first();
     			if (!$user) {
     				$user = User::query()->first();
@@ -33,18 +65,18 @@ class DevDataController extends Controller
     					'sn' => Input::get('sn'),
     					'type' => 0,
     					'attr' => 0,
-    					'data' => Input::get('data'),
+    					'data' => $redata,
     					'psn' => Input::get('psn'),
     					'owner' => $user->sn,
     			]);
 
     			if(Globalval::getVal('record_support') == true) {
-    				Record::create(['sn' => Input::get('sn'), 'type' => 'dev', 'data' => 'add']);
+    				Record::create(['sn' => $resn, 'type' => 'dev', 'data' => 'add']);
     			}
 
     			return '<h2>Success</h2>'
     					.'<span>Create new device!</span><br><br>'
-    					.'<span>sn: '.Input::get('sn').', data: '.Input::get('data').'</span>';
+    					.'<span>sn: '.$resn.', data: '.$redata.'</span>';
     		}
 
     	case 'threshold':
