@@ -31,7 +31,7 @@ class AdminController extends Controller
 	public function index(Request $request) {
 
 		if($request->isMethod('get')) {
-			return redirect('areactrl');
+			return view('index');
 		}
 	}
 

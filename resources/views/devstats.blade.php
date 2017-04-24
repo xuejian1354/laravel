@@ -5,16 +5,12 @@
     <div class="box box-default">
       <div class="box-header with-border">
         <i class="fa fa-h-square"></i>
-        <h3 class="box-title">智能贴士</h3>
+        <h3 class="box-title">视频设置</h3>
       </div>
       <div class="box-body">
-        <div class="alert alert-info alert-dismissible">
-          <h4><i class="icon fa fa-info"></i> 设备统计</h4>
-          <span>共用 {{ $pagetag->getAllcols() }} 个设备，其中 监测类 {{ App\Device::where('attr', 1)->count() }}，控制类 {{ App\Device::where('attr', 2)->count() }}</span>
-        </div>
         <div class="alert alert-warning alert-dismissible">
-          <h4><i class="icon fa fa-warning"></i> 状态警告</h4>
-          <span>有 {{ App\Device::where('attr', '!=', 3)->where('data', null)->count() }} 个设备处于无数据状态</span>
+          <h4><i class="icon fa fa-info"></i> 摄像头添加</h4>
+          <a href="/videoreal">点击此处进入摄像头设置页面</a>
         </div>
       </div>
     </div>
