@@ -42,9 +42,9 @@ class AreaboxcontentTableSeeder extends Seeder
         		Areaboxcontent::create(['box_id' => 7, 'type' => 16, 'area_sn' => $area->sn, 'key' => '硫化氢', 'val' => '0.01%']);
         	}
         	elseif ($area->type == '鱼塘') {
-        	    Areaboxcontent::create(['box_id' => 8, 'type' => 17, 'area_sn' => $area->sn, 'val' => '15℃']);
-        	    Areaboxcontent::create(['box_id' => 9, 'type' => 18, 'area_sn' => $area->sn, 'val' => '6.8']);
-        	    Areaboxcontent::create(['box_id' => 10, 'type' => 19, 'area_sn' => $area->sn, 'val' => '23%']);
+        	    Areaboxcontent::create(['box_id' => 8, 'type' => 17, 'area_sn' => $area->sn, 'val' => '未知']);
+        	    Areaboxcontent::create(['box_id' => 9, 'type' => 18, 'area_sn' => $area->sn, 'val' => '未知']);
+        	    Areaboxcontent::create(['box_id' => 10, 'type' => 19, 'area_sn' => $area->sn, 'val' => '未知']);
         	}
         }
     }

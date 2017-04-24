@@ -17,7 +17,7 @@
       <button class="btn btn-link info-box-icon {{ $areabox->color_class }}"><i class="fa {{ $areabox->icon_class }}"></i></button>
       <div class="info-box-content">
         <span class="info-box-number">{{ $areabox->title }}</span>
-        <p class="info-box-text" style="font-size: 20px; margin-top: 5px;">
+        <p class="info-box-text" style="font-size: 20px; margin-top: 5px; text-transform: none;">
         @foreach($areabox->contents as $index => $areaboxcontent)
           {{ $areaboxcontent->key }}{{ $areaboxcontent->key && $areaboxcontent->val?'：':''}}<span id="devspan{{ $areaboxcontent->id }}">{{ $areaboxcontent->val }}</span><br>
         @endforeach

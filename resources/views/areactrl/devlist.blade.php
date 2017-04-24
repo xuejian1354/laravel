@@ -2,7 +2,7 @@
   <div class="box-body">
     <div class="table-responsive">
       <table class="table no-margin">
-      <thead>
+      <thead hidden>
         <tr>
           <th>#</th>
           <th>序列号</th>
@@ -15,16 +15,16 @@
       <tbody>
       @for($index=0; $index < count($devices); $index++)
         <tr class="devtr">
-          <td>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
-          <td>
+          <td hidden>{{ ($pagetag->getPage()-1)*$pagetag->getRow()+$index+1 }}</td>
+          <td hidden>
             @if(App\Globalval::getVal('record_support') == true && $devices[$index]->attr == 1)
             <a class="devsna" href="{{ '/areactrl/'.$area->sn.'/record?sn='.$devices[$index]->sn }}">{{ $devices[$index]->sn }}</a>
             @else
             <a class="devsna">{{ $devices[$index]->sn }}</a>
             @endif
           </td>
-          <td><i class="{{ $devices[$index]->rel_type->img }}"><span>&nbsp;&nbsp;{{ $devices[$index]->name }}</span></td>
-          <td>
+          <td hidden><i class="{{ $devices[$index]->rel_type->img }}"><span>&nbsp;&nbsp;{{ $devices[$index]->name }}</span></td>
+          <td hidden>
           @if($devices[$index]->data == null)
             <span id="devsta{{ $devices[$index]->sn }}" class="label label-danger">离线</span>
           @else
@@ -32,13 +32,18 @@
           @endif
           </td>
           @if($devices[$index]->attr == 2)
-          <td style="min-width: 80px;">
-            @include('devopt', ['device' => $devices[$index]])
-          </td>
+          <td><center>
+          @for($i=0; $i<$devices[$index]->rel_devopt->channel; $i++)
+            <button type="button" class="btn btn-warning devbtn{{ $i }}" onClick="javascript:devOptCtrl('{{ $devices[$index]->sn }}', '{{ $devices[$index]->psn }}', '{{ $devices[$index]->rel_devopt->method }}', '{{ $devices[$index]->rel_devopt->channel }}', '{{ $i }}', '{{ $devices[$index]->rel_devopt->data }}');" style="margin: 10px 14px;">{{ App\DevbtName::find($i)->content }}</button>
+            @if($i%2==1)
+            <br>
+            @endif
+          @endfor
+          </center></td>
           @else
           <td height="40"><span id="selopt{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\DeviceController::getDevValueBySN($devices[$index]->sn) }}</span></td>
           @endif
-          <td id="devat{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($devices[$index]->updated_at) }}</td>
+          <td hidden id="devat{{ $devices[$index]->sn }}">{{ \App\Http\Controllers\ComputeController::getTimeFlag($devices[$index]->updated_at) }}</td>
         </tr>
       @endfor
       @while($index++ < $pagetag->getRow())

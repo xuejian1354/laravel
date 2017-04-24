@@ -4,6 +4,23 @@ function devstaChange(devsn, data, at) {
 	$('#devsta'+devsn).addClass('label-success');
 	$('#devsta'+devsn).text(data);
 	$('#devat'+devsn).text(at);
+	
+	if(data.length == 6 && devsn.substr(-2) == '07') {
+		for(var i=0; i<data.length; i++) {
+			console.log('.devbtn'+i);
+			var ibtn = $('.devbtn'+i);
+			ibtn.removeClass('btn-warning');
+			ibtn.removeClass('btn-info');
+			ibtn.removeClass('btn-danger');
+
+			if(data.substr(i, 1) == '1') {
+				ibtn.addClass('btn-info');
+			}
+			else if(data.substr(i, 1) == '0'){
+				ibtn.addClass('btn-danger');
+			}
+		}
+	}
   }
   else {
     $('#devsta'+devsn).addClass('label-danger');

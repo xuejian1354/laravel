@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Auth;
 use App\Device;
 use App\Ctrlrecord;
 use App\Action;
 use App\Areaboxcontent;
 use App\Globalval;
 use App\User;
-use Illuminate\Support\Facades\Redis;
 
 class DeviceController extends Controller
 {
@@ -104,7 +102,7 @@ class DeviceController extends Controller
 				    break;
 
 				case 19: //鱼塘含氧量
-				    $areaboxcontent->val = DeviceController::getWarmhouseSoilPHFromArea($areasn, $type);
+				    $areaboxcontent->val = DeviceController::getWarmhouseDissoxyFromArea($areasn, $type);
 				    break;
 
 				case 20: //鱼塘控制设备数
@@ -148,6 +146,8 @@ class DeviceController extends Controller
 				case 13: return DeviceController::getDioxideBySN($device->sn);
 				case 7: return DeviceController::getAmmoniaBySN($device->sn);
 				case 9:return DeviceController::getHydrothionBySN($device->sn);
+				case 18: return DeviceController::getPHBySN($device->sn);
+				case 14: return DeviceController::getDissOxyBySN($device->sn);
 			}
 		}
 
@@ -197,22 +197,56 @@ class DeviceController extends Controller
 		return $temp.'/'.$humi;
 	}
 
-	//大棚土壤温度
-	public static function getWarmhouseSoilTempFromArea($areasn, $type) {
-		$soiltemp = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type));
-		return $soiltemp == null ? '未知' : $soiltemp.'℃';
-	}
-
 	//大棚土壤水分
 	public static function getWarmhouseSoilMoistureFromArea($areasn, $type) {
 		$soilmoisture = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type), 'float');
 		return $soilmoisture == null ? '未知' : $soilmoisture;
 	}
 
-	//大棚土壤PH值
 	public static function getWarmhouseSoilPHFromArea($areasn, $type) {
-		$soilph = DeviceController::getDevAverageFromArea($areasn, DeviceController::getDevtypeFromBoxtype($type), 'float');
-		return $soilph == null ? '未知' : $soilph;
+
+		$devals = array();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
+		
+		foreach ($devs as $dev) {
+		    if($dev->data == null) {
+		        continue;
+		    }
+	        array_push($devals, hexdec(substr($dev->data, 0, 4))/100);
+		}
+
+		$phvals = DeviceController::getAverageVal($devals);
+		return $phvals == null ? '未知' : $phvals;
+	}
+
+	public static function getWarmhouseSoilTempFromArea($areasn, $type) {
+	    $devals = array();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype(19))->get();
+		
+		foreach ($devs as $dev) {
+		    if($dev->data == null) {
+		        continue;
+		    }
+	        array_push($devals, hexdec(substr($dev->data, 4, 8))/100);
+		}
+
+		$tempvals = DeviceController::getAverageVal($devals);
+	    return $tempvals == null ? '未知' : $tempvals.'℃';
+	}
+
+	public static function getWarmhouseDissoxyFromArea($areasn, $type) {
+	    $devals = array();
+		$devs = Device::where('area', $areasn)->where('type', DeviceController::getDevtypeFromBoxtype($type))->get();
+		
+		foreach ($devs as $dev) {
+		    if($dev->data == null) {
+		        continue;
+		    }
+	        array_push($devals, hexdec(substr($dev->data, 0, 4))/1000);
+		}
+
+		$dissoxyvals = DeviceController::getAverageVal($devals);
+	    return $dissoxyvals == null ? '未知' : $dissoxyvals.'mg/L';
 	}
 
 	//大棚气象风速
@@ -398,6 +432,34 @@ class DeviceController extends Controller
 		}
 
 		return $dydrothion === null ? '未知' : $dydrothion.' ppm';
+	}
+	
+	//水PH值
+	public static function getPHBySN($devsn) {
+	    $phval = null;
+	    $dev = Device::where('sn', $devsn)->first();
+	    if ($dev) {
+	        $phval = hexdec(substr($dev->data, 0, 4))/100;
+	    }
+	
+	    return $phval === null ? '未知' : $phval;
+	}
+
+	//水溶解氧含量
+	public static function getDissOxyBySN($devsn) {
+	    
+	    $dissoxyval = null;
+	    $tempval = null;
+	    $dev = Device::where('sn', $devsn)->first();
+	    if ($dev) {
+	        $dissoxyval = hexdec(substr($dev->data, 0, 4))/1000;
+	        $tempval = hexdec(substr($dev->data, 4, 8))/100;
+	    }
+
+	    $dissoxyval = ($dissoxyval == null ? '未知' : $dissoxyval.' mg/L');
+	    $tempval = ($tempval == null ? '未知' : $tempval.' ℃');
+	
+	    return $dissoxyval.' | '.$tempval;
 	}
 
 	public static function getDevAverageFromArea($areasn, $opttype, $ol = 'int') {
