@@ -59,6 +59,10 @@ $(function(){
 	}
 
   });
+
+  @if(isset($devices[0]))
+  devstaChange('{{ $devices[0]->sn }}', '{{ $devices[0]->data }}', '{{ $devices[0]->updated_at }}');
+  @endif
 })
 </script>
 @endsection

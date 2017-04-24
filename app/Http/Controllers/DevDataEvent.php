@@ -82,6 +82,14 @@ class DevDataEvent
     				$this->value = DeviceController::getDioxideBySN($device->sn);
     				break;
 
+   				case 14:
+   				    $contenttype = [17, 19]; //含氧量
+   				    break;
+
+			    case 18:
+			        $contenttype = [18]; //PH值
+			        break;
+
     			case 19:
     				$contenttype = [4];	//土壤温度
     				break;
@@ -171,7 +179,7 @@ class DevDataEvent
 
     		// update devctrl record
     		if($device->attr == 2) {
-    			DeviceController::addDevCtrlRecord($device);
+    			//DeviceController::addDevCtrlRecord($device);
     		}
     	}
     } 
