@@ -69,7 +69,7 @@ exports.listen = function() {
 			var outputPath = 'rtmp://localhost:1935/ffrtmp/' + req.body.name;
 			var serverPath = 'rtmp://' + req.body.server + ':1935/ffrtmp/' + req.body.name;
 
-			fftransrtmp(name, inputPath, outputPath, ['-vcodec copy', '-acodec aac']);
+			fftransrtmp(name, inputPath, outputPath, ['-vcodec h264', '-an']);
 			if(req.body.pushtoserver == '1') {
 				fftransrtmp('_'+name, inputPath, serverPath, ['-vcodec h264', '-s 320x180', '-acodec aac']);
 			}
