@@ -7,7 +7,6 @@ function devstaChange(devsn, data, at) {
 	
 	if(data.length == 6 && devsn.substr(-2) == '07') {
 		for(var i=0; i<data.length; i++) {
-			console.log('.devbtn'+i);
 			var ibtn = $('.devbtn'+i);
 			ibtn.removeClass('btn-warning');
 			ibtn.removeClass('btn-info');
