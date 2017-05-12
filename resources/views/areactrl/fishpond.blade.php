@@ -88,6 +88,7 @@
           <a id='vupopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'up');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="上移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-up"></i></a>
           <a id='vdownopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'down');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="下移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-down"></i></a>
           <a id='vrightopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'right');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="右移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-right"></i></a>
+          <a id='vstopopt' onclick="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="停止" type="button" class="btn btn-default btn-sm"><i class="fa fa-stop"></i></a>
         </div>
       </div>
       @endif
