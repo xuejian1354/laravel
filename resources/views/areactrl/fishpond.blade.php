@@ -89,6 +89,8 @@
           <a id='vdownopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'down');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="下移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-down"></i></a>
           <a id='vrightopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'right');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="右移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-right"></i></a>
           <a id='vstopopt' onclick="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="停止" type="button" class="btn btn-default btn-sm"><i class="fa fa-stop"></i></a>
+		  <a id='vnearopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'near');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="拉近" type="button" class="btn btn-default btn-sm"><i class="fa fa-plus-square"></i></a>
+		  <a id='vfaropt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'far');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="调远" type="button" class="btn btn-default btn-sm"><i class="fa fa-minus-square"></i></a>
         </div>
       </div>
       @endif
