@@ -452,8 +452,8 @@ class DeviceController extends Controller
 	    $tempval = null;
 	    $dev = Device::where('sn', $devsn)->first();
 	    if ($dev) {
-	        $dissoxyval = hexdec(substr($dev->data, 0, 4))/1000;
-	        $tempval = hexdec(substr($dev->data, 4, 8))/100;
+	        $dissoxyval = hexdec(substr($dev->data, 0, 4))/100;
+	        $tempval = hexdec(substr($dev->data, 4, 8))/10;
 	    }
 
 	    $dissoxyval = ($dissoxyval == null ? '未知' : $dissoxyval.' mg/L');

@@ -223,7 +223,7 @@ class AdminController extends Controller
 			}
 		}
 
-		$video_file = $this->getRandVideoName($vcamnames);
+		$video_file = $this->getRandVideoName($vcamnames, 'rtsp');
 
 		/* View */
 		return $this->getViewWithMenus('areactrl', $request)
@@ -1189,6 +1189,24 @@ class AdminController extends Controller
 				}
 			}
 		}
+		
+		$getpos = array_search('rtsp', $typesarr);
+		if($getpos !== false) {
+            //Camera info match with DB
+            $camdevs = Device::where('type', 1)->get();
+
+            foreach ($camdevs as $camdev) {
+                $campro = json_decode($camdev->data);
+                if ($campro && $campro->protocol == 'rtsp') {
+                    $video_file_names[$camdev->sn] = [
+                        'id' => $camdev->sn,
+                        'type' => 'rtsp',
+                        'name' => $camdev->sn,
+                        'url' => $campro->source
+                    ];
+                }
+            }
+		}
 
 		$getpos = array_search('storage', $typesarr);
 		$checkpos = array_search('none', $typesarr);
@@ -1408,13 +1426,13 @@ class AdminController extends Controller
 		return $video_file_names;
 	}
 
-	protected function getRandVideoName($names = null) {
+	protected function getRandVideoName($names = null, $edtypes = 'rtmp') {
 
 		if(Globalval::getVal('video_support') == false) {
 			return null;
 		}
 
-		$video_file_names = $this->getAllVideoNames($names, 'rtmp');
+		$video_file_names = $this->getAllVideoNames($names, $edtypes);
 		$video_file_names = $video_file_names['video_files'];
 		if(count($video_file_names) == 0) {
 			return null;

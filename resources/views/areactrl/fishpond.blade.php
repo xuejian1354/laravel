@@ -47,16 +47,20 @@
       <!-- /.box-header -->
       <div class="box-body no-padding">
         <div class="pad">
+          @if($video_file['type'] == 'mp4')
           <div id="viewplace" class="embed-responsive embed-responsive-4by3">
-            @if($video_file['type'] == 'mp4')
             <video id="vplay" class="embed-responsive-item" allowfullscreen controls autoplay>
   		      <source src="{{ $video_file['url'] }}" type="video/mp4">
 	        </video>
-	        @elseif($video_file['type'] == 'm3u8')
+	      </div>
+	      @elseif($video_file['type'] == 'm3u8')
+	      <div id="viewplace" class="embed-responsive embed-responsive-4by3">
             <div id="hplay" class="embed-responsive-item">
 		      <script type="text/javascript" src="/sewise.player.min.js?server=vod&type=m3u8&videourl={{ $video_file['url'] }}&title={{ $video_file['name'] }}&autostart=true&skin=vodWhite"></script>
 		    </div>
-		    @elseif($video_file['type'] == 'rtmp')
+		  </div>
+		  @elseif($video_file['type'] == 'rtmp')
+		  <div id="viewplace" class="embed-responsive embed-responsive-4by3">
             <!-- div id="hplay" class="embed-responsive-item">
 		      <script type="text/javascript" src="/sewise.player.min.js?server=live&type=rtmp&streamurl={{ $video_file['url'] }}&title={{ $video_file['name'] }}&autostart=true&skin=liveWhite"></script>
 		    </div -->
@@ -76,12 +80,35 @@
                 height: 'auto'
               });
 	        </script>
-		    @endif
 	      </div>
+	      @elseif($video_file['type'] == 'rtsp')
+	      <div id="viewplace">
+            <object classid="clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921"
+                codebase="http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab"
+                width="400"
+                height="300"
+                id="vlc">
+                <param name="mrl" value="{{ $video_file['url'] }}" />
+                <param name="autostart" value="true" />
+                <param name="allowfullscreen" value="true" />
+                <param name='controls' value='true' />
+            </object>
+            <!--object CLASSID="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" width="100%" height="auto" CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">    
+            <param name="type" value="video/quicktime">  
+            <param name="src" value="#">    
+            <param name="qtsrc" value="{{ $video_file['url'] }}">    
+            <param name="autoplay" value="true">    
+            <param name="loop" value="false">    
+            <param name="controller" value="false">    
+            <embed src="#" qtsrc="{{ $video_file['url'] }}" type="video/quicktime"   
+            width="100%" height="auto" autoplay="true" loop="false" controller="false" pluginspage="http://www.apple.com/quicktime/"></embed>    
+            </object-->
+	      </div> 
+		  @endif
         </div>
       </div>
       <!-- /.box-body -->
-      @if($video_file['type'] == 'rtmp')
+      @if($video_file['type'] == 'rtmp' || $video_file['type'] == 'rtsp')
       <div class="box-footer clearfix">
         <div class="btn-group">
           <a id='vleftopt' onmousedown="javascript:camctrl('{{ $video_file['id'] }}', 'left');" onmouseup="javascript:camctrl('{{ $video_file['id'] }}', 'stop');" title="左移" type="button" class="btn btn-default btn-sm"><i class="fa fa-caret-left"></i></a>
