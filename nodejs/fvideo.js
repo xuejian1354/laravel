@@ -96,6 +96,14 @@ exports.listen = function() {
 			var urlObj = require('url').parse(mycam.url, true);
 			var auth = urlObj.auth.split(':');
 
+			console.log('Cam Ctrl: ' + JSON.stringify({
+				ipaddr: urlObj.host,
+				port: 9008,
+				user: auth[0],
+				pass: auth[1],
+				action: req.body.action
+			}));
+
 			if(mycamctrl == null) {
 				mycamctrl = new SysCtrl({
 					ipaddr: urlObj.host,
