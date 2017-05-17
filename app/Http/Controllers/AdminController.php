@@ -1192,18 +1192,35 @@ class AdminController extends Controller
 		
 		$getpos = array_search('rtsp', $typesarr);
 		if($getpos !== false) {
+
             //Camera info match with DB
             $camdevs = Device::where('type', 1)->get();
-
+    
             foreach ($camdevs as $camdev) {
                 $campro = json_decode($camdev->data);
                 if ($campro && $campro->protocol == 'rtsp') {
-                    $video_file_names[$camdev->sn] = [
-                        'id' => $camdev->sn,
-                        'type' => 'rtsp',
-                        'name' => $camdev->sn,
-                        'url' => $campro->source
-                    ];
+                    
+                    //Select by names
+                    if($selnames != null && count($selnames) > 0) {
+                        foreach ($selnames as $selname) {
+                            if ($selname == $camdev->sn) {
+                                $video_file_names[$camdev->sn] = [
+                                    'id' => $camdev->sn,
+                                    'type' => 'rtsp',
+                                    'name' => $camdev->sn,
+                                    'url' => $campro->source
+                                ];
+                            }
+                        }
+                    }
+                    else {
+                        $video_file_names[$camdev->sn] = [
+                            'id' => $camdev->sn,
+                            'type' => 'rtsp',
+                            'name' => $camdev->sn,
+                            'url' => $campro->source
+                        ];
+                    }
                 }
             }
 		}

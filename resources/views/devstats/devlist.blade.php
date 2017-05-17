@@ -53,7 +53,7 @@
           @endif
           </td>
           @if($device->attr == 2)
-          <td><center>
+          <td style="min-width: 100px;"><center>
             @include('devopt')
           </center></td>
           @else

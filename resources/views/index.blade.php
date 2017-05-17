@@ -77,19 +77,24 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
               <li data-target="#carousel-base" data-slide-to="0" class="active"></li>
               <li data-target="#carousel-base" data-slide-to="1"></li>
               <li data-target="#carousel-base" data-slide-to="2"></li>
+              <li data-target="#carousel-base" data-slide-to="2"></li>
             </ol>
             <div class="carousel-inner">
-              <div class="item ltoggle active" durl="/areactrl" align="center" style="cursor: pointer; padding: 10px;">
-                <h2 style="position: absolute; margin-top: 10%; margin-left: 50%;">环境监测</h2>
+              <div class="item ltoggle active" durl="#" align="center" style="cursor: pointer; padding: 10px;">
+                <h2 style="position: absolute; margin-top: 10%; margin-left: 50%;">生产管理</h2>
                 <img src="/img/caquadetect.png" alt="">
               </div>
-              <div class="item ltoggle" durl="/devstats" align="center" style="cursor: pointer; padding: 10px;">
-                <h2 style="position: absolute; margin-top: 10%; margin-left: 20%;">设备控制</h2>
-                <img src="/img/caquamanage.png" alt="">
+              <div class="item ltoggle" durl="#" align="center" style="cursor: pointer; padding: 10px;">
+                <h2 style="position: absolute; margin-top: 10%; margin-left: 20%;">溯源系统</h2>
+                <img src="/img/caquaservice.png" alt="">
               </div>
-              <div class="item ltoggle" durl="/videoreal" align="center" style="cursor: pointer; padding: 10px;">
-                <h2 style="position: absolute; margin-top: 10%; margin-left: 18%;">视频监控</h2>
+              <div class="item ltoggle" durl="#" align="center" style="cursor: pointer; padding: 10px;">
+                <h2 style="position: absolute; margin-top: 10%; margin-left: 18%;">专家系统</h2>
                 <img src="/img/caquactrl.png" alt="">
+              </div>
+              <div class="item ltoggle" durl="#" align="center" style="cursor: pointer; padding: 10px;">
+                <h2 style="position: absolute; margin-top: 10%; margin-left: 18%;">报警提示</h2>
+                <img src="/img/caquamanage.png" alt="">
               </div>
             </div>
             <a class="left carousel-control" href="#carousel-base" role="button" data-slide="prev">
@@ -106,44 +111,34 @@ Landing page based on Pratt: http://blacktie.co/demo/pratt/
     </div>
 
     <div class="col-md-4">
-      <div class="info-box bg-green ltoggle" durl="#" style="cursor: pointer;">
+      <div class="info-box bg-green ltoggle" durl="/areactrl" style="cursor: pointer;">
         <span class="info-box-icon"><i class="fa fa-table"></i></span>
         <div class="info-box-content">
-          <span class="info-box-number" style="padding: 8px 0;">生产管理</span>
+          <span class="info-box-number" style="padding: 8px 0;">环境监测</span>
           <div class="progress">
             <div class="progress-bar" style="width: 100%"></div>
           </div>
-          <span class="info-box-text">农产品生产过程管理监控</span>
+          <span class="info-box-text">实时监控生产环境数据</span>
         </div>
       </div>
-      <div class="info-box bg-aqua ltoggle" durl="#" style="cursor: pointer;">
-        <span class="info-box-icon"><i class="fa fa-sort-amount-desc"></i></span>
+      <div class="info-box bg-aqua ltoggle" durl="/devstats" style="cursor: pointer;">
+        <span class="info-box-icon"><i class="fa fa-hand-pointer-o"></i></span>
         <div class="info-box-content">
-          <span class="info-box-number" style="padding: 8px 0;">溯源系统</span>
+          <span class="info-box-number" style="padding: 8px 0;">设备控制</span>
           <div class="progress">
             <div class="progress-bar" style="width: 100%"></div>
           </div>
-          <span class="info-box-text">农产品溯源追踪，可靠来源查询</span>
+          <span class="info-box-text">设置控制设备，调试测试数据信息</span>
         </div>
       </div>
-      <div class="info-box bg-yellow ltoggle" durl="#" style="cursor: pointer;">
-        <span class="info-box-icon"><i class="fa fa-user-plus"></i></span>
+      <div class="info-box bg-yellow ltoggle" durl="/videoreal" style="cursor: pointer;">
+        <span class="info-box-icon"><i class="fa  fa-video-camera"></i></span>
         <div class="info-box-content">
-          <span class="info-box-number" style="padding: 8px 0;">专家系统</span>
+          <span class="info-box-number" style="padding: 8px 0;">视频监控</span>
           <div class="progress">
             <div class="progress-bar" style="width: 100%"></div>
           </div>
-          <span class="info-box-text">专家在线答疑、咨询</span>
-        </div>
-      </div>
-      <div class="info-box bg-red ltoggle" durl="#" style="cursor: pointer;">
-        <span class="info-box-icon"><i class="fa fa-volume-up"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-number" style="padding: 8px 0;">报警提示</span>
-          <div class="progress">
-            <div class="progress-bar" style="width: 100%"></div>
-          </div>
-          <span class="info-box-text">报警阈值设置，联动报警等</span>
+          <span class="info-box-text">现场监控，查看鱼塘状态</span>
         </div>
       </div>
     </div>
