@@ -227,7 +227,7 @@ class DeviceController extends Controller
 		    if($dev->data == null) {
 		        continue;
 		    }
-	        array_push($devals, hexdec(substr($dev->data, 4, 8))/100);
+	        array_push($devals, hexdec(substr($dev->data, 4, 8))/10);
 		}
 
 		$tempvals = DeviceController::getAverageVal($devals);
@@ -242,7 +242,7 @@ class DeviceController extends Controller
 		    if($dev->data == null) {
 		        continue;
 		    }
-	        array_push($devals, hexdec(substr($dev->data, 0, 4))/1000);
+	        array_push($devals, hexdec(substr($dev->data, 0, 4))/100);
 		}
 
 		$dissoxyvals = DeviceController::getAverageVal($devals);

@@ -41,11 +41,12 @@ $(function(){
     console.log(devdata);
     devdata = JSON.parse(devdata);
 
-    for(x in devdata.areaboxcontents) {
-      for (item in devdata.areaboxcontents[x]){
-        $('#devspan'+item).text(devdata.areaboxcontents[x][item]);
-      }
-    }
+	$.each(devdata.areaboxcontents, function(index, value) {
+		$.each(devdata.areaboxcontents[index], function(y, val) {
+			//console.log('y: ' + y + 'val: ' + val);
+			$('#devspan'+y).text(val);
+		});
+	});
 
     $('.devtr').each(function() {
       var devsn = $(this).find('.devsna').text();
