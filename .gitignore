@@ -3,7 +3,6 @@
 /public/bower_components/AdminLTE
 /public/storage
 /storage/*.key
-/vendor
 /.idea
 /.settings
 *.log
